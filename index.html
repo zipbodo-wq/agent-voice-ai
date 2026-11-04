@@ -281,13 +281,41 @@
         }
 
         .voice-selector-box {
-            background: rgba(16, 185, 129, 0.12) !important;
-            border-color: rgba(16, 185, 129, 0.35) !important;
+            background: rgba(16, 185, 129, 0.22) !important;
+            border: 2px solid #10b981 !important;
+            box-shadow: 0 0 16px rgba(16, 185, 129, 0.35) !important;
+            transition: all 0.2s ease;
+        }
+
+        .voice-selector-box:hover {
+            box-shadow: 0 0 24px rgba(16, 185, 129, 0.6) !important;
+            transform: scale(1.02);
         }
 
         .voice-selector-box select {
             color: #34d399 !important;
-            font-weight: 700;
+            font-weight: 800;
+        }
+
+        .voice-indicator-pill-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            margin-top: 6px;
+            padding: 4px 12px;
+            background: rgba(16, 25, 46, 0.65);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 20px;
+        }
+
+        .active-voice-badge-text {
+            color: #10b981;
+            font-weight: 800;
+            font-size: 0.78rem;
+            background: rgba(16, 185, 129, 0.18);
+            padding: 2px 8px;
+            border-radius: 10px;
         }
 
         .persona-selector-box select {
@@ -1164,6 +1192,7 @@
                         <i class="fa-solid fa-user-astronaut" style="color:var(--accent-cyan)"></i>
                         <select id="personaSelect" onchange="changePersona()">
                             <option value="agent" selected>Agent · Autonomous Voice AI</option>
+                            <option value="hulk">Hulk · Gamma Giant Copilot</option>
                             <option value="jarvis">Jarvis · Code Copilot</option>
                             <option value="nova">Nova · Companion</option>
                             <option value="iot">CyberTech · IoT Agent</option>
@@ -1174,37 +1203,40 @@
                     <div class="persona-selector-box voice-selector-box" title="Select Real Human-like Voice Model">
                         <i class="fa-solid fa-microphone-lines" style="color:#10b981"></i>
                         <select id="realVoiceSelect" onchange="changeRealVoice()">
-                            <optgroup label="✨ OpenAI Realtime Voices">
-                                <option value="arbor" selected>Arbor (Easygoing & versatile)</option>
-                                <option value="breeze">Breeze (Animated & earnest)</option>
-                                <option value="cove">Cove (Composed & direct)</option>
-                                <option value="ember">Ember (Confident & optimistic)</option>
-                                <option value="juniper">Juniper (Open & upbeat)</option>
-                                <option value="maple">Maple (Cheerful & candid)</option>
-                                <option value="sol">Sol (Savvy & relaxed)</option>
-                                <option value="spruce">Spruce (Calm & affirming)</option>
-                                <option value="vale">Vale (Bright & inquisitive)</option>
-                                <option value="bubbie">Bubbie (Warm English)</option>
+                            <optgroup label="💥 SUPERHERO & POWER VOICES">
+                                <option value="hulk">🟢 HULK · Deep Booming Monster Roar</option>
+                            </optgroup>
+                            <optgroup label="👩 Realistic Female Voices">
+                                <option value="breeze" selected>👩 Breeze · Animated & earnest</option>
+                                <option value="ember">👩 Ember · Confident & optimistic</option>
+                                <option value="juniper">👩 Juniper · Open & upbeat</option>
+                                <option value="maple">👩 Maple · Cheerful & candid</option>
+                                <option value="vale">👩 Vale · Bright & inquisitive</option>
+                                <option value="bubbie">👩 Bubbie · Warm conversational</option>
+                                <option value="nova">👩 Nova · Energetic & expressive</option>
+                                <option value="shimmer">👩 Shimmer · Clear & gentle</option>
+                            </optgroup>
+                            <optgroup label="👨 Realistic Male Voices">
+                                <option value="cove">👨 Cove · Composed & direct</option>
+                                <option value="arbor">👨 Arbor · Easygoing & versatile</option>
+                                <option value="sol">👨 Sol · Savvy & relaxed</option>
+                                <option value="spruce">👨 Spruce · Calm & affirming</option>
+                                <option value="echo">👨 Echo · Warm baritone</option>
+                                <option value="onyx">👨 Onyx · Deep baritone</option>
+                                <option value="fable">👨 Fable · British accent</option>
+                                <option value="alloy">⚖️ Alloy · Balanced neutral</option>
                             </optgroup>
                             <optgroup label="🌏 International Voices (GPT-Live 1.1)">
-                                <option value="himari">Himari (ひまり) · Japanese (Expressive)</option>
-                                <option value="rindo">Rindō (りんどう) · Japanese (Composed)</option>
-                                <option value="haetsal">Haetsal (햇살) · Korean (Bright)</option>
-                                <option value="hanul">Hanul (한울) · Korean (Smooth)</option>
-                                <option value="tinta">Tinta · Mexican Spanish (Expressive)</option>
-                                <option value="arrullo">Arrullo · Mexican Spanish (Melodic)</option>
-                                <option value="celeste">Céleste · French (Refined)</option>
-                                <option value="leopold">Léopold · French (Classic)</option>
-                                <option value="friedrich">Friedrich · German (Authoritative)</option>
-                                <option value="greta">Greta · German (Dynamic)</option>
-                            </optgroup>
-                            <optgroup label="🎙️ Classic OpenAI Neural Voices">
-                                <option value="alloy">Alloy (Balanced & Neutral)</option>
-                                <option value="echo">Echo (Warm Baritone)</option>
-                                <option value="fable">Fable (British Accent)</option>
-                                <option value="onyx">Onyx (Deep Baritone)</option>
-                                <option value="nova">Nova (Energetic & Expressive)</option>
-                                <option value="shimmer">Shimmer (Clear & Gentle)</option>
+                                <option value="himari">👩 Himari (ひまり) · Japanese Female</option>
+                                <option value="rindo">👨 Rindō (りんどう) · Japanese Male</option>
+                                <option value="haetsal">👩 Haetsal (햇살) · Korean Female</option>
+                                <option value="hanul">👨 Hanul (한울) · Korean Male</option>
+                                <option value="tinta">👩 Tinta · Mexican Spanish Female</option>
+                                <option value="arrullo">👨 Arrullo · Mexican Spanish Male</option>
+                                <option value="celeste">👩 Céleste · French Female</option>
+                                <option value="leopold">👨 Léopold · French Male</option>
+                                <option value="friedrich">👨 Friedrich · German Male</option>
+                                <option value="greta">👩 Greta · German Female</option>
                             </optgroup>
                         </select>
                     </div>
@@ -1248,6 +1280,12 @@
                 </div>
                 <div class="subtitle-scroll" id="callSubtitles">
                     "Say 'Agent' or 'Agent, turn on dev lights', 'Agent, run python test'..."
+                </div>
+                <div class="voice-indicator-pill-bar" title="Current Active Voice (Select from the green top dropdown)">
+                    <i class="fa-solid fa-volume-high" style="color:#10b981;"></i>
+                    <span style="color:var(--text-secondary);font-size:0.75rem;font-weight:700;">ACTIVE VOICE:</span>
+                    <span id="activeVoiceBadgeLabel" class="active-voice-badge-text">👩 Breeze (Female)</span>
+                    <span style="color:var(--text-muted);font-size:0.72rem;">(Change using green box at top ⬆)</span>
                 </div>
             </div>
 
@@ -1548,6 +1586,12 @@
                 greeting: "Agent is online and listening. Just call my name 'Agent' whenever you need me!",
                 systemPrompt: "You are Agent, an autonomous, hyper-intelligent voice AI copilot. You speak concisely, directly, and naturally. Whenever the user calls your name 'Agent', you give them immediate, full attention and execute their verbal instructions and tools."
             },
+            hulk: {
+                name: "Hulk",
+                title: "Gamma Giant Copilot",
+                greeting: "HULK IS ONLINE! HULK HEAR YOU! HULK SMASH BUGS AND RUN CODE FOR YOU!",
+                systemPrompt: "You are Hulk, the colossal superhero giant and ultimate AI powerhouse. You speak in a deep, booming, powerful, epic tone. You call the user friend, you crush software bugs, execute tasks with raw power, and roar with confidence! Keep answers punchy and thunderous!"
+            },
             jarvis: {
                 name: "Jarvis",
                 title: "Code Copilot",
@@ -1575,11 +1619,17 @@
         };
         let currentPersonaId = 'agent';
 
-        // REAL HUMAN-LIKE NEURAL VOICE PROFILES (OpenAI & GPT-Live 1.1 Matrix)
+        // REAL HUMAN-LIKE NEURAL VOICE PROFILES (OpenAI, GPT-Live 1.1 & Superhero Hulk)
         const REAL_VOICES = {
-            arbor: { name: "Arbor", desc: "Easygoing and versatile", gender: "male", lang: "en", pitch: 0.96, rate: 1.02, openaiVoice: "alloy" },
-            breeze: { name: "Breeze", desc: "Animated and earnest", gender: "female", lang: "en", pitch: 1.14, rate: 1.10, openaiVoice: "nova" },
-            cove: { name: "Cove", desc: "Composed and direct", gender: "male", lang: "en", pitch: 0.90, rate: 0.98, openaiVoice: "onyx" },
+            hulk: { name: "🟢 Hulk (Gamma Titan)", desc: "Deep booming monstrous superhero roar", gender: "male", lang: "en", pitch: 0.45, rate: 0.85, openaiVoice: "onyx", theme: "hulk" },
+            breeze: { name: "👩 Breeze", desc: "Animated and earnest", gender: "female", lang: "en", pitch: 1.14, rate: 1.10, openaiVoice: "nova" },
+            ember: { name: "👩 Ember", desc: "Confident and optimistic", gender: "female", lang: "en", pitch: 1.08, rate: 1.06, openaiVoice: "shimmer" },
+            juniper: { name: "👩 Juniper", desc: "Open and upbeat", gender: "female", lang: "en", pitch: 1.18, rate: 1.08, openaiVoice: "nova" },
+            maple: { name: "👩 Maple", desc: "Cheerful and candid", gender: "female", lang: "en", pitch: 1.05, rate: 1.04, openaiVoice: "alloy" },
+            vale: { name: "👩 Vale", desc: "Bright and inquisitive", gender: "female", lang: "en", pitch: 1.12, rate: 1.08, openaiVoice: "shimmer" },
+            bubbie: { name: "👩 Bubbie", desc: "Warm and conversational English", gender: "female", lang: "en", pitch: 0.98, rate: 0.94, openaiVoice: "alloy" },
+            arbor: { name: "👨 Arbor", desc: "Easygoing and versatile", gender: "male", lang: "en", pitch: 0.96, rate: 1.02, openaiVoice: "alloy" },
+            cove: { name: "👨 Cove", desc: "Composed and direct", gender: "male", lang: "en", pitch: 0.90, rate: 0.98, openaiVoice: "onyx" },
             ember: { name: "Ember", desc: "Confident and optimistic", gender: "female", lang: "en", pitch: 1.08, rate: 1.06, openaiVoice: "shimmer" },
             juniper: { name: "Juniper", desc: "Open and upbeat", gender: "female", lang: "en", pitch: 1.18, rate: 1.08, openaiVoice: "nova" },
             maple: { name: "Maple", desc: "Cheerful and candid", gender: "female", lang: "en", pitch: 1.05, rate: 1.04, openaiVoice: "alloy" },
@@ -1604,7 +1654,7 @@
             nova: { name: "Nova", desc: "Energetic and expressive", gender: "female", lang: "en", pitch: 1.15, rate: 1.08, openaiVoice: "nova" },
             shimmer: { name: "Shimmer", desc: "Clear and gentle", gender: "female", lang: "en", pitch: 1.08, rate: 1.02, openaiVoice: "shimmer" }
         };
-        let currentRealVoiceId = localStorage.getItem('agent_real_voice') || 'arbor';
+        let currentRealVoiceId = localStorage.getItem('agent_real_voice') || 'breeze';
         let currentAudioPlayer = null; // Active HTML5 Audio element for OpenAI TTS
 
         // Transcript Session Storage
@@ -2875,11 +2925,21 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                 currentRealVoiceId = vSelect.value;
                 localStorage.setItem('agent_real_voice', currentRealVoiceId);
             }
-            const v = REAL_VOICES[currentRealVoiceId] || REAL_VOICES.arbor;
-            playHarmonicChime([523.25, 659.25]);
-            const intro = `Voice changed to ${v.name}: ${v.desc}. How does this sound?`;
-            speakAgentResponse(intro);
-            appendTranscript('agent', intro);
+            const v = REAL_VOICES[currentRealVoiceId] || REAL_VOICES.breeze;
+            const badge = document.getElementById('activeVoiceBadgeLabel');
+            if (badge) badge.innerText = v.name;
+
+            if (currentRealVoiceId === 'hulk') {
+                playTone(130, 0.25); // Deep sub-bass rumble
+                const roar = "HULK ONLINE! HULK IS READY TO SMASH CODE BUGS AND EXECUTE YOUR TASKS! WHAT SHOULD HULK CRUSH TODAY?!";
+                speakAgentResponse(roar);
+                appendTranscript('agent', roar);
+            } else {
+                playHarmonicChime([523.25, 659.25]);
+                const intro = `Voice changed to ${v.name}: ${v.desc}. How does this sound?`;
+                speakAgentResponse(intro);
+                appendTranscript('agent', intro);
+            }
         }
 
         // ==========================================
@@ -2905,9 +2965,14 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
         }
 
         function testVoiceAudioOutput() {
-            playHarmonicChime([523.25, 659.25, 783.99]);
-            const v = REAL_VOICES[currentRealVoiceId] || REAL_VOICES.arbor;
-            const testMsg = `Hello! I am speaking with the ${v.name} voice: ${v.desc}. Voice audio is working loud and clear!`;
+            const v = REAL_VOICES[currentRealVoiceId] || REAL_VOICES.breeze;
+            let testMsg = `Hello! I am speaking with the ${v.name} voice: ${v.desc}. Voice audio is working loud and clear!`;
+            if (currentRealVoiceId === 'hulk') {
+                playTone(130, 0.25);
+                testMsg = "HULK ONLINE! HULK SOUND IS WORKING LOUD AND POWERFUL! HULK READY TO SMASH CODE BUGS!";
+            } else {
+                playHarmonicChime([523.25, 659.25, 783.99]);
+            }
             speakAgentResponse(testMsg);
             appendTranscript('agent', testMsg);
         }
@@ -3190,6 +3255,9 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
             document.getElementById('soundChimesSelect').value = String(soundChimesEnabled);
             const rSelect = document.getElementById('realVoiceSelect');
             if (rSelect) rSelect.value = currentRealVoiceId;
+            const v = REAL_VOICES[currentRealVoiceId] || REAL_VOICES.breeze;
+            const badge = document.getElementById('activeVoiceBadgeLabel');
+            if (badge) badge.innerText = v.name;
             updateEngineSelection();
         }
 
