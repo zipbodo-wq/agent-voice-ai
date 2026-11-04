@@ -576,6 +576,74 @@
             background: #ef4444;
         }
 
+        /* QUICK TEXT / CHAT FALLBACK BAR */
+        .chat-fallback-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            max-width: 440px;
+            margin-top: 12px;
+            padding: 4px 8px;
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 30px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .quick-text-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #ffffff;
+            font-size: 0.82rem;
+            padding: 7px 10px;
+            font-family: inherit;
+        }
+        .quick-text-input::placeholder {
+            color: rgba(148, 163, 184, 0.6);
+            font-size: 0.78rem;
+        }
+        .send-btn {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: #0b1120;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: transform 0.15s ease;
+            flex-shrink: 0;
+        }
+        .send-btn:hover {
+            transform: scale(1.08);
+        }
+        .test-voice-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--text-secondary);
+            border-radius: 20px;
+            padding: 5px 11px;
+            font-size: 0.72rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .test-voice-btn:hover {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+        }
+
         /* RIGHT COLUMN: AUTONOMOUS MISSION & TASK HUD */
         section.mission-hud {
             flex: 1;
@@ -1151,6 +1219,18 @@
                     <i class="fa-solid fa-eye"></i>
                 </button>
             </div>
+
+            <!-- QUICK TEXT / VOICE TEST FALLBACK BAR -->
+            <div class="chat-fallback-container">
+                <input type="text" id="quickTextInput" class="quick-text-input" placeholder="Type here if not speaking (e.g. 'hello', 'who are you', 'turn on dev lights')..." onkeydown="if(event.key==='Enter') submitQuickText()">
+                <button class="send-btn" onclick="submitQuickText()" title="Send message to Agent">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+                <button class="test-voice-btn" onclick="testVoiceAudioOutput()" title="Click to test speaker sound and voice output">
+                    <i class="fa-solid fa-volume-high"></i>
+                    <span>Test Voice</span>
+                </button>
+            </div>
         </section>
 
         <!-- RIGHT: AUTONOMOUS MISSIONS & BACKGROUND EXECUTION HUD -->
@@ -1386,6 +1466,8 @@
         let voicesList = [];
         let isRecognitionStarting = false;
         window.activeUtterances = []; // Prevent iOS garbage collection halting speech
+        let speechSilenceTimeout = null;
+        let speechSafetyTimer = null;
 
         // In-flight fetch cancellation
         let currentAbortController = null;
@@ -1447,6 +1529,14 @@
 
         // INITIALIZATION
         window.addEventListener('DOMContentLoaded', () => {
+            if (window.location.protocol === 'file:') {
+                const banner = document.createElement('div');
+                banner.id = 'fileProtocolBanner';
+                banner.style.cssText = 'background:linear-gradient(90deg, #991b1b, #dc2626);color:#ffffff;padding:9px 16px;text-align:center;font-size:0.83rem;font-weight:600;z-index:9999;display:flex;align-items:center;justify-content:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.25);box-shadow:0 4px 15px rgba(0,0,0,0.4);';
+                banner.innerHTML = '<span>⚠️ Notice: Chrome & Edge block microphone voice input on local "file://" links. Run <b>launch_dots_voice_agent.bat</b> or open <b>http://127.0.0.1:8765</b> to talk with your voice! (You can still type in the box below)</span>';
+                document.body.prepend(banner);
+            }
+
             initOrbVisualizer();
             initSpeechSynthesis();
             loadSavedSettings();
@@ -1902,11 +1992,14 @@
                     triggerImmediateInterruption();
                 }
 
-                // If in Standby (not in active call) and wake word "Agent" is detected:
+                // If in Standby (not in active call):
                 if (!inCallMode) {
-                    if (wakeCheck.detected) {
+                    if (wakeCheck.detected || finalTranscript.trim().length > 0) {
+                        const cmdToRun = (wakeCheck.detected && wakeCheck.command) 
+                            ? wakeCheck.command 
+                            : (finalTranscript.trim() || interimTranscript.trim());
                         document.getElementById('callSubtitles').innerText = `"${currentText}"`;
-                        wakeAgentFromStandby(wakeCheck.command);
+                        wakeAgentFromStandby(cmdToRun);
                     }
                     return;
                 }
@@ -1916,8 +2009,17 @@
                     document.getElementById('callSubtitles').innerText = `"${currentText}"`;
                 }
 
+                if (speechSilenceTimeout) clearTimeout(speechSilenceTimeout);
+
                 if (finalTranscript.trim()) {
                     handleUserSpeechCommit(finalTranscript.trim());
+                } else if (interimTranscript.trim().length > 3) {
+                    // Safety silence commit: if user paused speaking for 1.2s, process speech immediately
+                    speechSilenceTimeout = setTimeout(() => {
+                        if (interimTranscript.trim() && !isSpeaking && inCallMode) {
+                            handleUserSpeechCommit(interimTranscript.trim());
+                        }
+                    }, 1200);
                 }
             };
 
@@ -1926,6 +2028,9 @@
                 isRecognitionStarting = false;
                 if (event.error === 'not-allowed') {
                     setAgentState('idle', 'Microphone Permission Needed');
+                    document.getElementById('callSubtitles').innerText = 'Microphone blocked. Click the lock/tune icon in browser address bar to Allow Microphone.';
+                } else if (event.error === 'network') {
+                    document.getElementById('callSubtitles').innerText = 'Speech recognition network notice. You can type in the box below anytime!';
                 }
             };
 
@@ -2483,7 +2588,14 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                 return;
             }
 
+            try {
+                if (window.speechSynthesis.paused) {
+                    window.speechSynthesis.resume();
+                }
+            } catch(e) {}
+
             window.speechSynthesis.cancel();
+            if (speechSafetyTimer) clearTimeout(speechSafetyTimer);
 
             // Strip code brackets & raw formatting for clean speech
             const cleanSpeech = text
@@ -2501,6 +2613,9 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
             currentAgentSpokenText = cleanSpeech.toLowerCase();
 
             // Robust Voice selection with safe fallback
+            if (voicesList.length === 0) {
+                voicesList = window.speechSynthesis.getVoices();
+            }
             const vSelect = document.getElementById('voiceSelect');
             const voiceIdx = vSelect ? vSelect.value : null;
             if (voicesList.length > 0 && voiceIdx !== null && voicesList[voiceIdx]) {
@@ -2509,9 +2624,21 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                 utter.voice = voicesList.find(v => v.lang.startsWith('en')) || voicesList[0];
             }
 
-            const rateVal = parseFloat(document.getElementById('voiceRateSelect')?.value) || 1.1;
+            const rateVal = parseFloat(document.getElementById('voiceRateSelect')?.value) || 1.05;
             utter.rate = rateVal;
             utter.pitch = (currentPersonaId === 'nova' ? 1.15 : (currentPersonaId === 'iot' ? 0.95 : 1.0));
+
+            let finished = false;
+            const finishOnce = () => {
+                if (finished) return;
+                finished = true;
+                if (speechSafetyTimer) clearTimeout(speechSafetyTimer);
+                isSpeaking = false;
+                window.activeUtterances = window.activeUtterances.filter(u => u !== utter);
+                setAgentState('listening', isPushToTalkMode ? 'Push-to-Talk Standby' : 'Listening to your voice...');
+                document.getElementById('callSubtitles').innerText = "Speak anytime... (or type below)";
+                if (onComplete) onComplete();
+            };
 
             utter.onstart = () => {
                 isSpeaking = true;
@@ -2520,22 +2647,63 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                 document.getElementById('callSubtitles').innerText = cleanSpeech;
             };
 
-            utter.onend = () => {
-                isSpeaking = false;
-                window.activeUtterances = window.activeUtterances.filter(u => u !== utter);
-                setAgentState('listening', isPushToTalkMode ? 'Push-to-Talk Standby' : 'Listening to your voice...');
-                document.getElementById('callSubtitles').innerText = "Speak anytime... (or tap orb / Spacebar to interrupt)";
-                if (onComplete) onComplete();
-            };
-
+            utter.onend = finishOnce;
             utter.onerror = (e) => {
-                isSpeaking = false;
-                window.activeUtterances = window.activeUtterances.filter(u => u !== utter);
-                setAgentState('listening', 'Listening...');
-                if (onComplete) onComplete();
+                console.warn("Speech synthesis notice:", e);
+                finishOnce();
             };
 
-            window.speechSynthesis.speak(utter);
+            // Max safety duration fallback in case Chrome drops onend event
+            const wordCount = cleanSpeech.split(/\s+/).length;
+            const maxDurationMs = Math.max(3500, wordCount * 550 + 2000);
+            speechSafetyTimer = setTimeout(() => {
+                if (isSpeaking) {
+                    console.warn("Speech safety timeout reached, unlocking listener.");
+                    finishOnce();
+                }
+            }, maxDurationMs);
+
+            // 35ms timeout avoids Chromium IPC cancel race condition
+            setTimeout(() => {
+                try {
+                    if (window.speechSynthesis.paused) {
+                        window.speechSynthesis.resume();
+                    }
+                    window.speechSynthesis.speak(utter);
+                } catch(err) {
+                    console.error("Speak execution notice:", err);
+                    finishOnce();
+                }
+            }, 35);
+        }
+
+        // ==========================================
+        // 10.1 QUICK TEXT CHAT & AUDIO TEST HELPERS
+        // ==========================================
+        function submitQuickText() {
+            const input = document.getElementById('quickTextInput');
+            const txt = input.value.trim();
+            if (!txt) return;
+            input.value = '';
+
+            // Ensure call session state is visually connected
+            if (!inCallMode) {
+                inCallMode = true;
+                const connectBtn = document.getElementById('callConnectBtn');
+                connectBtn.classList.add('in-call');
+                document.getElementById('callBtnText').innerText = "End Call";
+                document.getElementById('micMuteBtn').className = "ctrl-btn active-mic";
+                playHarmonicChime([523.25, 659.25]);
+            }
+
+            handleUserSpeechCommit(txt);
+        }
+
+        function testVoiceAudioOutput() {
+            playHarmonicChime([523.25, 659.25, 783.99]);
+            const testMsg = "Hello! Voice audio is working loud and clear. Click Start Call or type a message below to talk with me!";
+            speakAgentResponse(testMsg);
+            appendTranscript('agent', testMsg);
         }
 
         // ==========================================
