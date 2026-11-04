@@ -262,11 +262,12 @@
 
         .stage-meta {
             width: 100%;
-            max-width: 560px;
+            max-width: 680px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .persona-selector-box {
@@ -277,7 +278,16 @@
             border: 1px solid var(--border-dim);
             padding: 6px 12px;
             border-radius: 12px;
-            max-width: 65%;
+        }
+
+        .voice-selector-box {
+            background: rgba(16, 185, 129, 0.12) !important;
+            border-color: rgba(16, 185, 129, 0.35) !important;
+        }
+
+        .voice-selector-box select {
+            color: #34d399 !important;
+            font-weight: 700;
         }
 
         .persona-selector-box select {
@@ -1149,16 +1159,57 @@
         <!-- LEFT: THE VOICE ORB STAGE -->
         <section class="voice-stage" id="voiceStageSection">
             <div class="stage-meta">
-                <div class="persona-selector-box">
-                    <i class="fa-solid fa-user-astronaut" style="color:var(--accent-cyan)"></i>
-                    <select id="personaSelect" onchange="changePersona()">
-                        <option value="agent" selected>Agent · Autonomous Voice AI</option>
-                        <option value="jarvis">Jarvis · Code Copilot</option>
-                        <option value="nova">Nova · Companion</option>
-                        <option value="iot">CyberTech · IoT Agent</option>
-                        <option value="astra">Astra · Executive</option>
-                    </select>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:1;">
+                    <div class="persona-selector-box">
+                        <i class="fa-solid fa-user-astronaut" style="color:var(--accent-cyan)"></i>
+                        <select id="personaSelect" onchange="changePersona()">
+                            <option value="agent" selected>Agent · Autonomous Voice AI</option>
+                            <option value="jarvis">Jarvis · Code Copilot</option>
+                            <option value="nova">Nova · Companion</option>
+                            <option value="iot">CyberTech · IoT Agent</option>
+                            <option value="astra">Astra · Executive</option>
+                        </select>
+                    </div>
+
+                    <div class="persona-selector-box voice-selector-box" title="Select Real Human-like Voice Model">
+                        <i class="fa-solid fa-microphone-lines" style="color:#10b981"></i>
+                        <select id="realVoiceSelect" onchange="changeRealVoice()">
+                            <optgroup label="✨ OpenAI Realtime Voices">
+                                <option value="arbor" selected>Arbor (Easygoing & versatile)</option>
+                                <option value="breeze">Breeze (Animated & earnest)</option>
+                                <option value="cove">Cove (Composed & direct)</option>
+                                <option value="ember">Ember (Confident & optimistic)</option>
+                                <option value="juniper">Juniper (Open & upbeat)</option>
+                                <option value="maple">Maple (Cheerful & candid)</option>
+                                <option value="sol">Sol (Savvy & relaxed)</option>
+                                <option value="spruce">Spruce (Calm & affirming)</option>
+                                <option value="vale">Vale (Bright & inquisitive)</option>
+                                <option value="bubbie">Bubbie (Warm English)</option>
+                            </optgroup>
+                            <optgroup label="🌏 International Voices (GPT-Live 1.1)">
+                                <option value="himari">Himari (ひまり) · Japanese (Expressive)</option>
+                                <option value="rindo">Rindō (りんどう) · Japanese (Composed)</option>
+                                <option value="haetsal">Haetsal (햇살) · Korean (Bright)</option>
+                                <option value="hanul">Hanul (한울) · Korean (Smooth)</option>
+                                <option value="tinta">Tinta · Mexican Spanish (Expressive)</option>
+                                <option value="arrullo">Arrullo · Mexican Spanish (Melodic)</option>
+                                <option value="celeste">Céleste · French (Refined)</option>
+                                <option value="leopold">Léopold · French (Classic)</option>
+                                <option value="friedrich">Friedrich · German (Authoritative)</option>
+                                <option value="greta">Greta · German (Dynamic)</option>
+                            </optgroup>
+                            <optgroup label="🎙️ Classic OpenAI Neural Voices">
+                                <option value="alloy">Alloy (Balanced & Neutral)</option>
+                                <option value="echo">Echo (Warm Baritone)</option>
+                                <option value="fable">Fable (British Accent)</option>
+                                <option value="onyx">Onyx (Deep Baritone)</option>
+                                <option value="nova">Nova (Energetic & Expressive)</option>
+                                <option value="shimmer">Shimmer (Clear & Gentle)</option>
+                            </optgroup>
+                        </select>
+                    </div>
                 </div>
+
                 <div class="call-meta-right">
                     <button class="mode-toggle-btn" id="modeToggleBtn" onclick="toggleTalkMode()" title="Toggle between continuous Hands-Free conversation and Push-to-Talk">
                         <i class="fa-solid fa-headset"></i>
@@ -1524,6 +1575,38 @@
         };
         let currentPersonaId = 'agent';
 
+        // REAL HUMAN-LIKE NEURAL VOICE PROFILES (OpenAI & GPT-Live 1.1 Matrix)
+        const REAL_VOICES = {
+            arbor: { name: "Arbor", desc: "Easygoing and versatile", gender: "male", lang: "en", pitch: 0.96, rate: 1.02, openaiVoice: "alloy" },
+            breeze: { name: "Breeze", desc: "Animated and earnest", gender: "female", lang: "en", pitch: 1.14, rate: 1.10, openaiVoice: "nova" },
+            cove: { name: "Cove", desc: "Composed and direct", gender: "male", lang: "en", pitch: 0.90, rate: 0.98, openaiVoice: "onyx" },
+            ember: { name: "Ember", desc: "Confident and optimistic", gender: "female", lang: "en", pitch: 1.08, rate: 1.06, openaiVoice: "shimmer" },
+            juniper: { name: "Juniper", desc: "Open and upbeat", gender: "female", lang: "en", pitch: 1.18, rate: 1.08, openaiVoice: "nova" },
+            maple: { name: "Maple", desc: "Cheerful and candid", gender: "female", lang: "en", pitch: 1.05, rate: 1.04, openaiVoice: "alloy" },
+            sol: { name: "Sol", desc: "Savvy and relaxed", gender: "male", lang: "en", pitch: 0.94, rate: 0.96, openaiVoice: "echo" },
+            spruce: { name: "Spruce", desc: "Calm and affirming", gender: "male", lang: "en", pitch: 0.92, rate: 0.96, openaiVoice: "echo" },
+            vale: { name: "Vale", desc: "Bright and inquisitive", gender: "female", lang: "en", pitch: 1.12, rate: 1.08, openaiVoice: "shimmer" },
+            bubbie: { name: "Bubbie", desc: "Warm and conversational English", gender: "female", lang: "en", pitch: 0.98, rate: 0.94, openaiVoice: "alloy" },
+            himari: { name: "Himari (ひまり)", desc: "Japanese expressive", gender: "female", lang: "ja", pitch: 1.15, rate: 1.05, openaiVoice: "nova" },
+            rindo: { name: "Rindō (りんどう)", desc: "Japanese composed", gender: "male", lang: "ja", pitch: 0.92, rate: 1.0, openaiVoice: "onyx" },
+            haetsal: { name: "Haetsal (햇살)", desc: "Korean bright", gender: "female", lang: "ko", pitch: 1.12, rate: 1.05, openaiVoice: "shimmer" },
+            hanul: { name: "Hanul (한울)", desc: "Korean smooth", gender: "male", lang: "ko", pitch: 0.94, rate: 1.0, openaiVoice: "echo" },
+            tinta: { name: "Tinta", desc: "Mexican Spanish expressive", gender: "female", lang: "es", pitch: 1.06, rate: 1.08, openaiVoice: "nova" },
+            arrullo: { name: "Arrullo", desc: "Mexican Spanish melodic", gender: "male", lang: "es", pitch: 0.96, rate: 1.0, openaiVoice: "fable" },
+            celeste: { name: "Céleste", desc: "French refined", gender: "female", lang: "fr", pitch: 1.10, rate: 1.02, openaiVoice: "shimmer" },
+            leopold: { name: "Léopold", desc: "French classic", gender: "male", lang: "fr", pitch: 0.93, rate: 0.98, openaiVoice: "echo" },
+            friedrich: { name: "Friedrich", desc: "German authoritative", gender: "male", lang: "de", pitch: 0.90, rate: 0.98, openaiVoice: "onyx" },
+            greta: { name: "Greta", desc: "German dynamic", gender: "female", lang: "de", pitch: 1.08, rate: 1.04, openaiVoice: "nova" },
+            alloy: { name: "Alloy", desc: "Neutral and balanced", gender: "neutral", lang: "en", pitch: 1.0, rate: 1.0, openaiVoice: "alloy" },
+            echo: { name: "Echo", desc: "Warm baritone", gender: "male", lang: "en", pitch: 0.95, rate: 1.0, openaiVoice: "echo" },
+            fable: { name: "Fable", desc: "British accent", gender: "male", lang: "en", pitch: 1.0, rate: 1.0, openaiVoice: "fable" },
+            onyx: { name: "Onyx", desc: "Deep and authoritative", gender: "male", lang: "en", pitch: 0.88, rate: 0.96, openaiVoice: "onyx" },
+            nova: { name: "Nova", desc: "Energetic and expressive", gender: "female", lang: "en", pitch: 1.15, rate: 1.08, openaiVoice: "nova" },
+            shimmer: { name: "Shimmer", desc: "Clear and gentle", gender: "female", lang: "en", pitch: 1.08, rate: 1.02, openaiVoice: "shimmer" }
+        };
+        let currentRealVoiceId = localStorage.getItem('agent_real_voice') || 'arbor';
+        let currentAudioPlayer = null; // Active HTML5 Audio element for OpenAI TTS
+
         // Transcript Session Storage
         let sessionTranscript = [];
 
@@ -1869,6 +1952,13 @@
             inCallMode = false;
             clearInterval(callTimerInterval);
             stopSpeechRecognition();
+            if (currentAudioPlayer) {
+                try {
+                    currentAudioPlayer.pause();
+                    currentAudioPlayer.currentTime = 0;
+                    currentAudioPlayer = null;
+                } catch(e) {}
+            }
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
             }
@@ -2068,6 +2158,13 @@
         // 5. BARGE-IN INTERRUPTION ENGINE
         // ==========================================
         function triggerImmediateInterruption() {
+            if (currentAudioPlayer) {
+                try {
+                    currentAudioPlayer.pause();
+                    currentAudioPlayer.currentTime = 0;
+                    currentAudioPlayer = null;
+                } catch(e) {}
+            }
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
             }
@@ -2580,9 +2677,100 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
         }
 
         // ==========================================
-        // 10. SPEECH SYNTHESIS SPOKEN AUDIO OUT
+        // 10. REALISTIC NEURAL AUDIO & SPEECH SYNTHESIS
         // ==========================================
-        function speakAgentResponse(text, onComplete) {
+        async function speakAgentResponse(text, onComplete) {
+            // Stop any playing audio player or SpeechSynthesis
+            if (currentAudioPlayer) {
+                try {
+                    currentAudioPlayer.pause();
+                    currentAudioPlayer.currentTime = 0;
+                    currentAudioPlayer = null;
+                } catch(e) {}
+            }
+            if ('speechSynthesis' in window) {
+                try { window.speechSynthesis.cancel(); } catch(e) {}
+            }
+            if (speechSafetyTimer) clearTimeout(speechSafetyTimer);
+
+            // Strip code brackets & raw formatting for clean speech
+            const cleanSpeech = text
+                .replace(/```[\s\S]*?```/g, 'Code block omitted.')
+                .replace(/[#*`_~]/g, '')
+                .replace(/\(.*?\)/g, '')
+                .trim();
+
+            const vMeta = REAL_VOICES[currentRealVoiceId] || REAL_VOICES.arbor;
+
+            // STRATEGY 1: Real OpenAI HD Neural Audio Stream (if OpenAI API Key is provided)
+            if (openaiKey && openaiKey.trim().length > 10) {
+                try {
+                    setAgentState('speaking', `${vMeta.name} Generating Audio...`);
+                    document.getElementById('callSubtitles').className = "subtitle-scroll agent-speaking-now";
+                    document.getElementById('callSubtitles').innerText = cleanSpeech;
+
+                    const voiceParam = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'].includes(currentRealVoiceId)
+                        ? currentRealVoiceId
+                        : (['arbor', 'breeze', 'cove', 'ember', 'juniper', 'maple', 'sol', 'spruce', 'vale'].includes(currentRealVoiceId)
+                            ? currentRealVoiceId
+                            : vMeta.openaiVoice);
+
+                    const res = await fetch("https://api.openai.com/v1/audio/speech", {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${openaiKey.trim()}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            model: "tts-1",
+                            input: cleanSpeech,
+                            voice: voiceParam
+                        }),
+                        signal: currentAbortController?.signal
+                    });
+
+                    if (res.ok) {
+                        const blob = await res.blob();
+                        const audioUrl = URL.createObjectURL(blob);
+                        const audio = new Audio();
+                        audio.src = audioUrl;
+                        currentAudioPlayer = audio;
+
+                        isSpeaking = true;
+                        agentSpeechStartTime = Date.now();
+                        currentAgentSpokenText = cleanSpeech.toLowerCase();
+                        setAgentState('speaking', `${vMeta.name} Speaking...`);
+
+                        audio.onended = () => {
+                            isSpeaking = false;
+                            currentAudioPlayer = null;
+                            URL.revokeObjectURL(audioUrl);
+                            setAgentState('listening', isPushToTalkMode ? 'Push-to-Talk Standby' : 'Listening to your voice...');
+                            document.getElementById('callSubtitles').innerText = "Speak anytime... (or type below)";
+                            if (onComplete) onComplete();
+                        };
+
+                        audio.onerror = (err) => {
+                            console.warn("Audio player error, falling back to neural emulation:", err);
+                            isSpeaking = false;
+                            currentAudioPlayer = null;
+                            fallbackWebSpeechSynthesis(cleanSpeech, vMeta, onComplete);
+                        };
+
+                        await audio.play();
+                        return;
+                    }
+                } catch (e) {
+                    if (e.name === 'AbortError') return;
+                    console.warn("OpenAI Neural Audio notice, falling back:", e);
+                }
+            }
+
+            // STRATEGY 2: High-Definition Natural WebSpeech Neural Emulation (100% Free · Zero Setup)
+            fallbackWebSpeechSynthesis(cleanSpeech, vMeta, onComplete);
+        }
+
+        function fallbackWebSpeechSynthesis(cleanSpeech, vMeta, onComplete) {
             if (!('speechSynthesis' in window)) {
                 if (onComplete) onComplete();
                 return;
@@ -2597,36 +2785,43 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
             window.speechSynthesis.cancel();
             if (speechSafetyTimer) clearTimeout(speechSafetyTimer);
 
-            // Strip code brackets & raw formatting for clean speech
-            const cleanSpeech = text
-                .replace(/```[\s\S]*?```/g, 'Code block omitted.')
-                .replace(/[#*`_~]/g, '')
-                .replace(/\(.*?\)/g, '')
-                .trim();
-
             const utter = new SpeechSynthesisUtterance(cleanSpeech);
             currentUtterance = utter;
             window.activeUtterances.push(utter); // Prevent iOS Safari early garbage collection
 
-            // Set timestamps & text for echo guard
             agentSpeechStartTime = Date.now();
             currentAgentSpokenText = cleanSpeech.toLowerCase();
 
-            // Robust Voice selection with safe fallback
+            // Match best natural voice by language and gender
             if (voicesList.length === 0) {
                 voicesList = window.speechSynthesis.getVoices();
             }
-            const vSelect = document.getElementById('voiceSelect');
-            const voiceIdx = vSelect ? vSelect.value : null;
-            if (voicesList.length > 0 && voiceIdx !== null && voicesList[voiceIdx]) {
-                utter.voice = voicesList[voiceIdx];
-            } else if (voicesList.length > 0) {
-                utter.voice = voicesList.find(v => v.lang.startsWith('en')) || voicesList[0];
+
+            let bestVoice = null;
+            if (voicesList.length > 0) {
+                const targetLang = vMeta.lang || 'en';
+                // 1. Prefer Natural / Online neural voices for the target language
+                bestVoice = voicesList.find(v => v.lang.startsWith(targetLang) && (v.name.includes('Natural') || v.name.includes('Online')));
+                // 2. If not found, match by gender hint in name
+                if (!bestVoice) {
+                    const genderNames = vMeta.gender === 'female' 
+                        ? ['Jenny', 'Aria', 'Samantha', 'Zira', 'Nanami', 'SunHi', 'Denise', 'Katja'] 
+                        : ['Guy', 'Christopher', 'Eric', 'David', 'Keita', 'InJoon', 'Henri', 'Conrad'];
+                    bestVoice = voicesList.find(v => v.lang.startsWith(targetLang) && genderNames.some(n => v.name.includes(n)));
+                }
+                // 3. Fallback to any voice in target language
+                if (!bestVoice) {
+                    bestVoice = voicesList.find(v => v.lang.startsWith(targetLang));
+                }
+                // 4. Global fallback
+                if (!bestVoice) {
+                    bestVoice = voicesList.find(v => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google'))) || voicesList[0];
+                }
             }
 
-            const rateVal = parseFloat(document.getElementById('voiceRateSelect')?.value) || 1.05;
-            utter.rate = rateVal;
-            utter.pitch = (currentPersonaId === 'nova' ? 1.15 : (currentPersonaId === 'iot' ? 0.95 : 1.0));
+            if (bestVoice) utter.voice = bestVoice;
+            utter.rate = vMeta.rate || 1.05;
+            utter.pitch = vMeta.pitch || 1.0;
 
             let finished = false;
             const finishOnce = () => {
@@ -2642,7 +2837,7 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
 
             utter.onstart = () => {
                 isSpeaking = true;
-                setAgentState('speaking', `${PERSONAS[currentPersonaId].name} Speaking...`);
+                setAgentState('speaking', `${vMeta.name} Speaking...`);
                 document.getElementById('callSubtitles').className = "subtitle-scroll agent-speaking-now";
                 document.getElementById('callSubtitles').innerText = cleanSpeech;
             };
@@ -2653,17 +2848,14 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                 finishOnce();
             };
 
-            // Max safety duration fallback in case Chrome drops onend event
             const wordCount = cleanSpeech.split(/\s+/).length;
             const maxDurationMs = Math.max(3500, wordCount * 550 + 2000);
             speechSafetyTimer = setTimeout(() => {
                 if (isSpeaking) {
-                    console.warn("Speech safety timeout reached, unlocking listener.");
                     finishOnce();
                 }
             }, maxDurationMs);
 
-            // 35ms timeout avoids Chromium IPC cancel race condition
             setTimeout(() => {
                 try {
                     if (window.speechSynthesis.paused) {
@@ -2675,6 +2867,19 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                     finishOnce();
                 }
             }, 35);
+        }
+
+        function changeRealVoice() {
+            const vSelect = document.getElementById('realVoiceSelect');
+            if (vSelect) {
+                currentRealVoiceId = vSelect.value;
+                localStorage.setItem('agent_real_voice', currentRealVoiceId);
+            }
+            const v = REAL_VOICES[currentRealVoiceId] || REAL_VOICES.arbor;
+            playHarmonicChime([523.25, 659.25]);
+            const intro = `Voice changed to ${v.name}: ${v.desc}. How does this sound?`;
+            speakAgentResponse(intro);
+            appendTranscript('agent', intro);
         }
 
         // ==========================================
@@ -2701,7 +2906,8 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
 
         function testVoiceAudioOutput() {
             playHarmonicChime([523.25, 659.25, 783.99]);
-            const testMsg = "Hello! Voice audio is working loud and clear. Click Start Call or type a message below to talk with me!";
+            const v = REAL_VOICES[currentRealVoiceId] || REAL_VOICES.arbor;
+            const testMsg = `Hello! I am speaking with the ${v.name} voice: ${v.desc}. Voice audio is working loud and clear!`;
             speakAgentResponse(testMsg);
             appendTranscript('agent', testMsg);
         }
@@ -2982,6 +3188,8 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
             document.getElementById('bridgeUrlInput').value = bridgeUrl;
             document.getElementById('audioModeSelect').value = audioMode;
             document.getElementById('soundChimesSelect').value = String(soundChimesEnabled);
+            const rSelect = document.getElementById('realVoiceSelect');
+            if (rSelect) rSelect.value = currentRealVoiceId;
             updateEngineSelection();
         }
 

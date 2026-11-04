@@ -12,6 +12,24 @@ A low-latency, full-duplex two-way voice AI agent inspired by OpenAI's "Dots". S
 
 - 🗣️ **Wake Word Detection ("Agent" / "Hey Agent"):**
   Call out *"Agent"* from across the room to wake it up from standby into continuous listening.
+- 🎙️ **Hyper-Realistic OpenAI & GPT-Live 1.1 Voice Matrix:**
+  Switch between human-sounding voices right from the top bar:
+  - **Arbor**: Easygoing and versatile
+  - **Breeze**: Animated and earnest
+  - **Cove**: Composed and direct
+  - **Ember**: Confident and optimistic
+  - **Juniper**: Open and upbeat
+  - **Maple**: Cheerful and candid
+  - **Sol**: Savvy and relaxed
+  - **Spruce**: Calm and affirming
+  - **Vale**: Bright and inquisitive
+  - **Bubbie**: Warm English conversational
+  - **Himari & Rindō**: Japanese (Expressive & Composed)
+  - **Haetsal & Hanul**: Korean (Bright & Smooth)
+  - **Tinta & Arrullo**: Mexican Spanish (Expressive & Melodic)
+  - **Céleste & Léopold**: French (Refined & Classic)
+  - **Friedrich & Greta**: German (Authoritative & Dynamic)
+  - *Plus classic Alloy, Echo, Fable, Onyx, Nova, and Shimmer.*
 - ⚡ **Full-Duplex Speech & Instant Barge-In:**
   No need to wait for the agent to finish talking. Interrupt mid-sentence to shift tasks or clarify instructions.
 - 📱 **Mobile & Desktop Responsive:**
