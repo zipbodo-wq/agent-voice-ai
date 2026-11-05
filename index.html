@@ -2663,56 +2663,53 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                 }
             }
 
-            // Mode 2: Groq Cloud (Ultra-Fast Llama)
+            // Mode 2: Groq Cloud (Ultra-Fast Llama & DeepSeek)
             if (selectedEngine === 'groq' && groqKey) {
                 try {
                     let sysPrompt = PERSONAS[currentPersonaId].systemPrompt;
                     if (toolResult) {
                         sysPrompt += `\nBACKGROUND MISSION RESULT: You just executed '${toolIntent.name}'. Output was: '${toolResult.output}'. Confirm this verbally to the user in 1-2 natural spoken sentences.`;
                     }
-                    let activeModel = groqModel || localStorage.getItem('dots_groq_model') || 'llama-3.1-8b-instant';
-                    let res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-                        method: "POST",
-                        headers: { "Authorization": `Bearer ${groqKey.trim()}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            model: activeModel,
-                            messages: [
-                                { role: "system", content: sysPrompt },
-                                { role: "user", content: userPrompt }
-                            ],
-                            max_tokens: 280,
-                            temperature: 0.7
-                        }),
-                        signal: currentAbortController?.signal
-                    });
+                    const activeModel = groqModel || localStorage.getItem('dots_groq_model') || 'llama-3.1-8b-instant';
+                    const modelsToTry = [activeModel, "llama-3.3-70b-versatile", "llama-3.1-8b-instant", "deepseek-r1-distill-llama-70b", "gemma2-9b-it", "mistral-saba-24b", "qwen-2.5-32b", "llama3-8b-8192"];
+                    const uniqueModels = [...new Set(modelsToTry)];
 
-                    // If model returned 404 (does not exist/no access), automatically retry with llama-3.1-8b-instant
-                    if (res.status === 404 && activeModel !== 'llama-3.1-8b-instant') {
-                        activeModel = 'llama-3.1-8b-instant';
-                        groqModel = 'llama-3.1-8b-instant';
-                        localStorage.setItem('dots_groq_model', 'llama-3.1-8b-instant');
-                        res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-                            method: "POST",
-                            headers: { "Authorization": `Bearer ${groqKey.trim()}`, "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                model: activeModel,
-                                messages: [
-                                    { role: "system", content: sysPrompt },
-                                    { role: "user", content: userPrompt }
-                                ],
-                                max_tokens: 280,
-                                temperature: 0.7
-                            }),
-                            signal: currentAbortController?.signal
-                        });
+                    let lastNotice = "";
+                    for (const m of uniqueModels) {
+                        try {
+                            const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                                method: "POST",
+                                headers: { "Authorization": `Bearer ${groqKey.trim()}`, "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    model: m,
+                                    messages: [
+                                        { role: "system", content: sysPrompt },
+                                        { role: "user", content: userPrompt }
+                                    ],
+                                    max_tokens: 280,
+                                    temperature: 0.7
+                                }),
+                                signal: currentAbortController?.signal
+                            });
+                            const d = await res.json();
+                            if (res.ok && d.choices && d.choices[0]) {
+                                if (m !== activeModel) {
+                                    groqModel = m;
+                                    localStorage.setItem('dots_groq_model', m);
+                                }
+                                return d.choices[0].message.content;
+                            } else if (res.status === 404) {
+                                continue; // Try next model
+                            } else if (!res.ok) {
+                                lastNotice = d.error?.message || 'Check your Groq key in Settings';
+                                break;
+                            }
+                        } catch (err) {
+                            if (err.name === 'AbortError') return "";
+                        }
                     }
-
-                    const d = await res.json();
-                    if (res.ok && d.choices && d.choices[0]) {
-                        return d.choices[0].message.content;
-                    } else if (!res.ok) {
-                        console.error("Groq API notice:", d);
-                        return `Groq API notice: ${d.error?.message || 'Check your Groq key in Settings'}.`;
+                    if (lastNotice) {
+                        return `Groq API notice: ${lastNotice}.`;
                     }
                 } catch (e) {
                     if (e.name === 'AbortError') return "";
@@ -3375,67 +3372,58 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
 
             try {
                 if (eng === 'groq') {
-                    // Step 1: Detect available models
-                    let chosenModel = "llama-3.1-8b-instant";
-                    try {
-                        const mRes = await fetch("https://api.groq.com/openai/v1/models", {
-                            method: "GET",
-                            headers: { "Authorization": `Bearer ${key}` }
-                        });
-                        if (mRes.ok) {
-                            const mData = await mRes.json();
-                            const ids = (mData.data || []).map(m => m.id);
-                            if (ids.includes("llama-3.1-8b-instant")) {
-                                chosenModel = "llama-3.1-8b-instant";
-                            } else if (ids.includes("llama-3.3-70b-versatile")) {
-                                chosenModel = "llama-3.3-70b-versatile";
-                            } else if (ids.includes("llama3-8b-8192")) {
-                                chosenModel = "llama3-8b-8192";
+                    statusDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Scanning active models on your Groq account...';
+                    
+                    const candidates = [
+                        "llama-3.3-70b-versatile",
+                        "llama-3.1-8b-instant",
+                        "deepseek-r1-distill-llama-70b",
+                        "deepseek-r1-distill-qwen-32b",
+                        "gemma2-9b-it",
+                        "mistral-saba-24b",
+                        "qwen-2.5-32b",
+                        "llama3-70b-8192",
+                        "llama3-8b-8192"
+                    ];
+
+                    let workingModel = null;
+                    let lastErrMsg = "";
+
+                    for (const mod of candidates) {
+                        try {
+                            const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                                method: "POST",
+                                headers: { "Authorization": `Bearer ${key}`, "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    model: mod,
+                                    messages: [{ role: "user", content: "ping" }],
+                                    max_tokens: 5
+                                })
+                            });
+                            const d = await res.json();
+                            if (res.ok) {
+                                workingModel = mod;
+                                break;
+                            } else if (res.status === 401) {
+                                statusDiv.style.color = '#ef4444';
+                                statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> <strong>Groq Error (401 Unauthorized): Invalid API Key</strong>.<br>Please generate a new key on <a href="https://console.groq.com/keys" target="_blank" style="color:var(--accent-cyan);">console.groq.com/keys</a>.`;
+                                return;
+                            } else {
+                                lastErrMsg = d.error?.message || `HTTP ${res.status}`;
                             }
-                        } else if (mRes.status === 401) {
-                            statusDiv.style.color = '#ef4444';
-                            statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> <strong>Groq Error (401 Unauthorized): Invalid API Key</strong><br><span style="font-size:0.75rem;color:#cbd5e1;line-height:1.4;">Groq only reveals your secret key <u>once</u> upon creation.<br>1. Go to <a href="https://console.groq.com/keys" target="_blank" style="color:var(--accent-cyan);font-weight:700;">console.groq.com/keys</a><br>2. Click <strong>"Create API Key"</strong><br>3. Click the <strong>Copy</strong> icon inside the popup window before closing it<br>4. Paste it here and tap <strong>Test Key</strong></span>`;
-                            return;
+                        } catch (err) {
+                            lastErrMsg = err.message;
                         }
-                    } catch (e) {
-                        console.warn("Groq /models check:", e);
                     }
 
-                    // Step 2: Test with chosenModel (defaults to llama-3.1-8b-instant)
-                    let res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-                        method: "POST",
-                        headers: { "Authorization": `Bearer ${key}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            model: chosenModel,
-                            messages: [{ role: "user", content: "ping" }],
-                            max_tokens: 5
-                        })
-                    });
-                    let d = await res.json();
-
-                    // If chosenModel failed with 404, fallback to llama-3.1-8b-instant
-                    if (res.status === 404 && chosenModel !== "llama-3.1-8b-instant") {
-                        chosenModel = "llama-3.1-8b-instant";
-                        res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-                            method: "POST",
-                            headers: { "Authorization": `Bearer ${key}`, "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                model: chosenModel,
-                                messages: [{ role: "user", content: "ping" }],
-                                max_tokens: 5
-                            })
-                        });
-                        d = await res.json();
-                    }
-
-                    if (res.ok) {
-                        groqModel = chosenModel;
-                        localStorage.setItem('dots_groq_model', chosenModel);
+                    if (workingModel) {
+                        groqModel = workingModel;
+                        localStorage.setItem('dots_groq_model', workingModel);
                         statusDiv.style.color = '#10b981';
-                        statusDiv.innerHTML = `<i class="fa-solid fa-circle-check"></i> <strong>Groq Key Valid!</strong> Connected to <code>${chosenModel}</code>. Model ready to answer everything!`;
+                        statusDiv.innerHTML = `<i class="fa-solid fa-circle-check"></i> <strong>Groq Key Valid!</strong> Found & connected to <code>${workingModel}</code>. Model ready to answer everything!`;
                     } else {
                         statusDiv.style.color = '#ef4444';
-                        statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Groq Error (${res.status}): ${d.error?.message || 'Invalid API Key'}`;
+                        statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> <strong>No standard model enabled on this Groq key:</strong><br><span style="font-size:0.75rem;color:#cbd5e1;line-height:1.4;">${escapeHtml(lastErrMsg)}<br>👉 <strong>Alternative:</strong> Switch to <strong>Google Gemini</strong> in Settings for a free 1-click key from <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--accent-cyan);font-weight:700;">Google AI Studio</a>.</span>`;
                     }
                 } else if (eng === 'openai') {
                     const res = await fetch("https://api.openai.com/v1/chat/completions", {
