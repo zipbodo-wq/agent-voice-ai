@@ -1478,7 +1478,12 @@
                     <a id="apiKeyHelpLink" href="https://console.groq.com/keys" target="_blank" style="color:var(--accent-cyan);font-size:0.75rem;text-decoration:none;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Get Free API Key</a>
                 </div>
                 <div style="display:flex;gap:8px;">
-                    <input type="password" class="settings-input" style="flex:1;" id="apiKeyInput" placeholder="sk-... / gsk_... / AIza...">
+                    <div style="position:relative;flex:1;display:flex;align-items:center;">
+                        <input type="password" class="settings-input" style="width:100%;padding-right:34px;" id="apiKeyInput" placeholder="gsk_... / sk-... / AIza...">
+                        <button type="button" onclick="toggleApiKeyVisibility()" style="position:absolute;right:8px;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.85rem;" title="Show/Hide Key">
+                            <i id="apiKeyEyeIcon" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
                     <button type="button" class="action-chip" style="padding:0 12px;font-size:0.75rem;font-weight:700;" onclick="testCurrentApiKey()">
                         <i class="fa-solid fa-vial-circle-check"></i> Test Key
                     </button>
@@ -3302,6 +3307,19 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
             }
         }
 
+        function toggleApiKeyVisibility() {
+            const input = document.getElementById('apiKeyInput');
+            const icon = document.getElementById('apiKeyEyeIcon');
+            if (!input || !icon) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-solid fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa-solid fa-eye';
+            }
+        }
+
         async function testCurrentApiKey() {
             const eng = document.getElementById('engineSelect').value;
             const key = document.getElementById('apiKeyInput').value.trim();
@@ -3320,6 +3338,35 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                 statusDiv.style.color = '#f59e0b';
                 statusDiv.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Please paste an API key first before testing.';
                 return;
+            }
+
+            // Quick format checks
+            if (eng === 'groq') {
+                if (!key.startsWith('gsk_')) {
+                    statusDiv.style.display = 'block';
+                    statusDiv.style.color = '#ef4444';
+                    statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> <strong>Invalid format:</strong> Groq API keys always start with <code>gsk_</code>. You entered text starting with <code>${escapeHtml(key.slice(0, 4))}</code>. Tap the eye 👁️ icon to inspect what was pasted.`;
+                    return;
+                }
+                if (key.includes('•') || key.includes('*')) {
+                    statusDiv.style.display = 'block';
+                    statusDiv.style.color = '#ef4444';
+                    statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> <strong>Masked Key Detected:</strong> You copied the hidden dots/asterisks from the table instead of the secret key! Please generate a new key on console.groq.com/keys and click <strong>Copy</strong> immediately on the popup.`;
+                    return;
+                }
+                if (key.length < 30) {
+                    statusDiv.style.display = 'block';
+                    statusDiv.style.color = '#ef4444';
+                    statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> <strong>Incomplete Key:</strong> The key you entered is only ${key.length} characters long. Groq keys are ~56 characters.`;
+                    return;
+                }
+            } else if (eng === 'openai') {
+                if (!key.startsWith('sk-')) {
+                    statusDiv.style.display = 'block';
+                    statusDiv.style.color = '#ef4444';
+                    statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> OpenAI keys start with <code>sk-</code>. Check your key at platform.openai.com.`;
+                    return;
+                }
             }
 
             statusDiv.style.display = 'block';
@@ -3347,7 +3394,7 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                             }
                         } else if (mRes.status === 401) {
                             statusDiv.style.color = '#ef4444';
-                            statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Groq Error (401 Unauthorized): Invalid API key. Please check console.groq.com/keys.`;
+                            statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> <strong>Groq Error (401 Unauthorized): Invalid API Key</strong><br><span style="font-size:0.75rem;color:#cbd5e1;line-height:1.4;">Groq only reveals your secret key <u>once</u> upon creation.<br>1. Go to <a href="https://console.groq.com/keys" target="_blank" style="color:var(--accent-cyan);font-weight:700;">console.groq.com/keys</a><br>2. Click <strong>"Create API Key"</strong><br>3. Click the <strong>Copy</strong> icon inside the popup window before closing it<br>4. Paste it here and tap <strong>Test Key</strong></span>`;
                             return;
                         }
                     } catch (e) {
