@@ -1465,16 +1465,28 @@
             <div class="settings-group">
                 <label>AI Intelligence Engine</label>
                 <select class="settings-input" id="engineSelect" onchange="updateEngineSelection()">
-                    <option value="local">Autonomous Local Engine (100% Free · No Key Needed)</option>
-                    <option value="openai">OpenAI GPT-4o / GPT-4o-mini (Direct OpenAI Key)</option>
-                    <option value="groq">Groq Cloud (Llama 3.3 70B · Sub-200ms Latency)</option>
+                    <option value="local">Autonomous Local Engine (Basic Offline Rules · No Key)</option>
+                    <option value="groq">⚡ Groq Cloud (Llama 3.3 70B · 100% FREE & Ultra Fast)</option>
+                    <option value="openai">OpenAI GPT-4o / GPT-4o-mini (Full Intelligence + Real Voice)</option>
                     <option value="gemini">Google Gemini 2.0 Flash (Fast Multimodal)</option>
                 </select>
             </div>
 
             <div class="settings-group" id="apiKeyGroup">
-                <label id="apiKeyLabel">API Key</label>
-                <input type="password" class="settings-input" id="apiKeyInput" placeholder="sk-... / gsk_... / AIza...">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <label id="apiKeyLabel">API Key</label>
+                    <a id="apiKeyHelpLink" href="https://console.groq.com/keys" target="_blank" style="color:var(--accent-cyan);font-size:0.75rem;text-decoration:none;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Get Free API Key</a>
+                </div>
+                <div style="display:flex;gap:8px;">
+                    <input type="password" class="settings-input" style="flex:1;" id="apiKeyInput" placeholder="sk-... / gsk_... / AIza...">
+                    <button type="button" class="action-chip" style="padding:0 12px;font-size:0.75rem;font-weight:700;" onclick="testCurrentApiKey()">
+                        <i class="fa-solid fa-vial-circle-check"></i> Test Key
+                    </button>
+                </div>
+                <div id="apiKeyTestStatus" style="font-size:0.75rem;margin-top:2px;display:none;"></div>
+                <div id="engineHelpText" style="font-size:0.74rem;color:var(--text-muted);line-height:1.4;">
+                    Adding an API key connects Agent to frontier AI models so it knows everything and answers any question!
+                </div>
             </div>
 
             <div class="settings-row-2">
@@ -2597,6 +2609,17 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
         // 9. MULTI-ENGINE INTELLIGENCE DISPATCHER
         // ==========================================
         async function generateAgentVoiceReply(userPrompt, toolIntent, toolResult) {
+            // Check if selected engine requires an API key that is missing
+            if (selectedEngine === 'groq' && !groqKey) {
+                return "Groq engine is selected, but no API key was found. Click the Settings gear icon at the top right to paste your free Groq API key, and I will be able to answer any question in the world!";
+            }
+            if (selectedEngine === 'openai' && !openaiKey) {
+                return "OpenAI engine is selected, but no API key was found. Please open Settings and paste your OpenAI API key to activate GPT-4o intelligence.";
+            }
+            if (selectedEngine === 'gemini' && !geminiKey) {
+                return "Google Gemini is selected, but no API key was found. Please open Settings and paste your Gemini API key.";
+            }
+
             // Mode 1: OpenAI GPT-4o / GPT-4o-mini
             if (selectedEngine === 'openai' && openaiKey) {
                 try {
@@ -2616,13 +2639,18 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                                 { role: "system", content: sysPrompt },
                                 { role: "user", content: userPrompt }
                             ],
-                            max_tokens: 160,
+                            max_tokens: 280,
                             temperature: 0.7
                         }),
                         signal: currentAbortController?.signal
                     });
                     const d = await res.json();
-                    if (d.choices && d.choices[0]) return d.choices[0].message.content;
+                    if (res.ok && d.choices && d.choices[0]) {
+                        return d.choices[0].message.content;
+                    } else if (!res.ok) {
+                        console.error("OpenAI API notice:", d);
+                        return `OpenAI API notice: ${d.error?.message || 'Check your OpenAI API key in Settings'}.`;
+                    }
                 } catch (e) {
                     if (e.name === 'AbortError') return "";
                     console.warn("OpenAI fallback:", e);
@@ -2645,13 +2673,18 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                                 { role: "system", content: sysPrompt },
                                 { role: "user", content: userPrompt }
                             ],
-                            max_tokens: 150,
+                            max_tokens: 280,
                             temperature: 0.7
                         }),
                         signal: currentAbortController?.signal
                     });
                     const d = await res.json();
-                    if (d.choices && d.choices[0]) return d.choices[0].message.content;
+                    if (res.ok && d.choices && d.choices[0]) {
+                        return d.choices[0].message.content;
+                    } else if (!res.ok) {
+                        console.error("Groq API notice:", d);
+                        return `Groq API notice: ${d.error?.message || 'Check your Groq key in Settings'}.`;
+                    }
                 } catch (e) {
                     if (e.name === 'AbortError') return "";
                     console.warn("Groq fallback:", e);
@@ -2676,7 +2709,12 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                         signal: currentAbortController?.signal
                     });
                     const d = await res.json();
-                    if (d.candidates && d.candidates[0]) return d.candidates[0].content.parts[0].text;
+                    if (res.ok && d.candidates && d.candidates[0]) {
+                        return d.candidates[0].content.parts[0].text;
+                    } else if (!res.ok) {
+                        console.error("Gemini API notice:", d);
+                        return `Gemini API notice: ${d.error?.message || 'Check your Gemini key in Settings'}.`;
+                    }
                 } catch (e) {
                     if (e.name === 'AbortError') return "";
                     console.warn("Gemini fallback:", e);
@@ -2723,7 +2761,7 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                 return `The current local time is ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} on ${now.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}.`;
             }
 
-            return `Understood. I've noted that: "${userPrompt}". I'm maintaining live audio telemetry while keeping your background tasks synchronized.`;
+            return `I heard: "${userPrompt}". I am currently running on the basic offline rule engine. To unlock full AI intelligence like ChatGPT so I can answer any question in science, coding, history, or conversation, open Settings and add a free Groq or OpenAI API key!`;
         }
 
         // ==========================================
@@ -3193,6 +3231,10 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
             const eng = document.getElementById('engineSelect').value;
             const label = document.getElementById('apiKeyLabel');
             const grp = document.getElementById('apiKeyGroup');
+            const helpLink = document.getElementById('apiKeyHelpLink');
+            const helpText = document.getElementById('engineHelpText');
+            const statusDiv = document.getElementById('apiKeyTestStatus');
+            if (statusDiv) { statusDiv.style.display = 'none'; statusDiv.innerHTML = ''; }
 
             if (eng === 'local') {
                 grp.style.display = 'none';
@@ -3200,18 +3242,123 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
             } else if (eng === 'openai') {
                 grp.style.display = 'flex';
                 label.innerText = "OpenAI API Key (sk-...)";
+                if (helpLink) {
+                    helpLink.href = "https://platform.openai.com/api-keys";
+                    helpLink.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Get OpenAI Key`;
+                }
+                if (helpText) {
+                    helpText.innerHTML = `Connects GPT-4o-mini for full ChatGPT-level intelligence and OpenAI realistic voices.`;
+                }
                 document.getElementById('apiKeyInput').value = openaiKey;
                 document.getElementById('activeEngineLabel').innerText = "OpenAI GPT-4o-mini";
             } else if (eng === 'groq') {
                 grp.style.display = 'flex';
                 label.innerText = "Groq Cloud API Key (gsk_...)";
+                if (helpLink) {
+                    helpLink.href = "https://console.groq.com/keys";
+                    helpLink.innerHTML = `<i class="fa-solid fa-bolt"></i> Get Free Groq Key (Fastest)`;
+                }
+                if (helpText) {
+                    helpText.innerHTML = `<strong>Recommended:</strong> 100% Free, ultra-fast &lt;200ms latency powered by Meta Llama 3.3 70B! Answers any question in the world.`;
+                }
                 document.getElementById('apiKeyInput').value = groqKey;
                 document.getElementById('activeEngineLabel').innerText = "Groq Llama 3.3 70B";
             } else if (eng === 'gemini') {
                 grp.style.display = 'flex';
                 label.innerText = "Google Gemini API Key (AIza...)";
+                if (helpLink) {
+                    helpLink.href = "https://aistudio.google.com/app/apikey";
+                    helpLink.innerHTML = `<i class="fa-brands fa-google"></i> Get Free Gemini Key`;
+                }
+                if (helpText) {
+                    helpText.innerHTML = `Free tier available via Google AI Studio powered by Gemini 2.0 Flash.`;
+                }
                 document.getElementById('apiKeyInput').value = geminiKey;
                 document.getElementById('activeEngineLabel').innerText = "Gemini 2.0 Flash";
+            }
+        }
+
+        async function testCurrentApiKey() {
+            const eng = document.getElementById('engineSelect').value;
+            const key = document.getElementById('apiKeyInput').value.trim();
+            const statusDiv = document.getElementById('apiKeyTestStatus');
+            if (!statusDiv) return;
+
+            if (eng === 'local') {
+                statusDiv.style.display = 'block';
+                statusDiv.style.color = '#38bdf8';
+                statusDiv.innerHTML = '<i class="fa-solid fa-info-circle"></i> Local Engine does not need an API key.';
+                return;
+            }
+
+            if (!key) {
+                statusDiv.style.display = 'block';
+                statusDiv.style.color = '#f59e0b';
+                statusDiv.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Please paste an API key first before testing.';
+                return;
+            }
+
+            statusDiv.style.display = 'block';
+            statusDiv.style.color = '#38bdf8';
+            statusDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying key with ' + eng.toUpperCase() + ' servers...';
+
+            try {
+                if (eng === 'groq') {
+                    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                        method: "POST",
+                        headers: { "Authorization": `Bearer ${key}`, "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            model: "llama-3.3-70b-versatile",
+                            messages: [{ role: "user", content: "ping" }],
+                            max_tokens: 5
+                        })
+                    });
+                    const d = await res.json();
+                    if (res.ok) {
+                        statusDiv.style.color = '#10b981';
+                        statusDiv.innerHTML = '<i class="fa-solid fa-circle-check"></i> <strong>Groq Key Valid!</strong> Llama 3.3 70B is active and ready to answer any question.';
+                    } else {
+                        statusDiv.style.color = '#ef4444';
+                        statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Groq Error (${res.status}): ${d.error?.message || 'Invalid API Key'}`;
+                    }
+                } else if (eng === 'openai') {
+                    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+                        method: "POST",
+                        headers: { "Authorization": `Bearer ${key}`, "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            model: "gpt-4o-mini",
+                            messages: [{ role: "user", content: "ping" }],
+                            max_tokens: 5
+                        })
+                    });
+                    const d = await res.json();
+                    if (res.ok) {
+                        statusDiv.style.color = '#10b981';
+                        statusDiv.innerHTML = '<i class="fa-solid fa-circle-check"></i> <strong>OpenAI Key Valid!</strong> GPT-4o-mini is active with full intelligence.';
+                    } else {
+                        statusDiv.style.color = '#ef4444';
+                        statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> OpenAI Error (${res.status}): ${d.error?.message || 'Invalid API Key'}`;
+                    }
+                } else if (eng === 'gemini') {
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            contents: [{ role: "user", parts: [{ text: "ping" }] }]
+                        })
+                    });
+                    const d = await res.json();
+                    if (res.ok) {
+                        statusDiv.style.color = '#10b981';
+                        statusDiv.innerHTML = '<i class="fa-solid fa-circle-check"></i> <strong>Gemini Key Valid!</strong> Gemini 2.0 Flash is active.';
+                    } else {
+                        statusDiv.style.color = '#ef4444';
+                        statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Gemini Error (${res.status}): ${d.error?.message || 'Check your key'}`;
+                    }
+                }
+            } catch (err) {
+                statusDiv.style.color = '#ef4444';
+                statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Network test error: ${err.message}`;
             }
         }
 

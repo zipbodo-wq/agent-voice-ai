@@ -12,8 +12,9 @@ A low-latency, full-duplex two-way voice AI agent inspired by OpenAI's "Dots". S
 
 - 🗣️ **Wake Word Detection ("Agent" / "Hey Agent"):**
   Call out *"Agent"* from across the room to wake it up from standby into continuous listening.
-- 🎙️ **Hyper-Realistic OpenAI & GPT-Live 1.1 Voice Matrix:**
-  Switch between human-sounding voices right from the top bar:
+- 🎙️ **Hyper-Realistic OpenAI, GPT-Live 1.1 & Superhero Voices:**
+  Switch between human-sounding voices or superhero personas right from the top bar:
+  - 🟢 **Hulk (Gamma Titan)**: Massive deep roaring superhero voice!
   - **Arbor**: Easygoing and versatile
   - **Breeze**: Animated and earnest
   - **Cove**: Composed and direct
@@ -45,6 +46,25 @@ A low-latency, full-duplex two-way voice AI agent inspired by OpenAI's "Dots". S
   - Google Gemini 2.0 Flash
 - 👁️ **Optic Vision Feed:**
   Real-time camera feed analysis for vision assistance.
+
+---
+
+## 🧠 Unlocking Full AI Intelligence (Knows Everything)
+
+Out of the box without an API key, the app runs on a **basic offline rule engine** (handling basic greetings, device toggles, and system telemetry).
+
+To give the agent **infinite world knowledge** (coding, math, history, science, creative writing, reasoning) just like ChatGPT:
+
+1. Click the **⚙️ Settings** icon in the top header.
+2. Select your **AI Intelligence Engine**:
+   - ⚡ **Groq Cloud (Recommended)**: **100% Free** and ultra-low latency (<200ms speech response). Powered by `llama-3.3-70b-versatile`.
+     - Get a free key at: [console.groq.com/keys](https://console.groq.com/keys)
+   - 🤖 **OpenAI**: Connects `gpt-4o-mini` or `gpt-4o`.
+     - Get key at: [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+   - ✨ **Google Gemini**: Connects `gemini-2.0-flash`.
+     - Get free key at: [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)
+3. Paste your key and click **🧪 Test Key** to verify.
+4. Click **Save Settings**!
 
 ---
 
