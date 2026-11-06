@@ -204,6 +204,12 @@
             background: rgba(16, 185, 129, 0.08);
         }
 
+        .action-chip.bridge-cloud {
+            border-color: rgba(0, 242, 254, 0.4);
+            color: var(--accent-cyan);
+            background: rgba(0, 242, 254, 0.08);
+        }
+
         /* ===== MOBILE SCREEN SEGMENTED SWITCHER ===== */
         .mobile-view-tabs {
             display: none;
@@ -1528,8 +1534,14 @@
             </div>
 
             <div class="settings-group">
-                <label>Local Python Bridge URL (Use PC IP for Mobile on WiFi)</label>
-                <input type="text" class="settings-input" id="bridgeUrlInput" value="http://127.0.0.1:8765">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <label>Local Python Bridge URL <span style="font-size:0.75rem;color:var(--text-muted);">(Optional for PC Hardware)</span></label>
+                    <button type="button" onclick="document.getElementById('bridgeUrlInput').value='http://127.0.0.1:8765'" style="background:none;border:none;color:var(--accent-cyan);font-size:0.75rem;cursor:pointer;">Reset Default</button>
+                </div>
+                <input type="text" class="settings-input" id="bridgeUrlInput" value="http://127.0.0.1:8765" placeholder="http://127.0.0.1:8765">
+                <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;line-height:1.4;">
+                    ☁️ <strong>Note:</strong> On GitHub Pages, your Voice AI connects directly to the Cloud AI without this. This is <em>only</em> needed if you run <code>launch_agent.bat</code> on your local Windows PC to control physical electronic switches. Do not enter your github.io URL here.
+                </div>
             </div>
 
             <button class="btn-save-settings" onclick="saveSettings()">Save & Apply Settings</button>
@@ -3151,15 +3163,37 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
         async function testBridgeConnection() {
             const btn = document.getElementById('bridgeStatusBtn');
             const txt = document.getElementById('bridgeText');
-            txt.innerText = "...";
+            if (!btn || !txt) return;
 
+            // Auto-sanitize if user typed a GitHub Pages URL as the bridge
+            if (bridgeUrl && bridgeUrl.includes('github.io')) {
+                bridgeUrl = 'http://127.0.0.1:8765';
+                localStorage.setItem('dots_bridge_url', bridgeUrl);
+                const bInput = document.getElementById('bridgeUrlInput');
+                if (bInput) bInput.value = bridgeUrl;
+            }
+
+            // On HTTPS (e.g. GitHub Pages), browsers strictly block mixed-content requests to http://
+            const isHttps = window.location.protocol === 'https:';
+            if (isHttps && bridgeUrl.startsWith('http://')) {
+                bridgeOnline = false;
+                btn.classList.remove('bridge-online');
+                btn.classList.add('bridge-cloud');
+                txt.innerText = "Cloud AI Ready";
+                btn.title = "Cloud Mode Active! Your Voice AI connects directly to frontier AI models. No local PC bridge needed.";
+                return;
+            }
+
+            txt.innerText = "...";
             try {
                 const res = await fetch(`${bridgeUrl}/api/status`, { signal: AbortSignal.timeout(2000) });
                 if (res.ok) {
                     const data = await res.json();
                     bridgeOnline = true;
                     btn.classList.add('bridge-online');
-                    txt.innerText = "Bridge: On";
+                    btn.classList.remove('bridge-cloud');
+                    txt.innerText = "Bridge: Live";
+                    btn.title = "Connected to local Python hardware orchestrator on port 8765.";
                     updateIotUI(data.iot_state);
                     return;
                 }
@@ -3167,7 +3201,15 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
 
             bridgeOnline = false;
             btn.classList.remove('bridge-online');
-            txt.innerText = "Bridge: Off";
+            if (window.location.hostname.includes('github.io') || isHttps) {
+                btn.classList.add('bridge-cloud');
+                txt.innerText = "Cloud AI Ready";
+                btn.title = "Cloud Mode Active! Hands-free voice is ready to chat.";
+            } else {
+                btn.classList.remove('bridge-cloud');
+                txt.innerText = "Bridge: Off";
+                btn.title = "Local PC bridge on port 8765 is not detected. Run launch_agent.bat if you want to control physical PC hardware.";
+            }
         }
 
         function updateIotUI(iot) {
@@ -3484,7 +3526,12 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                 localStorage.setItem('jarvis_gemini_key', geminiKey);
             }
 
-            bridgeUrl = document.getElementById('bridgeUrlInput').value.trim() || 'http://127.0.0.1:8765';
+            let bUrl = document.getElementById('bridgeUrlInput').value.trim() || 'http://127.0.0.1:8765';
+            if (bUrl.includes('github.io')) {
+                bUrl = 'http://127.0.0.1:8765';
+                document.getElementById('bridgeUrlInput').value = bUrl;
+            }
+            bridgeUrl = bUrl;
             localStorage.setItem('dots_bridge_url', bridgeUrl);
 
             audioMode = document.getElementById('audioModeSelect').value;
@@ -3501,6 +3548,12 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
 
         function loadSavedSettings() {
             document.getElementById('engineSelect').value = selectedEngine;
+            let bUrl = localStorage.getItem('dots_bridge_url') || 'http://127.0.0.1:8765';
+            if (bUrl.includes('github.io')) {
+                bUrl = 'http://127.0.0.1:8765';
+                localStorage.setItem('dots_bridge_url', bUrl);
+            }
+            bridgeUrl = bUrl;
             document.getElementById('bridgeUrlInput').value = bridgeUrl;
             document.getElementById('audioModeSelect').value = audioMode;
             document.getElementById('soundChimesSelect').value = String(soundChimesEnabled);
