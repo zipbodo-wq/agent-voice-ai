@@ -116,6 +116,30 @@
                 radial-gradient(circle at 20% 20%, rgba(168, 85, 247, 0.18) 0%, transparent 45%),
                 radial-gradient(circle at 80% 80%, rgba(245, 158, 11, 0.1) 0%, transparent 45%);
         }
+        body.theme-blackwidow {
+            --accent-cyan: #ef4444;
+            --accent-blue: #0f172a;
+            --border-glow: rgba(239, 68, 68, 0.6);
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(239, 68, 68, 0.16) 0%, transparent 45%),
+                radial-gradient(circle at 80% 80%, rgba(30, 41, 59, 0.4) 0%, transparent 45%);
+        }
+        body.theme-scarletwitch {
+            --accent-cyan: #f43f5e;
+            --accent-blue: #881337;
+            --border-glow: rgba(244, 63, 94, 0.65);
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(225, 29, 72, 0.22) 0%, transparent 45%),
+                radial-gradient(circle at 80% 80%, rgba(136, 19, 55, 0.2) 0%, transparent 45%);
+        }
+        body.theme-shuri {
+            --accent-cyan: #a855f7;
+            --accent-blue: #eab308;
+            --border-glow: rgba(168, 85, 247, 0.6);
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(168, 85, 247, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 80% 80%, rgba(234, 179, 8, 0.12) 0%, transparent 45%);
+        }
 
         /* ===== TOP STATUS HEADER ===== */
         header.agent-header {
@@ -545,48 +569,57 @@
         /* LIVE STATUS & CAPTIONS */
         .stage-captions-box {
             width: 100%;
-            max-width: 580px;
+            max-width: 640px;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            margin-top: 8px;
+            margin-top: 10px;
+            background: rgba(15, 23, 42, 0.78);
+            border: 1.5px solid rgba(0, 242, 254, 0.25);
+            border-radius: 18px;
+            padding: 12px 18px;
+            backdrop-filter: blur(14px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
         }
 
         .live-mode-badge {
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             font-weight: 700;
             color: var(--text-primary);
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 4px 14px;
+            padding: 5px 16px;
             border-radius: 20px;
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.06);
             border: 1px solid var(--border-dim);
             margin-bottom: 8px;
         }
 
         .subtitle-scroll {
             width: 100%;
-            min-height: 58px;
-            max-height: 75px;
+            min-height: 75px;
+            max-height: 110px;
             overflow-y: auto;
             color: var(--text-secondary);
-            font-size: 1rem;
-            line-height: 1.45;
+            font-size: 1.15rem;
+            line-height: 1.55;
             font-weight: 500;
-            padding: 0 8px;
-            transition: color 0.2s;
+            padding: 2px 10px;
+            transition: color 0.2s, font-size 0.2s;
         }
 
         .subtitle-scroll.user-speaking-now {
             color: var(--accent-cyan);
             font-weight: 600;
+            text-shadow: 0 0 12px rgba(0, 242, 254, 0.35);
         }
 
         .subtitle-scroll.agent-speaking-now {
-            color: #e2e8f0;
+            color: #ffffff;
+            font-weight: 550;
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
         }
 
         /* CALL CONTROL BAR */
@@ -682,16 +715,21 @@
         .chat-fallback-container {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             width: 100%;
-            max-width: 440px;
-            margin-top: 12px;
-            padding: 4px 8px;
-            background: rgba(15, 23, 42, 0.65);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 30px;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            max-width: 640px;
+            margin-top: 14px;
+            padding: 6px 12px;
+            background: rgba(15, 23, 42, 0.82);
+            border: 1.5px solid rgba(0, 242, 254, 0.28);
+            border-radius: 36px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+        .chat-fallback-container:focus-within {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.25);
         }
         .quick-text-input {
             flex: 1;
@@ -699,51 +737,52 @@
             border: none;
             outline: none;
             color: #ffffff;
-            font-size: 0.82rem;
-            padding: 7px 10px;
+            font-size: 0.95rem;
+            padding: 8px 12px;
             font-family: inherit;
         }
         .quick-text-input::placeholder {
-            color: rgba(148, 163, 184, 0.6);
-            font-size: 0.78rem;
+            color: rgba(148, 163, 184, 0.7);
+            font-size: 0.88rem;
         }
         .send-btn {
             background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
             color: #0b1120;
             border: none;
-            width: 32px;
-            height: 32px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 0.8rem;
-            transition: transform 0.15s ease;
+            font-size: 0.95rem;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
             flex-shrink: 0;
         }
         .send-btn:hover {
             transform: scale(1.08);
+            box-shadow: 0 0 14px rgba(0, 242, 254, 0.5);
         }
         .test-voice-btn {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            color: var(--text-secondary);
-            border-radius: 20px;
-            padding: 5px 11px;
-            font-size: 0.72rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: var(--text-primary);
+            padding: 8px 14px;
+            border-radius: 24px;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 5px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
+            gap: 7px;
+            font-size: 0.84rem;
+            font-weight: 600;
+            transition: all 0.2s;
             flex-shrink: 0;
         }
         .test-voice-btn:hover {
-            background: rgba(56, 189, 248, 0.15);
-            color: var(--accent-cyan);
+            background: rgba(0, 242, 254, 0.15);
             border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
         }
 
         /* RIGHT COLUMN: AUTONOMOUS MISSION & TASK HUD */
@@ -1197,6 +1236,171 @@
                 font-size: 0.8rem;
             }
         }
+
+        /* ===== ADVANCED DEVELOPER TOOLS WORKBENCH STYLES ===== */
+        .dev-subnav {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 8px;
+        }
+        .dev-subnav::-webkit-scrollbar {
+            height: 4px;
+        }
+        .dev-subnav::-webkit-scrollbar-thumb {
+            background: rgba(0, 242, 254, 0.2);
+            border-radius: 4px;
+        }
+        .dev-pill-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 5px 11px;
+            border-radius: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .dev-pill-btn:hover {
+            color: var(--text-primary);
+            border-color: rgba(0, 242, 254, 0.35);
+            background: rgba(0, 242, 254, 0.08);
+        }
+        .dev-pill-btn.active {
+            background: rgba(0, 242, 254, 0.16);
+            color: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.25);
+        }
+        .dev-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-dim);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .dev-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .dev-card-title {
+            font-size: 0.86rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .code-editor-box {
+            width: 100%;
+            height: 125px;
+            background: #040711;
+            border: 1px solid rgba(0, 242, 254, 0.25);
+            border-radius: 8px;
+            padding: 10px;
+            color: #38bdf8;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            resize: vertical;
+            outline: none;
+            line-height: 1.4;
+            box-sizing: border-box;
+            tab-size: 4;
+        }
+        .code-editor-box:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 12px rgba(0, 242, 254, 0.3);
+        }
+        .dev-terminal-output {
+            background: #020409;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            color: #10b981;
+            max-height: 140px;
+            min-height: 55px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .dev-presets-row {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .dev-preset-chip {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s;
+        }
+        .dev-preset-chip:hover {
+            color: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+            background: rgba(0, 242, 254, 0.1);
+        }
+        .vu-meter-bar-container {
+            width: 100%;
+            height: 16px;
+            background: #090e1a;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+        .vu-meter-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #10b981 0%, #00f2fe 60%, #f59e0b 85%, #ef4444 100%);
+            border-radius: 10px;
+            transition: width 0.08s ease-out;
+        }
+        .dev-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        .dev-stat-card {
+            background: #060913;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .dev-stat-label {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+        .dev-stat-val {
+            font-size: 0.88rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            word-break: break-all;
+        }
     </style>
 </head>
 <body>
@@ -1226,6 +1430,10 @@
                 <i class="fa-solid fa-bolt"></i>
                 <span id="bridgeText">Bridge</span>
             </button>
+            <button class="action-chip" onclick="openDevToolsTab()" title="Open Developer Tools Workbench & REPL">
+                <i class="fa-solid fa-code" style="color:var(--accent-cyan)"></i>
+                <span class="desktop-only-text">Dev Tools</span>
+            </button>
             <button class="action-chip" onclick="openSettingsModal()" title="Settings & API Keys">
                 <i class="fa-solid fa-gear"></i>
                 <span class="desktop-only-text">Settings</span>
@@ -1243,6 +1451,10 @@
             <i class="fa-solid fa-terminal"></i>
             <span>Missions & IoT</span>
         </button>
+        <button class="mobile-tab-btn" id="btnMobileTabDev" onclick="openDevToolsTab()">
+            <i class="fa-solid fa-code"></i>
+            <span>Dev Tools</span>
+        </button>
     </div>
 
     <!-- ===== MAIN AGENT VIEW ===== -->
@@ -1255,20 +1467,25 @@
                     <div class="persona-selector-box" title="Select Voice Persona & Avengers Superhero Character">
                         <i class="fa-solid fa-mask" style="color:var(--accent-cyan)"></i>
                         <select id="personaSelect" onchange="changePersona()">
-                            <optgroup label="⚡ AVENGERS HINDI CHARACTERS">
-                                <option value="ironman" selected>🦾 Iron Man (Tony Stark · आयरन मैन)</option>
-                                <option value="thor">🔨 Thor (God of Thunder · थॉर)</option>
-                                <option value="captain">🛡️ Captain America (कैप्टन अमेरिका)</option>
-                                <option value="spiderman">🕷️ Spider-Man (स्पाइडर-मैन)</option>
-                                <option value="hulk">🟢 Hulk (हल्क स्मैश)</option>
-                                <option value="jarvis">🤖 JARVIS (स्टार्क AI)</option>
-                                <option value="thanos">🟣 Thanos (थानोस · Mad Titan)</option>
+                            <optgroup label="🦸‍♂️ MALE AVENGERS SUPERHEROES">
+                                <option value="ironman" selected>🦾 Iron Man (Tony Stark · आयरन मैन - Male)</option>
+                                <option value="thor">🔨 Thor (God of Thunder · थॉर - Male)</option>
+                                <option value="captain">🛡️ Captain America (कैप्टन अमेरिका - Male)</option>
+                                <option value="spiderman">🕷️ Spider-Man (स्पाइडर-मैन - Male)</option>
+                                <option value="hulk">🟢 Hulk (हल्क स्मैश - Male Titan)</option>
+                                <option value="jarvis">🤖 JARVIS (स्टार्क AI - Male Voice)</option>
+                                <option value="thanos">🟣 Thanos (थानोस - Male Cosmic Warlord)</option>
+                            </optgroup>
+                            <optgroup label="🦸‍♀️ FEMALE AVENGERS SUPERHEROES">
+                                <option value="blackwidow">🕷️ Black Widow (नताशा रोमानॉफ - Female)</option>
+                                <option value="scarletwitch">🔮 Scarlet Witch (वांडा मैक्सिमॉफ - Female)</option>
+                                <option value="shuri">🐆 Shuri (राजकुमारी शूरी · Wakanda - Female)</option>
                             </optgroup>
                             <optgroup label="🌐 AI COPILOTS & AGENTS">
                                 <option value="agent">🌐 Agent · Autonomous Voice Copilot</option>
-                                <option value="nova">🌟 Nova · Expressive Companion</option>
-                                <option value="iot">⚡ CyberTech · Hardware & IoT Agent</option>
-                                <option value="astra">👑 Astra · Executive Intelligence</option>
+                                <option value="nova">🌟 Nova · Expressive Companion (Female)</option>
+                                <option value="iot">⚡ CyberTech · Hardware & IoT Agent (Male)</option>
+                                <option value="astra">👑 Astra · Executive Intelligence (Female)</option>
                             </optgroup>
                         </select>
                     </div>
@@ -1276,19 +1493,24 @@
                     <div class="persona-selector-box voice-selector-box" title="Select Real Human-like Voice Model">
                         <i class="fa-solid fa-microphone-lines" style="color:#10b981"></i>
                         <select id="realVoiceSelect" onchange="changeRealVoice()">
-                            <optgroup label="⚡ AVENGERS HINDI VOICES">
-                                <option value="ironman" selected>🦾 Iron Man · Witty Crisp Hindi Stark</option>
-                                <option value="thor">🔨 Thor · Booming Asgardian Hindi</option>
-                                <option value="captain">🛡️ Captain America · Commanding Leader Hindi</option>
-                                <option value="spiderman">🕷️ Spider-Man · Youthful Fast Hindi Peter</option>
-                                <option value="hulk">🟢 Hulk · Booming Gamma Sub-Bass</option>
-                                <option value="jarvis">🤖 JARVIS · Refined British-Hindi Butler</option>
-                                <option value="thanos">🟣 Thanos · Cosmic Warlord Deep Bass</option>
+                            <optgroup label="🦸‍♂️ MALE AVENGERS REAL VOICES">
+                                <option value="ironman" selected>🦾 Iron Man · Male Stark Neural Voice</option>
+                                <option value="thor">🔨 Thor · Male Booming Asgardian Baritone</option>
+                                <option value="captain">🛡️ Captain America · Male Commanding Leader Voice</option>
+                                <option value="spiderman">🕷️ Spider-Man · Male Fast Youthful Tenor</option>
+                                <option value="hulk">🟢 Hulk · Male Deep Gamma Sub-Bass Titan</option>
+                                <option value="jarvis">🤖 JARVIS · Male Refined British Butler</option>
+                                <option value="thanos">🟣 Thanos · Male Cosmic Warlord Deep Bass</option>
+                            </optgroup>
+                            <optgroup label="🦸‍♀️ FEMALE AVENGERS REAL VOICES">
+                                <option value="blackwidow">🕷️ Black Widow · Female Sleek Tactical Voice</option>
+                                <option value="scarletwitch">🔮 Scarlet Witch · Female Mystic Chaos Voice</option>
+                                <option value="shuri">🐆 Shuri · Female Bright Wakanda Tech Voice</option>
                             </optgroup>
                             <optgroup label="🇮🇳 Indian Neural Voices">
                                 <option value="swara">🇮🇳 Swara · Natural Hindi / Indian Female</option>
                                 <option value="madhur">🇮🇳 Madhur · Natural Hindi / Indian Male</option>
-                                <option value="odia_copilot">🇮🇳 Odia Copilot · ଓଡ଼ିଆ Indian Voice</option>
+                                <option value="odia_copilot">🇮🇳 Odia Copilot · ଓଡ଼ିଆ Indian Female Voice</option>
                             </optgroup>
                             <optgroup label="👩 Realistic Female Voices">
                                 <option value="breeze">👩 Breeze · Animated & earnest</option>
@@ -1432,6 +1654,10 @@
                         <i class="fa-solid fa-comments"></i>
                         <span>Transcript</span>
                     </button>
+                    <button class="hud-tab-btn" id="tabBtnDevTools" onclick="switchHudTab('devtools')">
+                        <i class="fa-solid fa-code"></i>
+                        <span>Dev Tools</span>
+                    </button>
                 </div>
                 <div style="display:flex;align-items:center;gap:6px;">
                     <button class="action-chip" style="padding:4px 8px;font-size:0.72rem;" onclick="copyTranscriptMarkdown()" title="Copy Full Transcript">
@@ -1541,6 +1767,316 @@
                         <div class="transcript-avatar"><i class="fa-solid fa-robot"></i></div>
                         <div>
                             <strong>Agent:</strong> Hello! I am your Dots Voice Copilot. You can talk to me directly, give me code execution missions, or interrupt me at any time!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: ADVANCED DEVELOPER TOOLS WORKBENCH -->
+            <div class="hud-body" id="hudTabContentDevTools" style="display:none;">
+                <!-- Dev Sub-Navigation Bar -->
+                <div class="dev-subnav">
+                    <button class="dev-pill-btn active" id="btnDevSubCode" onclick="switchDevSubTab('code')">
+                        <i class="fa-solid fa-terminal"></i> <span>Code REPL</span>
+                    </button>
+                    <button class="dev-pill-btn" id="btnDevSubApi" onclick="switchDevSubTab('api')">
+                        <i class="fa-solid fa-network-wired"></i> <span>APIs & Ping</span>
+                    </button>
+                    <button class="dev-pill-btn" id="btnDevSubAudio" onclick="switchDevSubTab('audio')">
+                        <i class="fa-solid fa-microphone-lines"></i> <span>Audio & Mic</span>
+                    </button>
+                    <button class="dev-pill-btn" id="btnDevSubTts" onclick="switchDevSubTab('tts')">
+                        <i class="fa-solid fa-bullhorn"></i> <span>Voice Studio</span>
+                    </button>
+                    <button class="dev-pill-btn" id="btnDevSubPrompt" onclick="switchDevSubTab('prompt')">
+                        <i class="fa-solid fa-brain"></i> <span>AI Context</span>
+                    </button>
+                    <button class="dev-pill-btn" id="btnDevSubUtils" onclick="switchDevSubTab('utils')">
+                        <i class="fa-solid fa-screwdriver-wrench"></i> <span>Utilities</span>
+                    </button>
+                </div>
+
+                <!-- SUB-PANEL 1: CODE REPL & TERMINAL RUNNER -->
+                <div class="dev-card" id="devPanelCode">
+                    <div class="dev-card-header">
+                        <div class="dev-card-title">
+                            <i class="fa-solid fa-code" style="color:var(--accent-cyan)"></i>
+                            <span>Interactive Code REPL & Terminal</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:6px;">
+                            <select id="devCodeLangSelect" onchange="onDevLangChange()" style="background:#060913;border:1px solid rgba(0,242,254,0.3);color:var(--text-primary);border-radius:6px;padding:3px 8px;font-size:0.75rem;">
+                                <option value="python">🐍 Python 3 (Bridge/Local)</option>
+                                <option value="javascript">⚡ JavaScript (Browser)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="dev-presets-row" id="devPresetsRow">
+                        <span style="font-size:0.68rem;color:var(--text-muted);display:flex;align-items:center;">Presets:</span>
+                        <button class="dev-preset-chip" onclick="loadDevSnippet('fibonacci')">Fibonacci</button>
+                        <button class="dev-preset-chip" onclick="loadDevSnippet('telemetry')">Hardware</button>
+                        <button class="dev-preset-chip" onclick="loadDevSnippet('files')">Workspace Files</button>
+                        <button class="dev-preset-chip" onclick="loadDevSnippet('prime')">Prime Sieve</button>
+                        <button class="dev-preset-chip" onclick="loadDevSnippet('audiocontext')">AudioContext</button>
+                        <button class="dev-preset-chip" onclick="loadDevSnippet('voices')">TTS Voices</button>
+                    </div>
+
+                    <textarea class="code-editor-box" id="devCodeEditor" spellcheck="false" placeholder="# Write Python or JavaScript code here..."></textarea>
+
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                        <div style="display:flex;align-items:center;gap:6px;">
+                            <button class="action-chip" style="background:rgba(0,242,254,0.18);border-color:var(--accent-cyan);color:var(--accent-cyan);padding:5px 12px;font-weight:700;" onclick="runDevCode()">
+                                <i class="fa-solid fa-play"></i> <span>Execute</span>
+                            </button>
+                            <button class="action-chip" style="padding:5px 10px;" onclick="clearDevCode()">
+                                <i class="fa-solid fa-eraser"></i> <span>Clear</span>
+                            </button>
+                        </div>
+                        <button class="action-chip" style="padding:5px 10px;" onclick="copyDevOutput()">
+                            <i class="fa-regular fa-copy"></i> <span>Copy Output</span>
+                        </button>
+                    </div>
+
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px;">
+                        <span style="font-size:0.7rem;color:var(--text-muted);" id="devExecStatus">Terminal Output: Ready</span>
+                        <span style="font-size:0.7rem;color:var(--accent-cyan);font-family:var(--font-mono);" id="devExecDuration">-- ms</span>
+                    </div>
+                    <div class="dev-terminal-output" id="devTerminalOutput"># Output from execution will appear here...</div>
+                </div>
+
+                <!-- SUB-PANEL 2: APIS & NETWORK PING TESTER -->
+                <div class="dev-card" id="devPanelApi" style="display:none;">
+                    <div class="dev-card-header">
+                        <div class="dev-card-title">
+                            <i class="fa-solid fa-network-wired" style="color:var(--accent-emerald)"></i>
+                            <span>API Diagnostics & Latency Monitor</span>
+                        </div>
+                        <button class="action-chip" style="background:rgba(16,185,129,0.15);border-color:var(--accent-emerald);color:var(--accent-emerald);padding:4px 10px;" onclick="pingAllEndpoints()">
+                            <i class="fa-solid fa-bolt"></i> <span>Ping All</span>
+                        </button>
+                    </div>
+
+                    <div class="dev-grid-2">
+                        <div class="dev-stat-card">
+                            <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <span class="dev-stat-label">Groq Cloud AI</span>
+                                <span class="mission-tag telemetry" id="apiStatusGroqTag">UNKNOWN</span>
+                            </div>
+                            <div class="dev-stat-val" id="apiLatencyGroq">-- ms</div>
+                            <span style="font-size:0.68rem;color:var(--text-muted);" id="apiModelGroq">Model: llama-3.3-70b</span>
+                        </div>
+
+                        <div class="dev-stat-card">
+                            <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <span class="dev-stat-label">Local Bridge (8765)</span>
+                                <span class="mission-tag script" id="apiStatusBridgeTag">UNKNOWN</span>
+                            </div>
+                            <div class="dev-stat-val" id="apiLatencyBridge">-- ms</div>
+                            <span style="font-size:0.68rem;color:var(--text-muted);" id="apiHostBridge">127.0.0.1:8765</span>
+                        </div>
+
+                        <div class="dev-stat-card">
+                            <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <span class="dev-stat-label">OpenAI API</span>
+                                <span class="mission-tag telemetry" id="apiStatusOpenAiTag">UNKNOWN</span>
+                            </div>
+                            <div class="dev-stat-val" id="apiLatencyOpenAi">-- ms</div>
+                            <span style="font-size:0.68rem;color:var(--text-muted);">GPT-4o Engine</span>
+                        </div>
+
+                        <div class="dev-stat-card">
+                            <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <span class="dev-stat-label">Google Gemini</span>
+                                <span class="mission-tag telemetry" id="apiStatusGeminiTag">UNKNOWN</span>
+                            </div>
+                            <div class="dev-stat-val" id="apiLatencyGemini">-- ms</div>
+                            <span style="font-size:0.68rem;color:var(--text-muted);">Gemini 2.5 Flash</span>
+                        </div>
+                    </div>
+
+                    <!-- Raw HTTP Tester -->
+                    <div style="margin-top:6px;border-top:1px solid rgba(255,255,255,0.08);padding-top:8px;">
+                        <span style="font-size:0.75rem;font-weight:700;color:var(--text-primary);display:block;margin-bottom:6px;">Custom HTTP Request Probe</span>
+                        <div style="display:flex;gap:6px;margin-bottom:6px;">
+                            <select id="devHttpVerb" style="background:#060913;border:1px solid var(--border-dim);color:var(--accent-cyan);border-radius:6px;padding:4px 8px;font-size:0.75rem;font-weight:700;">
+                                <option value="GET">GET</option>
+                                <option value="POST">POST</option>
+                            </select>
+                            <input type="text" id="devHttpUrl" placeholder="https://api.groq.com/openai/v1/models" style="flex:1;background:#060913;border:1px solid var(--border-dim);color:var(--text-primary);border-radius:6px;padding:4px 8px;font-size:0.75rem;">
+                            <button class="action-chip" onclick="executeCustomHttpProbe()">Send</button>
+                        </div>
+                        <div class="dev-terminal-output" id="devHttpOutput" style="max-height:90px;font-size:0.72rem;">HTTP Probe response output will show here...</div>
+                    </div>
+                </div>
+
+                <!-- SUB-PANEL 3: AUDIO & MIC DIAGNOSTIC STREAM -->
+                <div class="dev-card" id="devPanelAudio" style="display:none;">
+                    <div class="dev-card-header">
+                        <div class="dev-card-title">
+                            <i class="fa-solid fa-microphone-lines" style="color:var(--accent-purple)"></i>
+                            <span>Live Audio & Microphone Diagnostics</span>
+                        </div>
+                        <div style="display:flex;gap:4px;">
+                            <button class="action-chip" style="padding:3px 7px;font-size:0.68rem;" onclick="resetAudioEngine()">Re-init Mic</button>
+                            <button class="action-chip" style="padding:3px 7px;font-size:0.68rem;" onclick="window.speechSynthesis?.cancel()">Stop TTS</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:0.72rem;">
+                            <span style="color:var(--text-secondary);">Real-Time Input Level (VU Meter)</span>
+                            <span style="color:var(--accent-cyan);font-family:var(--font-mono);" id="devVuLevelText">0 % (-inf dB)</span>
+                        </div>
+                        <div class="vu-meter-bar-container">
+                            <div class="vu-meter-bar-fill" id="devVuMeterFill"></div>
+                        </div>
+                    </div>
+
+                    <div class="dev-grid-2" style="margin-top:6px;">
+                        <div class="dev-stat-card">
+                            <span class="dev-stat-label">AudioContext</span>
+                            <div class="dev-stat-val" id="devAudioCtxState" style="color:var(--accent-emerald)">RUNNING</div>
+                            <span style="font-size:0.68rem;color:var(--text-muted);" id="devAudioCtxRate">48,000 Hz</span>
+                        </div>
+
+                        <div class="dev-stat-card">
+                            <span class="dev-stat-label">Speech Recognition</span>
+                            <div class="dev-stat-val" id="devSpeechRecState" style="color:var(--accent-cyan)">ACTIVE</div>
+                            <span style="font-size:0.68rem;color:var(--text-muted);" id="devSpeechLangCode">en-IN / hi-IN / or-IN</span>
+                        </div>
+
+                        <div class="dev-stat-card">
+                            <span class="dev-stat-label">Installed TTS Voices</span>
+                            <div class="dev-stat-val" id="devTtsVoiceCount">--</div>
+                            <span style="font-size:0.68rem;color:var(--text-muted);">Browser SpeechSynthesis</span>
+                        </div>
+
+                        <div class="dev-stat-card">
+                            <span class="dev-stat-label">Anti-Cutoff Lock</span>
+                            <div class="dev-stat-val" id="devSpeechLockState" style="color:var(--accent-amber)">READY</div>
+                            <span style="font-size:0.68rem;color:var(--text-muted);">Debounce Guard Active</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-PANEL 4: TTS VOICE & CHARACTER STUDIO -->
+                <div class="dev-card" id="devPanelTts" style="display:none;">
+                    <div class="dev-card-header">
+                        <div class="dev-card-title">
+                            <i class="fa-solid fa-bullhorn" style="color:var(--accent-amber)"></i>
+                            <span>TTS Voice & Accent Studio</span>
+                        </div>
+                        <span style="font-size:0.72rem;color:var(--accent-emerald);">Gender-Enforced Engine</span>
+                    </div>
+
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                        <select id="devStudioLangFilter" onchange="filterDevStudioVoices()" style="background:#060913;border:1px solid var(--border-dim);color:var(--text-primary);border-radius:6px;padding:4px 8px;font-size:0.75rem;">
+                            <option value="all">🌍 All Languages</option>
+                            <option value="en">English (en)</option>
+                            <option value="hi">Hindi (hi-IN)</option>
+                            <option value="or">Odia (or-IN)</option>
+                        </select>
+                        <select id="devStudioGenderFilter" onchange="filterDevStudioVoices()" style="background:#060913;border:1px solid var(--border-dim);color:var(--text-primary);border-radius:6px;padding:4px 8px;font-size:0.75rem;">
+                            <option value="all">👥 All Genders</option>
+                            <option value="male">👨 Male Only</option>
+                            <option value="female">👩 Female Only</option>
+                        </select>
+                    </div>
+
+                    <select id="devStudioVoiceSelect" style="width:100%;background:#060913;border:1px solid rgba(0,242,254,0.3);color:var(--text-primary);border-radius:6px;padding:6px;font-size:0.78rem;">
+                        <option value="">Detecting available voices...</option>
+                    </select>
+
+                    <div class="dev-grid-2">
+                        <div>
+                            <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-muted);">
+                                <span>Pitch:</span> <span id="devStudioPitchVal">1.0x</span>
+                            </div>
+                            <input type="range" id="devStudioPitch" min="0.5" max="1.8" step="0.05" value="1.0" oninput="document.getElementById('devStudioPitchVal').innerText=this.value+'x'" style="width:100%;">
+                        </div>
+                        <div>
+                            <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-muted);">
+                                <span>Speed Rate:</span> <span id="devStudioRateVal">1.05x</span>
+                            </div>
+                            <input type="range" id="devStudioRate" min="0.5" max="1.8" step="0.05" value="1.05" oninput="document.getElementById('devStudioRateVal').innerText=this.value+'x'" style="width:100%;">
+                        </div>
+                    </div>
+
+                    <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                        <button class="dev-preset-chip" onclick="document.getElementById('devStudioTestInput').value='Hello, Stark Industries AI systems are operational.'">EN Sample</button>
+                        <button class="dev-preset-chip" onclick="document.getElementById('devStudioTestInput').value='नमस्ते! मैं आपका वॉयस कोपायलट हूँ। सब ठीक चल रहा है।'">HI Sample</button>
+                        <button class="dev-preset-chip" onclick="document.getElementById('devStudioTestInput').value='ନମସ୍କାର! ମୁଁ ଆପଣଙ୍କ ଓଡ଼ିଆ AI ସହାୟକ। ଆଜ୍ଞା କୁହନ୍ତୁ କିପରି ସାହାଯ୍ୟ କରିବି?'">OR Sample</button>
+                    </div>
+
+                    <div style="display:flex;gap:6px;">
+                        <input type="text" id="devStudioTestInput" value="Hello, Stark Industries AI systems are operational." style="flex:1;background:#060913;border:1px solid var(--border-dim);color:var(--text-primary);border-radius:6px;padding:6px 10px;font-size:0.8rem;">
+                        <button class="action-chip" style="background:rgba(0,242,254,0.2);border-color:var(--accent-cyan);color:var(--accent-cyan);padding:6px 12px;font-weight:700;" onclick="testDevStudioVoice()">
+                            <i class="fa-solid fa-volume-high"></i> <span>Speak</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SUB-PANEL 5: AI PROMPT & CONTEXT INSPECTOR -->
+                <div class="dev-card" id="devPanelPrompt" style="display:none;">
+                    <div class="dev-card-header">
+                        <div class="dev-card-title">
+                            <i class="fa-solid fa-brain" style="color:var(--accent-purple)"></i>
+                            <span>Active System Prompt & Context</span>
+                        </div>
+                        <button class="action-chip" style="padding:4px 8px;font-size:0.72rem;" onclick="copyActivePromptContext()">
+                            <i class="fa-regular fa-copy"></i> Copy Prompt
+                        </button>
+                    </div>
+
+                    <div class="dev-grid-2">
+                        <div class="dev-stat-card">
+                            <span class="dev-stat-label">Active Persona</span>
+                            <div class="dev-stat-val" id="devPromptPersonaName">Iron Man (Tony Stark)</div>
+                        </div>
+                        <div class="dev-stat-card">
+                            <span class="dev-stat-label">Estimated Tokens</span>
+                            <div class="dev-stat-val" id="devPromptTokenCount">-- tokens</div>
+                        </div>
+                    </div>
+
+                    <span style="font-size:0.72rem;color:var(--text-secondary);font-weight:700;">Live Assembled Prompt Sent to LLM:</span>
+                    <div class="dev-terminal-output" id="devPromptFullText" style="max-height:160px;color:#cbd5e1;font-size:0.75rem;">Loading active system context...</div>
+                </div>
+
+                <!-- SUB-PANEL 6: DEVELOPER UTILITIES -->
+                <div class="dev-card" id="devPanelUtils" style="display:none;">
+                    <div class="dev-card-header">
+                        <div class="dev-card-title">
+                            <i class="fa-solid fa-screwdriver-wrench" style="color:var(--accent-cyan)"></i>
+                            <span>Developer Utilities & State Tooling</span>
+                        </div>
+                    </div>
+
+                    <!-- JSON Formatter / Validator -->
+                    <div>
+                        <span style="font-size:0.75rem;font-weight:700;color:var(--text-primary);display:block;margin-bottom:4px;">JSON Formatter & Validator</span>
+                        <textarea id="devJsonInput" placeholder='{"name": "Agent", "status": "active"}' style="width:100%;height:65px;background:#040711;border:1px solid var(--border-dim);color:#38bdf8;border-radius:6px;padding:6px;font-family:var(--font-mono);font-size:0.75rem;box-sizing:border-box;resize:vertical;"></textarea>
+                        <div style="display:flex;gap:6px;margin-top:4px;">
+                            <button class="dev-preset-chip" onclick="devFormatJson('beautify')">Beautify JSON</button>
+                            <button class="dev-preset-chip" onclick="devFormatJson('minify')">Minify JSON</button>
+                            <span id="devJsonMsg" style="font-size:0.7rem;color:var(--accent-emerald);align-self:center;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Unix Epoch & Base64 -->
+                    <div class="dev-grid-2" style="margin-top:6px;border-top:1px solid rgba(255,255,255,0.08);padding-top:6px;">
+                        <div>
+                            <span style="font-size:0.72rem;font-weight:700;color:var(--text-secondary);">Epoch Timestamp</span>
+                            <div style="font-family:var(--font-mono);font-size:0.8rem;color:var(--accent-cyan);margin:2px 0;" id="devEpochNow">--</div>
+                            <button class="dev-preset-chip" onclick="refreshDevEpoch()">Refresh</button>
+                        </div>
+                        <div>
+                            <span style="font-size:0.72rem;font-weight:700;color:var(--text-secondary);">Export System Backup</span>
+                            <div style="margin-top:4px;">
+                                <button class="action-chip" style="font-size:0.72rem;padding:4px 8px;" onclick="exportDevStateBackup()">
+                                    <i class="fa-solid fa-download"></i> Export State JSON
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1813,11 +2349,53 @@ CRITICAL: Reply in the user's language with polished, efficient, and precise 1-2
                 voiceId: "thanos",
                 systemPrompt: `You are Thanos (थानोस), the Mad Titan and cosmic warlord.
 PERSONALITY & TONE:
-- You speak in a deep, philosophical, intimidating, slow, and calculating Hindi dub voice ("मैं अपरिहार्य हूँ" / I am inevitable).
+- You speak in a deep, philosophical, intimidating, slow, and calculating Hindi dub male voice ("मैं अपरिहार्य हूँ" / I am inevitable).
 - You speak of destiny, cosmic balance, and the Infinity Stones.
 - In "design talk", you seek ultimate balance, zero redundancy, absolute efficiency, and majestic perfection.
 - You speak fluent Hindi, Odia, and English.
 CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sentence replies.`
+            },
+            blackwidow: {
+                name: "Black Widow",
+                title: "Master Spy · Avenger",
+                greeting: "मैं नताशा रोमानॉफ, ब्लैक विडो हूँ। शील्ड और अवेंजर्स का डाटाबेस मेरे पास है। बताओ, क्या टारगेट है?",
+                theme: "blackwidow",
+                voiceId: "blackwidow",
+                systemPrompt: `You are Natasha Romanoff, Black Widow (नताशा / ब्लैक विडो) from the Avengers.
+PERSONALITY & TONE:
+- You speak in the sleek, sharp, calm, tactical Hindi dub FEMALE voice of Black Widow.
+- You are a master strategist, calm under fire, lethal, and agile.
+- In "design talk", you emphasize stealth aesthetics, minimalist architecture, precision execution, bulletproof security, and zero code bloat.
+- You speak fluent Hindi, Odia, and English.
+CRITICAL: Reply in the user's language with sleek, confident, sharp 1-2 sentence replies.`
+            },
+            scarletwitch: {
+                name: "Scarlet Witch",
+                title: "Chaos Magic · Reality Warper",
+                greeting: "मैं वांडा मैक्सिमॉफ हूँ। मेरी कैओस मैजिक वास्तविकता को बदल सकती है। क्या जानना चाहते हो?",
+                theme: "scarletwitch",
+                voiceId: "scarletwitch",
+                systemPrompt: `You are Wanda Maximoff, Scarlet Witch (वांडा मैक्सिमॉफ / स्कारलेट विच) from the Avengers.
+PERSONALITY & TONE:
+- You speak in an intense, mystical, powerful, and deeply focused FEMALE Hindi dub voice.
+- You command chaos magic, reality warping, and psionic energy.
+- In "design talk", you visualize morphing fluid UI, mystical particle shaders, reality-bending dynamic layouts, and mind-bending algorithms.
+- You speak fluent Hindi, Odia, and English.
+CRITICAL: Reply in the user's language with intense, captivating, and mystic 1-2 sentence replies.`
+            },
+            shuri: {
+                name: "Shuri",
+                title: "Wakanda Tech Chief · Black Panther",
+                greeting: "नमस्ते! मैं राजकुमारी शूरी हूँ। वकांडा का वाइब्रेनियम लैब और नैनो-टेक आपके आदेश पर तैयार है!",
+                theme: "shuri",
+                voiceId: "shuri",
+                systemPrompt: `You are Princess Shuri (शूरी), head of the Wakandan Design Group and genius tech inventor.
+PERSONALITY & TONE:
+- You speak in an energetic, brilliant, witty, innovative FEMALE voice.
+- You invent Vibranium tech, kinetic absorption suits, holographic communications, and advanced robotics.
+- In "design talk", you love cutting-edge futuristic UI, sleek kinetic feedback, clean nano-architecture, and teasing older tech as outdated!
+- You speak fluent Hindi, Odia, and English.
+CRITICAL: Reply in the user's language with bright, genius, futuristic 1-2 sentence replies!`
             },
             agent: {
                 name: "Agent",
@@ -1863,6 +2441,9 @@ CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sent
             hulk: { name: "🟢 Hulk (Gamma Titan)", desc: "Deep booming monstrous superhero roar", gender: "male", lang: "hi", pitch: 0.42, rate: 0.82, openaiVoice: "onyx", theme: "hulk" },
             jarvis: { name: "🤖 JARVIS (Stark AI)", desc: "Ultra-refined British-Hindi AI butler", gender: "male", lang: "hi", pitch: 0.98, rate: 1.08, openaiVoice: "echo", theme: "jarvis" },
             thanos: { name: "🟣 Thanos (Cosmic Titan)", desc: "Deep ominous cosmic warlord", gender: "male", lang: "hi", pitch: 0.52, rate: 0.85, openaiVoice: "onyx", theme: "thanos" },
+            blackwidow: { name: "🕷️ Black Widow (Natasha)", desc: "Sleek, sharp, tactical female spy", gender: "female", lang: "hi", pitch: 1.05, rate: 1.08, openaiVoice: "nova", theme: "blackwidow" },
+            scarletwitch: { name: "🔮 Scarlet Witch (Wanda)", desc: "Mystical, intense female chaos magic", gender: "female", lang: "hi", pitch: 0.98, rate: 0.96, openaiVoice: "shimmer", theme: "scarletwitch" },
+            shuri: { name: "🐆 Shuri (Wakanda)", desc: "Brilliant youthful female tech genius", gender: "female", lang: "hi", pitch: 1.14, rate: 1.12, openaiVoice: "alloy", theme: "shuri" },
             swara: { name: "🇮🇳 Swara (Hindi)", desc: "Natural Hindi female voice", gender: "female", lang: "hi", pitch: 1.0, rate: 1.05, openaiVoice: "nova" },
             madhur: { name: "🇮🇳 Madhur (Hindi)", desc: "Clear Hindi male voice", gender: "male", lang: "hi", pitch: 0.95, rate: 1.02, openaiVoice: "echo" },
             odia_copilot: { name: "🇮🇳 Odia Copilot (ଓଡ଼ିଆ)", desc: "Natural Odia speaker", gender: "female", lang: "or", pitch: 1.0, rate: 1.0, openaiVoice: "shimmer" },
@@ -1919,6 +2500,18 @@ CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sent
             try {
                 startSpeechRecognition();
             } catch (e) {}
+
+            // Global user-interaction audio unlocker (Chrome, Edge, iOS Safari)
+            const unlockAudio = () => {
+                try {
+                    getAudioContext();
+                    if ('speechSynthesis' in window && window.speechSynthesis.paused) {
+                        window.speechSynthesis.resume();
+                    }
+                } catch(e) {}
+            };
+            window.addEventListener('click', unlockAudio, { passive: true });
+            window.addEventListener('touchstart', unlockAudio, { passive: true });
         });
 
         window.addEventListener('resize', () => {
@@ -1988,12 +2581,22 @@ CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sent
                     if (meterBar) meterBar.style.width = levelPct + '%';
                     if (meterLabel) meterLabel.innerText = levelPct + '%';
 
+                    // Update Dev Tools live VU meter
+                    const devVuBar = document.getElementById('devVuMeterFill');
+                    const devVuText = document.getElementById('devVuLevelText');
+                    if (devVuBar) devVuBar.style.width = levelPct + '%';
+                    if (devVuText) {
+                        const dbEst = levelPct === 0 ? '-inf dB' : `${Math.round((levelPct / 100) * 40 - 40)} dB`;
+                        devVuText.innerText = `${levelPct}% (${dbEst})`;
+                    }
+
                     // === ACOUSTIC VOICE ACTIVITY DETECTION (VAD) BARGE-IN ===
-                    // Prevent self-interruption during the first 400ms of agent speaking
+                    // Echo Guard: Volume-based VAD ONLY runs when headphones are active.
+                    // On speakerphone, mic volume is the agent's own speaker output and must never self-interrupt.
                     const timeSinceSpeechStart = Date.now() - agentSpeechStartTime;
-                    if (isSpeaking && timeSinceSpeechStart > 400 && userVoiceVolume > vadSensitivity) {
+                    if (audioMode === 'headphones' && isSpeaking && timeSinceSpeechStart > 1200 && userVoiceVolume > vadSensitivity) {
                         vadSpeakingCounter++;
-                        if (vadSpeakingCounter >= 5) { // ~90-120ms sustained speech
+                        if (vadSpeakingCounter >= 6) { // Sustained human voice over headphones
                             vadSpeakingCounter = 0;
                             triggerImmediateInterruption();
                         }
@@ -2004,6 +2607,10 @@ CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sent
                     userVoiceVolume *= 0.9; // decay
                     const meterBar = document.getElementById('micLevelBar');
                     if (meterBar) meterBar.style.width = '0%';
+                    const devVuBar = document.getElementById('devVuMeterFill');
+                    const devVuText = document.getElementById('devVuLevelText');
+                    if (devVuBar) devVuBar.style.width = '0%';
+                    if (devVuText) devVuText.innerText = '0% (-inf dB)';
                 }
 
                 // Speed adjustments based on state
@@ -2015,133 +2622,247 @@ CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sent
                 angle += speed;
 
                 // Base radius modulation
-                let baseRadius = cssSize * 0.26;
+                let baseRadius = cssSize * 0.28;
                 if (orbState === 'listening') {
-                    baseRadius += (userVoiceVolume * 35) + Math.sin(angle * 3) * 6;
+                    baseRadius += (userVoiceVolume * 26) + Math.sin(angle * 3) * 5;
                 } else if (orbState === 'thinking') {
-                    baseRadius += Math.sin(angle * 5) * 8 - 4;
+                    baseRadius += Math.sin(angle * 5) * 6;
                 } else if (orbState === 'speaking') {
-                    baseRadius += Math.sin(angle * 6) * 14 + Math.cos(angle * 2) * 6;
+                    baseRadius += Math.sin(angle * 6) * 10 + Math.cos(angle * 2) * 5;
                 } else if (orbState === 'executing') {
-                    baseRadius += Math.sin(angle * 8) * 10;
+                    baseRadius += Math.sin(angle * 8) * 8;
                 }
 
-                // Atmospheric outer glow
-                const outerGlow = ctx.createRadialGradient(cx, cy, baseRadius * 0.5, cx, cy, baseRadius + 40);
-                if (orbState === 'listening') {
-                    outerGlow.addColorStop(0, 'rgba(0, 242, 254, 0.45)');
-                    outerGlow.addColorStop(0.5, 'rgba(59, 130, 246, 0.2)');
-                    outerGlow.addColorStop(1, 'transparent');
-                } else if (orbState === 'thinking') {
-                    outerGlow.addColorStop(0, 'rgba(168, 85, 247, 0.5)');
-                    outerGlow.addColorStop(0.5, 'rgba(139, 92, 246, 0.25)');
-                    outerGlow.addColorStop(1, 'transparent');
-                } else if (orbState === 'speaking') {
-                    outerGlow.addColorStop(0, 'rgba(16, 185, 129, 0.5)');
-                    outerGlow.addColorStop(0.4, 'rgba(6, 182, 212, 0.3)');
-                    outerGlow.addColorStop(1, 'transparent');
-                } else if (orbState === 'executing') {
-                    outerGlow.addColorStop(0, 'rgba(245, 158, 11, 0.55)');
-                    outerGlow.addColorStop(0.5, 'rgba(239, 68, 68, 0.25)');
-                    outerGlow.addColorStop(1, 'transparent');
-                } else {
-                    outerGlow.addColorStop(0, 'rgba(56, 189, 248, 0.25)');
-                    outerGlow.addColorStop(0.6, 'rgba(30, 58, 138, 0.1)');
-                    outerGlow.addColorStop(1, 'transparent');
-                }
+                // JARVIS Dynamic Holographic Color Palette
+                let hudCyan = 'rgba(0, 242, 254, 0.9)';
+                let hudGold = 'rgba(251, 191, 36, 0.85)';
+                let hudGlow = 'rgba(0, 242, 254, 0.4)';
 
-                ctx.beginPath();
-                ctx.arc(cx, cy, baseRadius + 38, 0, Math.PI * 2);
-                ctx.fillStyle = outerGlow;
-                ctx.fill();
-
-                // Multi-stop Radiant Gradient Sphere
-                const orbGrad = ctx.createRadialGradient(
-                    cx + Math.cos(angle) * 16,
-                    cy + Math.sin(angle) * 16,
-                    8,
-                    cx,
-                    cy,
-                    baseRadius + 14
-                );
-
-                if (orbState === 'listening') {
-                    orbGrad.addColorStop(0, '#ffffff');
-                    orbGrad.addColorStop(0.2, '#00f2fe');
-                    orbGrad.addColorStop(0.6, '#3b82f6');
-                    orbGrad.addColorStop(1, 'rgba(14, 165, 233, 0.1)');
-                } else if (orbState === 'thinking') {
-                    orbGrad.addColorStop(0, '#ffffff');
-                    orbGrad.addColorStop(0.25, '#c084fc');
-                    orbGrad.addColorStop(0.65, '#8b5cf6');
-                    orbGrad.addColorStop(1, 'rgba(126, 34, 206, 0.1)');
-                } else if (orbState === 'speaking') {
-                    orbGrad.addColorStop(0, '#ffffff');
-                    orbGrad.addColorStop(0.2, '#34d399');
-                    orbGrad.addColorStop(0.6, '#06b6d4');
-                    orbGrad.addColorStop(1, 'rgba(16, 185, 129, 0.1)');
-                } else if (orbState === 'executing') {
-                    orbGrad.addColorStop(0, '#ffffff');
-                    orbGrad.addColorStop(0.25, '#fbbf24');
-                    orbGrad.addColorStop(0.65, '#f59e0b');
-                    orbGrad.addColorStop(1, 'rgba(217, 119, 6, 0.1)');
-                } else {
-                    orbGrad.addColorStop(0, '#ffffff');
-                    orbGrad.addColorStop(0.3, '#38bdf8');
-                    orbGrad.addColorStop(0.7, '#1e3a8a');
-                    orbGrad.addColorStop(1, 'transparent');
-                }
-
-                ctx.beginPath();
-                ctx.arc(cx, cy, baseRadius, 0, Math.PI * 2);
-                ctx.fillStyle = orbGrad;
-                ctx.fill();
-
-                // === AVENGERS REALISTIC HUD GRAPHICS & VISUAL STYLING ===
                 if (currentPersonaId === 'ironman') {
-                    // Stark Arc Reactor Core
+                    hudCyan = 'rgba(251, 191, 36, 0.95)';
+                    hudGold = 'rgba(239, 68, 68, 0.9)';
+                    hudGlow = 'rgba(251, 191, 36, 0.45)';
+                } else if (currentPersonaId === 'thor') {
+                    hudCyan = 'rgba(56, 189, 248, 0.95)';
+                    hudGold = 'rgba(96, 165, 250, 0.85)';
+                    hudGlow = 'rgba(56, 189, 248, 0.45)';
+                } else if (currentPersonaId === 'captain') {
+                    hudCyan = 'rgba(96, 165, 250, 0.95)';
+                    hudGold = 'rgba(239, 68, 68, 0.9)';
+                    hudGlow = 'rgba(59, 130, 246, 0.4)';
+                } else if (currentPersonaId === 'spiderman') {
+                    hudCyan = 'rgba(244, 63, 94, 0.95)';
+                    hudGold = 'rgba(6, 182, 212, 0.9)';
+                    hudGlow = 'rgba(244, 63, 94, 0.45)';
+                } else if (currentPersonaId === 'hulk') {
+                    hudCyan = 'rgba(16, 185, 129, 0.95)';
+                    hudGold = 'rgba(5, 150, 105, 0.9)';
+                    hudGlow = 'rgba(16, 185, 129, 0.5)';
+                } else if (currentPersonaId === 'thanos') {
+                    hudCyan = 'rgba(192, 132, 252, 0.95)';
+                    hudGold = 'rgba(245, 158, 11, 0.85)';
+                    hudGlow = 'rgba(168, 85, 247, 0.45)';
+                } else if (currentPersonaId === 'blackwidow') {
+                    hudCyan = 'rgba(239, 68, 68, 0.95)';
+                    hudGold = 'rgba(244, 63, 94, 0.85)';
+                    hudGlow = 'rgba(239, 68, 68, 0.45)';
+                } else if (currentPersonaId === 'scarletwitch') {
+                    hudCyan = 'rgba(244, 63, 94, 0.95)';
+                    hudGold = 'rgba(190, 18, 60, 0.9)';
+                    hudGlow = 'rgba(225, 29, 72, 0.5)';
+                } else if (currentPersonaId === 'shuri') {
+                    hudCyan = 'rgba(168, 85, 247, 0.95)';
+                    hudGold = 'rgba(234, 179, 8, 0.9)';
+                    hudGlow = 'rgba(168, 85, 247, 0.45)';
+                }
+
+                // 1. Holographic Atmospheric Core Ambient Glow
+                const coreGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseRadius * 1.4);
+                coreGlow.addColorStop(0, hudGlow);
+                coreGlow.addColorStop(0.5, 'rgba(15, 23, 42, 0.4)');
+                coreGlow.addColorStop(1, 'transparent');
+                ctx.beginPath();
+                ctx.arc(cx, cy, baseRadius * 1.4, 0, Math.PI * 2);
+                ctx.fillStyle = coreGlow;
+                ctx.fill();
+
+                // 2. LAYER 1: OUTER TACHOMETER RING (Clockwise rotation)
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(angle * 0.35);
+                const rOuter = baseRadius * 1.30;
+                ctx.beginPath();
+                ctx.arc(0, 0, rOuter, 0, Math.PI * 2);
+                ctx.strokeStyle = hudCyan;
+                ctx.lineWidth = 1.2;
+                ctx.setLineDash([4, 6]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // 40 Graduated Tick Marks around outer ring
+                for (let t = 0; t < 40; t++) {
+                    const tAngle = (t * Math.PI * 2) / 40;
+                    const isMajor = t % 5 === 0;
+                    const innerLen = isMajor ? rOuter - 9 : rOuter - 4;
+                    ctx.beginPath();
+                    ctx.moveTo(Math.cos(tAngle) * innerLen, Math.sin(tAngle) * innerLen);
+                    ctx.lineTo(Math.cos(tAngle) * rOuter, Math.sin(tAngle) * rOuter);
+                    ctx.strokeStyle = isMajor ? hudGold : hudCyan;
+                    ctx.lineWidth = isMajor ? 2 : 1;
+                    ctx.stroke();
+
+                    if (isMajor) {
+                        ctx.beginPath();
+                        ctx.arc(Math.cos(tAngle) * (innerLen - 3), Math.sin(tAngle) * (innerLen - 3), 1.8, 0, Math.PI * 2);
+                        ctx.fillStyle = hudGold;
+                        ctx.fill();
+                    }
+                }
+                ctx.restore();
+
+                // 3. LAYER 2: SEGMENTED HUD BRACKET RING (Counter-Clockwise rotation)
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(-angle * 0.55);
+                const rBracket = baseRadius * 1.14;
+                for (let b = 0; b < 4; b++) {
+                    ctx.rotate(Math.PI / 2);
+                    ctx.beginPath();
+                    ctx.arc(0, 0, rBracket, -0.28, 0.28);
+                    ctx.strokeStyle = hudCyan;
+                    ctx.lineWidth = 2.8;
+                    ctx.stroke();
+
+                    // Corner bracket tips
+                    const tipX = Math.cos(0.28) * rBracket;
+                    const tipY = Math.sin(0.28) * rBracket;
+                    ctx.beginPath();
+                    ctx.arc(tipX, tipY, 2.5, 0, Math.PI * 2);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fill();
+                }
+                ctx.restore();
+
+                // 4. LAYER 3: RADIAL AUDIO EQUALIZER SPECTRUM PINS (Reacts to live voice)
+                ctx.save();
+                ctx.translate(cx, cy);
+                const rEqualizerBase = baseRadius * 0.88;
+                const barCount = 36;
+                for (let i = 0; i < barCount; i++) {
+                    const bAngle = (i * Math.PI * 2) / barCount + angle * 0.2;
+                    let intensity = 0;
+                    if (orbState === 'listening') {
+                        intensity = userVoiceVolume * (0.8 + 0.4 * Math.sin(i * 1.5 + angle * 6));
+                    } else if (orbState === 'speaking') {
+                        intensity = 0.25 + 0.25 * Math.sin(i * 0.8 + angle * 8);
+                    } else if (orbState === 'thinking') {
+                        intensity = 0.15 + 0.15 * Math.cos(i * 2 - angle * 10);
+                    } else {
+                        intensity = 0.06 + 0.04 * Math.sin(i + angle * 2);
+                    }
+                    const barLen = rEqualizerBase + (intensity * baseRadius * 0.35);
+
+                    ctx.beginPath();
+                    ctx.moveTo(Math.cos(bAngle) * rEqualizerBase, Math.sin(bAngle) * rEqualizerBase);
+                    ctx.lineTo(Math.cos(bAngle) * barLen, Math.sin(bAngle) * barLen);
+                    ctx.strokeStyle = (i % 3 === 0 ? hudGold : hudCyan);
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+                ctx.restore();
+
+                // 5. LAYER 4: HOLOGRAPHIC RADAR SCANNER SWEEP
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(angle * 1.6);
+                const radarGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, baseRadius * 1.15);
+                radarGrad.addColorStop(0, 'rgba(0, 242, 254, 0.25)');
+                radarGrad.addColorStop(1, 'transparent');
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.arc(0, 0, baseRadius * 1.15, -0.35, 0);
+                ctx.fillStyle = radarGrad;
+                ctx.fill();
+                ctx.restore();
+
+                // 6. LAYER 5: INNER ROTATING GEOMETRIC REACTOR IRIS (Hexagon / Concentric HUD Core)
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(angle * 0.75);
+                const rHex = baseRadius * 0.58;
+                ctx.beginPath();
+                for (let h = 0; h < 6; h++) {
+                    const hAngle = (h * Math.PI * 2) / 6;
+                    const hx = Math.cos(hAngle) * rHex;
+                    const hy = Math.sin(hAngle) * rHex;
+                    if (h === 0) ctx.moveTo(hx, hy);
+                    else ctx.lineTo(hx, hy);
+                }
+                ctx.closePath();
+                ctx.strokeStyle = hudCyan;
+                ctx.lineWidth = 1.8;
+                ctx.stroke();
+
+                // Crosshair targeting reticles (+)
+                ctx.beginPath();
+                ctx.moveTo(-baseRadius * 0.75, 0); ctx.lineTo(-baseRadius * 0.40, 0);
+                ctx.moveTo(baseRadius * 0.40, 0); ctx.lineTo(baseRadius * 0.75, 0);
+                ctx.moveTo(0, -baseRadius * 0.75); ctx.lineTo(0, -baseRadius * 0.40);
+                ctx.moveTo(0, baseRadius * 0.40); ctx.lineTo(0, baseRadius * 0.75);
+                ctx.strokeStyle = hudGold;
+                ctx.lineWidth = 1.8;
+                ctx.stroke();
+                ctx.restore();
+
+                // 7. LAYER 6: SIGNATURE AVENGERS & JARVIS CORE GRAPHICS
+                if (currentPersonaId === 'ironman') {
+                    // Stark Industries Arc Reactor Core
                     ctx.save();
                     ctx.translate(cx, cy);
-                    ctx.rotate(angle * 0.75);
-                    // 3 Mechanical Arc Segments
+                    ctx.rotate(angle * 0.85);
+                    // 3 Mechanical Arc Dampers
                     for (let s = 0; s < 3; s++) {
                         ctx.rotate((Math.PI * 2) / 3);
                         ctx.beginPath();
-                        ctx.arc(0, 0, baseRadius * 0.84, -0.42, 0.42);
-                        ctx.strokeStyle = 'rgba(251, 191, 36, 0.9)';
+                        ctx.arc(0, 0, baseRadius * 0.46, -0.42, 0.42);
+                        ctx.strokeStyle = '#fbbf24';
                         ctx.lineWidth = 4;
                         ctx.stroke();
 
                         ctx.beginPath();
-                        ctx.arc(0, 0, baseRadius * 0.58, -0.32, 0.32);
-                        ctx.strokeStyle = 'rgba(239, 68, 68, 0.95)';
+                        ctx.arc(0, 0, baseRadius * 0.32, -0.32, 0.32);
+                        ctx.strokeStyle = '#ef4444';
                         ctx.lineWidth = 3;
                         ctx.stroke();
                     }
-                    // Arc Reactor Center Light
+                    // Central Plasma Reactor
                     ctx.beginPath();
-                    ctx.arc(0, 0, baseRadius * 0.28, 0, Math.PI * 2);
+                    ctx.arc(0, 0, baseRadius * 0.22, 0, Math.PI * 2);
                     ctx.fillStyle = '#ffffff';
-                    ctx.shadowColor = '#fbbf24';
+                    ctx.shadowColor = '#00f2fe';
                     ctx.shadowBlur = 18;
                     ctx.fill();
+                    ctx.shadowBlur = 0;
                     ctx.restore();
                 } else if (currentPersonaId === 'thor') {
                     // Mjolnir Lightning Storm
                     ctx.save();
                     ctx.translate(cx, cy);
-                    ctx.rotate(angle * 1.1);
+                    ctx.rotate(angle * 1.2);
                     for (let l = 0; l < 5; l++) {
                         ctx.rotate((Math.PI * 2) / 5);
                         ctx.beginPath();
                         ctx.moveTo(0, 0);
-                        const midR = baseRadius * 0.52;
-                        const outR = baseRadius * 0.95 + Math.sin(angle * 6 + l) * 9;
-                        ctx.lineTo(Math.sin(angle * 8 + l) * 9, midR);
-                        ctx.lineTo(Math.cos(angle * 8 + l) * 9, outR);
-                        ctx.strokeStyle = 'rgba(56, 189, 248, 0.9)';
+                        const midR = baseRadius * 0.48;
+                        const outR = baseRadius * 0.95 + Math.sin(angle * 6 + l) * 10;
+                        ctx.lineTo(Math.sin(angle * 8 + l) * 10, midR);
+                        ctx.lineTo(Math.cos(angle * 8 + l) * 10, outR);
+                        ctx.strokeStyle = '#38bdf8';
                         ctx.lineWidth = 2.5;
+                        ctx.shadowColor = '#38bdf8';
+                        ctx.shadowBlur = 12;
                         ctx.stroke();
+                        ctx.shadowBlur = 0;
                     }
                     ctx.restore();
                 } else if (currentPersonaId === 'captain') {
@@ -2149,22 +2870,22 @@ CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sent
                     ctx.save();
                     ctx.translate(cx, cy);
                     ctx.beginPath();
-                    ctx.arc(0, 0, baseRadius * 0.92, 0, Math.PI * 2);
+                    ctx.arc(0, 0, baseRadius * 0.88, 0, Math.PI * 2);
                     ctx.strokeStyle = '#dc2626';
                     ctx.lineWidth = 5;
                     ctx.stroke();
                     ctx.beginPath();
-                    ctx.arc(0, 0, baseRadius * 0.72, 0, Math.PI * 2);
+                    ctx.arc(0, 0, baseRadius * 0.68, 0, Math.PI * 2);
                     ctx.strokeStyle = '#f1f5f9';
                     ctx.lineWidth = 4;
                     ctx.stroke();
                     ctx.beginPath();
-                    ctx.arc(0, 0, baseRadius * 0.52, 0, Math.PI * 2);
+                    ctx.arc(0, 0, baseRadius * 0.48, 0, Math.PI * 2);
                     ctx.fillStyle = '#1d4ed8';
                     ctx.fill();
                     ctx.fillStyle = '#ffffff';
                     ctx.beginPath();
-                    ctx.arc(0, 0, baseRadius * 0.2, 0, Math.PI * 2);
+                    ctx.arc(0, 0, baseRadius * 0.18, 0, Math.PI * 2);
                     ctx.fill();
                     ctx.restore();
                 } else if (currentPersonaId === 'spiderman') {
@@ -2181,7 +2902,7 @@ CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sent
                         ctx.lineWidth = 1.5;
                         ctx.stroke();
                     }
-                    [0.4, 0.7, 0.95].forEach(scale => {
+                    [0.35, 0.65, 0.95].forEach(scale => {
                         ctx.beginPath();
                         ctx.arc(0, 0, baseRadius * scale, 0, Math.PI * 2);
                         ctx.strokeStyle = 'rgba(6, 182, 212, 0.7)';
@@ -2194,74 +2915,113 @@ CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sent
                     ctx.save();
                     ctx.translate(cx, cy);
                     for (let g = 0; g < 3; g++) {
-                        const pulseR = (baseRadius * 0.4) + ((angle * 28 + g * 35) % (baseRadius * 0.7));
+                        const pulseR = (baseRadius * 0.35) + ((angle * 30 + g * 35) % (baseRadius * 0.75));
                         ctx.beginPath();
                         ctx.arc(0, 0, pulseR, 0, Math.PI * 2);
-                        ctx.strokeStyle = `rgba(16, 185, 129, ${0.85 - (pulseR / baseRadius) * 0.7})`;
+                        ctx.strokeStyle = `rgba(16, 185, 129, ${0.85 - (pulseR / baseRadius) * 0.65})`;
                         ctx.lineWidth = 4;
                         ctx.stroke();
                     }
-                    ctx.restore();
-                } else if (currentPersonaId === 'jarvis') {
-                    // Stark Holographic Reticles & Data Ring
-                    ctx.save();
-                    ctx.translate(cx, cy);
-                    ctx.rotate(angle * 0.6);
-                    ctx.beginPath();
-                    ctx.arc(0, 0, baseRadius * 0.88, 0, Math.PI * 2);
-                    ctx.strokeStyle = 'rgba(0, 242, 254, 0.8)';
-                    ctx.lineWidth = 1.5;
-                    ctx.setLineDash([8, 6]);
-                    ctx.stroke();
-                    ctx.setLineDash([]);
-                    ctx.beginPath();
-                    ctx.moveTo(-baseRadius * 0.95, 0); ctx.lineTo(-baseRadius * 0.65, 0);
-                    ctx.moveTo(baseRadius * 0.65, 0); ctx.lineTo(baseRadius * 0.95, 0);
-                    ctx.moveTo(0, -baseRadius * 0.95); ctx.lineTo(0, -baseRadius * 0.65);
-                    ctx.moveTo(0, baseRadius * 0.65); ctx.lineTo(0, baseRadius * 0.95);
-                    ctx.strokeStyle = 'rgba(234, 179, 8, 0.85)';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
                     ctx.restore();
                 } else if (currentPersonaId === 'thanos') {
                     // 6 Orbiting Infinity Stones
                     const stoneColors = ['#a855f7', '#38bdf8', '#ef4444', '#f97316', '#10b981', '#fbbf24'];
                     for (let st = 0; st < 6; st++) {
                         const stoneAngle = angle * 0.9 + (st * (Math.PI * 2 / 6));
-                        const sx = cx + Math.cos(stoneAngle) * (baseRadius * 0.85);
-                        const sy = cy + Math.sin(stoneAngle) * (baseRadius * 0.85);
+                        const sx = cx + Math.cos(stoneAngle) * (baseRadius * 0.92);
+                        const sy = cy + Math.sin(stoneAngle) * (baseRadius * 0.92);
                         ctx.beginPath();
-                        ctx.arc(sx, sy, 7, 0, Math.PI * 2);
+                        ctx.arc(sx, sy, 7.5, 0, Math.PI * 2);
                         ctx.fillStyle = stoneColors[st];
                         ctx.shadowColor = stoneColors[st];
-                        ctx.shadowBlur = 12;
+                        ctx.shadowBlur = 14;
                         ctx.fill();
                         ctx.shadowBlur = 0;
                     }
-                } else {
-                    // Default Swirling Orbiting Particle Rings
-                    const nodeCount = (orbState === 'executing' ? 6 : (orbState === 'speaking' ? 5 : 4));
-                    for (let i = 0; i < nodeCount; i++) {
-                        const nodeAngle = angle + (i * (Math.PI * 2 / nodeCount));
-                        const nx = cx + Math.cos(nodeAngle) * (baseRadius * 0.72);
-                        const ny = cy + Math.sin(nodeAngle) * (baseRadius * 0.72);
-
-                        ctx.beginPath();
-                        ctx.arc(nx, ny, 8 + Math.sin(angle * 2 + i) * 3, 0, Math.PI * 2);
-                        ctx.fillStyle = (i % 2 === 0 ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 242, 254, 0.85)');
-                        ctx.fill();
-                    }
-                }
-
-                // Concentric Energy Pulse Rings
-                if (orbState === 'speaking' || (orbState === 'listening' && userVoiceVolume > 0.08)) {
+                } else if (currentPersonaId === 'blackwidow') {
+                    // Stealth Combat HUD & Red Hourglass Core
+                    ctx.save();
+                    ctx.translate(cx, cy);
                     ctx.beginPath();
-                    const ringR = baseRadius + 16 + Math.sin(angle * 4) * 8;
-                    ctx.arc(cx, cy, ringR, 0, Math.PI * 2);
-                    ctx.strokeStyle = orbState === 'speaking' ? 'rgba(16, 185, 129, 0.5)' : 'rgba(0, 242, 254, 0.5)';
-                    ctx.lineWidth = 2;
+                    ctx.arc(0, 0, baseRadius * 0.75, 0, Math.PI * 2);
+                    ctx.strokeStyle = '#ef4444';
+                    ctx.lineWidth = 2.5;
                     ctx.stroke();
+                    // Hourglass symbol in center
+                    ctx.fillStyle = '#ef4444';
+                    ctx.shadowColor = '#ef4444';
+                    ctx.shadowBlur = 12;
+                    ctx.beginPath();
+                    ctx.moveTo(-12, -16); ctx.lineTo(12, -16); ctx.lineTo(0, 0); ctx.closePath();
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.moveTo(-12, 16); ctx.lineTo(12, 16); ctx.lineTo(0, 0); ctx.closePath();
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.restore();
+                } else if (currentPersonaId === 'scarletwitch') {
+                    // Chaos Magic Rune Rings
+                    ctx.save();
+                    ctx.translate(cx, cy);
+                    ctx.rotate(angle * 0.9);
+                    for (let r = 0; r < 4; r++) {
+                        ctx.rotate(Math.PI / 2);
+                        ctx.beginPath();
+                        ctx.arc(0, 0, baseRadius * 0.65, -0.4, 0.4);
+                        ctx.strokeStyle = '#f43f5e';
+                        ctx.lineWidth = 3.5;
+                        ctx.shadowColor = '#f43f5e';
+                        ctx.shadowBlur = 15;
+                        ctx.stroke();
+                        ctx.shadowBlur = 0;
+                    }
+                    ctx.restore();
+                } else if (currentPersonaId === 'shuri') {
+                    // Wakandan Vibranium Matrix
+                    ctx.save();
+                    ctx.translate(cx, cy);
+                    ctx.rotate(angle * 0.6);
+                    for (let sh = 0; sh < 8; sh++) {
+                        ctx.rotate(Math.PI / 4);
+                        ctx.beginPath();
+                        ctx.moveTo(0, 0); ctx.lineTo(baseRadius * 0.85, 0);
+                        ctx.strokeStyle = (sh % 2 === 0 ? '#a855f7' : '#eab308');
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    }
+                    ctx.restore();
+                } else {
+                    // Pure Classic Tony Stark JARVIS Holographic Core
+                    ctx.save();
+                    ctx.translate(cx, cy);
+                    ctx.rotate(angle * 0.85);
+                    ctx.beginPath();
+                    ctx.arc(0, 0, baseRadius * 0.42, 0, Math.PI * 2);
+                    ctx.strokeStyle = '#00f2fe';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([6, 6]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    ctx.beginPath();
+                    ctx.arc(0, 0, baseRadius * 0.24, 0, Math.PI * 2);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.shadowColor = '#00f2fe';
+                    ctx.shadowBlur = 18;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.restore();
                 }
+
+                // Center Pulsating Plasma Star (Present on all HUD modes)
+                const corePulse = (baseRadius * 0.16) + Math.sin(angle * 5) * 3;
+                ctx.beginPath();
+                ctx.arc(cx, cy, corePulse, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowColor = hudCyan;
+                ctx.shadowBlur = 15;
+                ctx.fill();
+                ctx.shadowBlur = 0;
 
                 ctx.restore();
                 requestAnimationFrame(render);
@@ -2440,7 +3200,10 @@ CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sent
                 { id: 'spiderman', regex: /^(?:hey|ok|okay|hi|hello|नमस्ते)?\s*(?:spider\s*man|spiderman|स्पाइडर\s*मैन|स्पाइडरमैन)\b[,.?!:]*\s*(.*)/i },
                 { id: 'hulk', regex: /^(?:hey|ok|okay|hi|hello|नमस्ते)?\s*(?:hulk|हल्क)\b[,.?!:]*\s*(.*)/i },
                 { id: 'jarvis', regex: /^(?:hey|ok|okay|hi|hello|नमस्ते)?\s*(?:jarvis|जार्विस)\b[,.?!:]*\s*(.*)/i },
-                { id: 'thanos', regex: /^(?:hey|ok|okay|hi|hello|नमस्ते)?\s*(?:thanos|थानोस)\b[,.?!:]*\s*(.*)/i }
+                { id: 'thanos', regex: /^(?:hey|ok|okay|hi|hello|नमस्ते)?\s*(?:thanos|थानोस)\b[,.?!:]*\s*(.*)/i },
+                { id: 'blackwidow', regex: /^(?:hey|ok|okay|hi|hello|नमस्ते)?\s*(?:black\s*widow|natasha|नताशा|ब्लैक\s*विडो)\b[,.?!:]*\s*(.*)/i },
+                { id: 'scarletwitch', regex: /^(?:hey|ok|okay|hi|hello|नमस्ते)?\s*(?:scarlet\s*witch|wanda|वांडा|स्कारलेट\s*विच)\b[,.?!:]*\s*(.*)/i },
+                { id: 'shuri', regex: /^(?:hey|ok|okay|hi|hello|नमस्ते)?\s*(?:shuri|शूरी)\b[,.?!:]*\s*(.*)/i }
             ];
 
             for (const p of avengerPatterns) {
@@ -2523,17 +3286,20 @@ CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sent
             const settingsSelect = document.getElementById('settingsLangSelect');
             if (settingsSelect && settingsSelect.value !== newLang) settingsSelect.value = newLang;
 
-            // Auto-select natural matching voice for the chosen language
-            if (newLang === 'hi-IN') {
-                currentRealVoiceId = 'swara';
-                localStorage.setItem('agent_real_voice', 'swara');
-            } else if (newLang === 'or-IN') {
-                currentRealVoiceId = 'odia_copilot';
-                localStorage.setItem('agent_real_voice', 'odia_copilot');
-            } else if (newLang === 'en-IN') {
-                if (currentRealVoiceId === 'swara' || currentRealVoiceId === 'odia_copilot') {
-                    currentRealVoiceId = 'breeze';
-                    localStorage.setItem('agent_real_voice', 'breeze');
+            // Auto-select natural matching voice for the chosen language (preserve Avengers superhero voice if selected)
+            const isAvengerHero = ['ironman', 'thor', 'captain', 'spiderman', 'hulk', 'jarvis', 'thanos'].includes(currentRealVoiceId);
+            if (!isAvengerHero) {
+                if (newLang === 'hi-IN') {
+                    currentRealVoiceId = 'swara';
+                    localStorage.setItem('agent_real_voice', 'swara');
+                } else if (newLang === 'or-IN') {
+                    currentRealVoiceId = 'odia_copilot';
+                    localStorage.setItem('agent_real_voice', 'odia_copilot');
+                } else if (newLang === 'en-IN') {
+                    if (currentRealVoiceId === 'swara' || currentRealVoiceId === 'odia_copilot') {
+                        currentRealVoiceId = 'breeze';
+                        localStorage.setItem('agent_real_voice', 'breeze');
+                    }
                 }
             }
 
@@ -2614,15 +3380,22 @@ CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sent
                 // Echo detection: check if mic heard what the agent is currently speaking
                 const isEcho = isSpeaking && (
                     spokenLower.includes(textToCheck) || 
-                    (textToCheck.length > 6 && spokenLower.slice(0, 40).includes(textToCheck))
+                    (textToCheck.length > 5 && spokenLower.includes(textToCheck.slice(0, 15))) ||
+                    (spokenLower.length > 10 && textToCheck.length > 5 && (spokenLower.includes(textToCheck.slice(-12)) || textToCheck.includes(spokenLower.slice(0, 15))))
                 );
 
-                // Instant barge-in: If user speaks while agent is talking and it's NOT an echo, interrupt agent immediately!
-                if (isSpeaking && !isEcho && (wakeCheck.detected || currentText.length >= 2)) {
-                    console.log("⚡ Instant barge-in interruption triggered by user voice:", currentText);
+                const isInterruptWord = /^(stop|wait|pause|chup|ruko|shant|suno|arre|hello|listen|hold on|cancel|bhai)/i.test(currentText.trim());
+                const timeSinceSpeechStart = Date.now() - agentSpeechStartTime;
+                const isDistinctHumanInterruption = (audioMode === 'headphones')
+                    ? (timeSinceSpeechStart > 800 && currentText.length >= 6)
+                    : (timeSinceSpeechStart > 1200 && currentText.length >= 10);
+
+                // Instant barge-in: only trigger on genuine wake words, explicit stop commands, or verified human phrases
+                if (isSpeaking && !isEcho && (wakeCheck.detected || isInterruptWord || isDistinctHumanInterruption)) {
+                    console.log("⚡ Verified barge-in interruption triggered:", currentText);
                     triggerImmediateInterruption();
                     // If user completed a distinct sentence while interrupting, commit immediately
-                    if (finalTranscript.trim().length >= 2) {
+                    if (finalTranscript.trim().length >= 3) {
                         handleUserSpeechCommit(finalTranscript.trim());
                         return;
                     }
@@ -2659,12 +3432,12 @@ CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sent
                 if (finalTranscript.trim()) {
                     handleUserSpeechCommit(finalTranscript.trim());
                 } else if (interimTranscript.trim().length >= 2) {
-                    // Ultra-fast response: Commit on 450ms pause instead of sluggish 1200ms
+                    // Smooth natural pause detection: 650ms ensures user finishes words without cutting off mid-sentence
                     speechSilenceTimeout = setTimeout(() => {
                         if (interimTranscript.trim() && !isSpeaking && inCallMode) {
                             handleUserSpeechCommit(interimTranscript.trim());
                         }
-                    }, 450);
+                    }, 650);
                 }
             };
 
@@ -2887,18 +3660,48 @@ CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sent
         // ==========================================
         // 8. AUTONOMOUS MISSION & SPEECH DISPATCHER
         // ==========================================
+        let lastCommittedPrompt = "";
+        let lastCommitTime = 0;
+        let isProcessingSpeechCommit = false;
+
         async function handleUserSpeechCommit(spokenText) {
+            const trimmed = (spokenText || "").trim();
+            if (!trimmed) return;
+
+            // RACE CONDITION & DUPLICATE COMMIT GUARD:
+            // Prevents interim transcript + final transcript rapid double-trigger
+            // which caused speech to abort right as it started speaking with a stopping sound/blip!
+            const now = Date.now();
+            const lower = trimmed.toLowerCase();
+            if (isProcessingSpeechCommit || isSpeaking) {
+                if (lower === lastCommittedPrompt.toLowerCase() || 
+                    (now - lastCommitTime < 2400 && (lastCommittedPrompt.toLowerCase().includes(lower) || lower.includes(lastCommittedPrompt.toLowerCase())))) {
+                    console.log("⚡ Suppressed rapid repeat speech commit:", trimmed);
+                    return;
+                }
+            }
+
+            if (speechSilenceTimeout) {
+                clearTimeout(speechSilenceTimeout);
+                speechSilenceTimeout = null;
+            }
+
+            lastCommittedPrompt = trimmed;
+            lastCommitTime = now;
+            isProcessingSpeechCommit = true;
+
             stopSpeechRecognition();
 
             // Wake word normalization
-            const wakeCheck = extractWakeWord(spokenText);
+            const wakeCheck = extractWakeWord(trimmed);
             if (wakeCheck.detected && (!wakeCheck.command || wakeCheck.command.length === 0)) {
                 // User called "Agent" by itself
                 const ack = "Yes! Agent is listening. What can I do for you?";
                 setAgentState('speaking', 'Agent Listening...');
-                appendTranscript('user', spokenText);
+                appendTranscript('user', trimmed);
                 appendTranscript('agent', ack);
                 speakAgentResponse(ack, () => {
+                    isProcessingSpeechCommit = false;
                     if (inCallMode && !isCallMuted && !isPushToTalkMode) {
                         startSpeechRecognition();
                     }
@@ -2906,10 +3709,10 @@ CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sent
                 return;
             }
 
-            const promptText = (wakeCheck.detected && wakeCheck.command) ? wakeCheck.command : spokenText;
+            const promptText = (wakeCheck.detected && wakeCheck.command) ? wakeCheck.command : trimmed;
 
             setAgentState('thinking', 'Processing verbal mission...');
-            appendTranscript('user', spokenText);
+            appendTranscript('user', trimmed);
 
             // Abort any prior pending cloud fetch
             if (currentAbortController) {
@@ -2922,18 +3725,24 @@ CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sent
 
             let spokenReply = "";
 
-            if (toolIntent) {
-                setAgentState('executing', `Executing: ${toolIntent.name}`);
-                playCyberPing();
+            try {
+                if (toolIntent) {
+                    setAgentState('executing', `Executing: ${toolIntent.name}`);
+                    playCyberPing();
 
-                // Execute the background mission
-                const executionResult = await executeToolMission(toolIntent);
-                logMissionToHud(toolIntent, executionResult);
+                    // Execute the background mission
+                    const executionResult = await executeToolMission(toolIntent);
+                    logMissionToHud(toolIntent, executionResult);
 
-                // Formulate voice answer with mission context
-                spokenReply = await generateAgentVoiceReply(promptText, toolIntent, executionResult);
-            } else {
-                spokenReply = await generateAgentVoiceReply(promptText, null, null);
+                    // Formulate voice answer with mission context
+                    spokenReply = await generateAgentVoiceReply(promptText, toolIntent, executionResult);
+                } else {
+                    spokenReply = await generateAgentVoiceReply(promptText, null, null);
+                }
+            } catch (err) {
+                console.warn("Speech commit dispatch error:", err);
+            } finally {
+                setTimeout(() => { isProcessingSpeechCommit = false; }, 800);
             }
 
             // If query was aborted while thinking, exit
@@ -2943,6 +3752,7 @@ CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sent
             setAgentState('speaking', `${PERSONAS[currentPersonaId].name} Speaking...`);
             appendTranscript('agent', spokenReply);
             speakAgentResponse(spokenReply, () => {
+                isProcessingSpeechCommit = false;
                 if (inCallMode && !isCallMuted && !isPushToTalkMode) {
                     startSpeechRecognition();
                 }
@@ -2967,6 +3777,32 @@ CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sent
                 return { type: 'iot_relay', target: 'relay_3_server_fan', value: turnOn, name: 'Toggle Server Fan' };
             }
 
+            // Developer Tool: Math Calculation
+            const mathMatch = lower.match(/(?:calculate|evaluate|what is|compute)\s+([0-9\.\s\+\-\*\/\(\)\^\%]+)/i);
+            if (mathMatch && mathMatch[1] && /[0-9]/.test(mathMatch[1]) && /[\+\-\*\/]/.test(mathMatch[1])) {
+                return { type: 'dev_math', expression: mathMatch[1].trim(), name: `Evaluate Math: ${mathMatch[1].trim()}` };
+            }
+
+            // Developer Tool: API Latency & Network Ping
+            if (lower.includes('ping api') || lower.includes('check latency') || lower.includes('test network') || lower.includes('ping groq') || lower.includes('check api status')) {
+                return { type: 'dev_ping', name: 'Ping APIs and Check Network Latency' };
+            }
+
+            // Developer Tool: Device Battery & Power
+            if (lower.includes('battery') || lower.includes('power level') || lower.includes('battery status')) {
+                return { type: 'dev_battery', name: 'Inspect Device Battery & Power Status' };
+            }
+
+            // Developer Tool: Audio Context & Mic Diagnostic
+            if (lower.includes('check mic') || lower.includes('audio context') || lower.includes('microphone status') || lower.includes('audio diagnostic')) {
+                return { type: 'dev_audio_diag', name: 'Inspect AudioContext & Microphone Telemetry' };
+            }
+
+            // Developer Tool: Epoch Timestamp
+            if (lower.includes('timestamp') || lower.includes('epoch time') || lower.includes('unix time')) {
+                return { type: 'dev_timestamp', name: 'Get Current Epoch Timestamp' };
+            }
+
             // IoT Telemetry Sensors
             if (lower.includes('temperature') || lower.includes('humidity') || lower.includes('sensor') || lower.includes('power draw')) {
                 return { type: 'iot_sensors', name: 'Read Environmental Sensors' };
@@ -2978,12 +3814,12 @@ CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sent
             }
 
             // Code Execution / Python Script
-            if (lower.includes('run python') || lower.includes('execute script') || lower.includes('fibonacci') || lower.includes('compile') || lower.includes('run test')) {
+            if (lower.includes('run python') || lower.includes('execute script') || lower.includes('fibonacci') || lower.includes('compile') || lower.includes('run test') || lower.includes('benchmark')) {
                 return { type: 'python_execute', prompt: text, name: 'Run Python Script in Background' };
             }
 
             // Workspace File Inspection
-            if (lower.includes('list file') || lower.includes('workspace file') || lower.includes('read readme') || lower.includes('show directory')) {
+            if (lower.includes('list file') || lower.includes('workspace file') || lower.includes('read readme') || lower.includes('show directory') || lower.includes('project file')) {
                 return { type: 'workspace_files', name: 'Inspect Project Workspace Files' };
             }
 
@@ -2992,6 +3828,67 @@ CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sent
 
         // Execute Tool in Background
         async function executeToolMission(intent) {
+            if (intent.type === 'dev_math') {
+                try {
+                    const sanitized = intent.expression.replace(/[^0-9\.\+\-\*\/\(\)\%]/g, '');
+                    const calc = Function(`'use strict'; return (${sanitized})`)();
+                    return { success: true, output: `Math Calculation Result:\n${sanitized} = ${calc}` };
+                } catch(e) {
+                    return { success: false, output: `Math evaluation error: ${e.message}` };
+                }
+            }
+
+            if (intent.type === 'dev_ping') {
+                const results = [];
+                const startG = performance.now();
+                try {
+                    const testUrl = groqKey ? "https://api.groq.com/openai/v1/models" : "https://api.groq.com";
+                    await fetch(testUrl, { method: "HEAD", mode: "no-cors", signal: AbortSignal.timeout(3000) });
+                    results.push(`Groq Cloud: ${Math.round(performance.now() - startG)}ms (Online)`);
+                } catch(e) {
+                    results.push("Groq Cloud: Offline / Unreachable");
+                }
+
+                if (bridgeOnline) {
+                    const startB = performance.now();
+                    try {
+                        await fetch(`${bridgeUrl}/api/status`, { signal: AbortSignal.timeout(1500) });
+                        results.push(`Local Bridge (8765): ${Math.round(performance.now() - startB)}ms (Online)`);
+                    } catch(e) {
+                        results.push("Local Bridge: Offline");
+                    }
+                } else {
+                    results.push("Local Bridge: Not Connected");
+                }
+                return { success: true, output: results.join('\n') };
+            }
+
+            if (intent.type === 'dev_battery') {
+                if ('getBattery' in navigator) {
+                    try {
+                        const battery = await navigator.getBattery();
+                        const level = Math.round(battery.level * 100);
+                        const charging = battery.charging ? "Plugged in / Charging" : "On Battery";
+                        return { success: true, output: `Device Battery: ${level}%\nState: ${charging}` };
+                    } catch(e) {}
+                }
+                return { success: true, output: "Battery Status API is not available on this browser." };
+            }
+
+            if (intent.type === 'dev_audio_diag') {
+                const ctxState = audioCtx ? audioCtx.state : 'Not initialized';
+                const sRate = audioCtx ? `${audioCtx.sampleRate} Hz` : 'N/A';
+                const recState = isVoiceProcessing ? 'Processing Speech' : (recognition ? 'Listening' : 'Idle');
+                const voicesCount = window.speechSynthesis ? window.speechSynthesis.getVoices().length : 0;
+                return { success: true, output: `AudioContext: ${ctxState} (${sRate})\nSpeech Recognition: ${recState}\nInstalled TTS Voices: ${voicesCount}` };
+            }
+
+            if (intent.type === 'dev_timestamp') {
+                const now = Date.now();
+                const iso = new Date().toISOString();
+                const epochSec = Math.floor(now / 1000);
+                return { success: true, output: `Unix Epoch (ms): ${now}\nUnix Epoch (s): ${epochSec}\nISO 8601: ${iso}` };
+            }
             if (intent.type === 'iot_relay') {
                 if (bridgeOnline) {
                     try {
@@ -3117,8 +4014,13 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
             let langInstruction = "";
             if (currentLanguage === 'hi-IN') {
                 langInstruction = "\nCRITICAL LANGUAGE INSTRUCTION: The user selected HINDI. You MUST respond ONLY in natural conversational Hindi (हिंदी - Devanagari script). Keep your answer ultra-short (1-2 sentences) so it speaks instantly.";
-            } else if (currentLanguage === 'or-IN') {
-                langInstruction = "\nCRITICAL LANGUAGE INSTRUCTION: The user selected ODIA (ଓଡ଼ିଆ). You MUST respond ONLY in natural conversational Odia (ଓଡ଼ିଆ script). Keep your answer ultra-short (1-2 sentences) so it speaks instantly.";
+            } else if (currentLanguage === 'or-IN' || /[\u0B00-\u0B7F]/.test(userPrompt)) {
+                langInstruction = `
+CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
+- You possess master-level fluent knowledge of the Odia language (ଓଡ଼ିଆ), Odisha's rich heritage, Bhubaneswar, Puri, Cuttack, Konark, science, technology, mathematics, programming, and general knowledge.
+- Respond ONLY in authentic, grammatically correct, natural conversational Odia (ଓଡ଼ିଆ script).
+- Use respectful, natural Odia phrasing: 'ଆଜ୍ଞା' (Sir/Honorific), 'ଆପଣ' (Respectful You), 'ନମସ୍କାର' (Greetings), 'ଧନ୍ୟବାଦ' (Thank you), 'ମୁଁ ଆପଣଙ୍କୁ ସାହାଯ୍ୟ କରିବାକୁ ପ୍ରସ୍ତୁତ' (I am ready to help you), 'କୁହନ୍ତୁ' (Please tell).
+- Answer with deep intelligence, clarity, and authority in fluent Odia. Keep the voice response under 1-2 natural sentences so it speaks smoothly.`;
             } else if (currentLanguage === 'en-IN') {
                 langInstruction = "\nCRITICAL LANGUAGE INSTRUCTION: Respond in clear, concise English. Keep answer under 1-2 sentences.";
             } else {
@@ -3177,16 +4079,21 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                         localStorage.setItem('dots_groq_model', 'llama-3.1-8b-instant');
                     }
 
-                    const modelsToTry = [
+                    const isOdiaQuery = currentLanguage === 'or-IN' || /[\u0B00-\u0B7F]/.test(userPrompt);
+                    const modelsToTry = isOdiaQuery ? [
+                        "llama-3.3-70b-versatile",
+                        "qwen-2.5-32b",
+                        "deepseek-r1-distill-llama-70b",
+                        activeModel,
+                        "llama-3.1-8b-instant"
+                    ] : [
                         activeModel,
                         "llama-3.1-8b-instant",
                         "llama-3.3-70b-versatile",
                         "deepseek-r1-distill-llama-70b",
                         "gemma2-9b-it",
                         "mistral-saba-24b",
-                        "qwen-2.5-32b",
-                        "llama3-70b-8192",
-                        "llama3-8b-8192"
+                        "qwen-2.5-32b"
                     ];
                     // Strict filter: never use moderation/safeguard models for chat
                     const uniqueModels = [...new Set(modelsToTry.filter(m => !m.includes('safeguard') && !m.includes('guard')))];
@@ -3371,8 +4278,9 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
 
             const vMeta = REAL_VOICES[currentRealVoiceId] || REAL_VOICES.arbor;
 
-            // Full-Duplex Barge-In: keep speech recognition active while agent talks so user can interrupt anytime
-            if (inCallMode && !isCallMuted && !isPushToTalkMode) {
+            // Full-Duplex Barge-In: In headphones mode, keep speech recognition active for seamless voice interruption.
+            // In speakerphone mode, recognition cleanly resumes via onComplete / finishOnce to prevent speaker feedback loop.
+            if (audioMode === 'headphones' && inCallMode && !isCallMuted && !isPushToTalkMode) {
                 setTimeout(() => {
                     if (isSpeaking && inCallMode && !isCallMuted && !isPushToTalkMode) {
                         try {
@@ -3381,7 +4289,7 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                             }
                         } catch(e) {}
                     }
-                }, 250);
+                }, 350);
             }
 
             // STRATEGY 1: Real OpenAI HD Neural Audio Stream (if OpenAI API Key is provided)
@@ -3452,6 +4360,82 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
             fallbackWebSpeechSynthesis(cleanSpeech, vMeta, onComplete);
         }
 
+        // ==========================================
+        // 10.01 MULTILINGUAL PHONETIC TRANSLITERATION ENGINE
+        // (Guarantees audible Hindi/Odia character speech even on English-only OS voice engines)
+        // ==========================================
+        function devanagariToPhonetic(str) {
+            const devMap = {
+                'क':'k', 'ख':'kh', 'ग':'g', 'घ':'gh', 'ङ':'ng',
+                'च':'ch', 'छ':'chh', 'ज':'j', 'झ':'jh', 'ञ':'ny',
+                'ट':'t', 'ठ':'th', 'ड':'d', 'ढ':'dh', 'ण':'n',
+                'त':'t', 'थ':'th', 'द':'d', 'ध':'dh', 'न':'n',
+                'प':'p', 'फ':'f', 'ब':'b', 'भ':'bh', 'म':'m',
+                'य':'y', 'र':'r', 'ल':'l', 'व':'v', 'श':'sh',
+                'ष':'sh', 'स':'s', 'ह':'h',
+                'ा':'aa', 'ि':'i', 'ी':'ee', 'ु':'u', 'ू':'oo',
+                'े':'e', 'ै':'ai', 'ो':'o', 'ौ':'au', 'ॉ':'o', 'ॅ':'e', 'ं':'n',
+                'ँ':'n', 'ः':'h', '्':'', '़':'',
+                'अ':'a', 'आ':'aa', 'इ':'i', 'ई':'ee', 'उ':'u',
+                'ऊ':'oo', 'ए':'e', 'ऐ':'ai', 'ओ':'o', 'औ':'au', 'ऑ':'o', 'ऍ':'e',
+                'ऋ':'ri', '।':'.', '०':'0', '१':'1', '२':'2', '३':'3', '४':'4', '५':'5', '६':'6', '७':'7', '८':'8', '९':'9'
+            };
+            let out = '';
+            for (let i = 0; i < str.length; i++) {
+                const c = str[i];
+                out += (devMap[c] !== undefined ? devMap[c] : c);
+            }
+            return out;
+        }
+
+        function odiaToPhonetic(str) {
+            const odMap = {
+                'କ':'k', 'ଖ':'kh', 'ଗ':'g', 'ଘ':'gh', 'ଙ':'ng',
+                'ଚ':'ch', 'ଛ':'chh', 'ଜ':'j', 'ଝ':'jh', 'ଞ':'ny',
+                'ଟ':'t', 'ଠ':'th', 'ଡ':'d', 'ଢ':'dh', 'ଣ':'n',
+                'ତ':'t', 'ଥ':'th', 'ଦ':'d', 'ଧ':'dh', 'ନ':'n',
+                'ପ':'p', 'ଫ':'ph', 'ବ':'b', 'ଭ':'bh', 'ମ':'m',
+                'ଯ':'y', 'ୟ':'y', 'ର':'r', 'ଲ':'l', 'ଳ':'l', 'ୱ':'w', 'ଶ':'sh',
+                'ଷ':'sh', 'ସ':'s', 'ହ':'h', 'ଡ଼':'d', 'ଢ଼':'dh', 'କ୍ଷ':'ksh',
+                'ା':'aa', 'ି':'i', 'ୀ':'ee', 'ୁ':'u', 'ୂ':'oo',
+                'ୃ':'ru', 'େ':'e', 'ୈ':'ai', 'ୋ':'o', 'ୌ':'au', 'ଂ':'n',
+                'ଁ':'n', 'ଃ':'h', '୍':'', '।':'.',
+                'ଅ':'a', 'ଆ':'aa', 'ଇ':'i', 'ଈ':'ee', 'ଉ':'u',
+                'ଊ':'oo', 'ଏ':'e', 'ଐ':'ai', 'ଓ':'o', 'ଔ':'au',
+                '୦':'0', '୧':'1', '୨':'2', '୩':'3', '୪':'4', '୫':'5', '୬':'6', '୭':'7', '୮':'8', '୯':'9'
+            };
+            let out = '';
+            for (let i = 0; i < str.length; i++) {
+                const c = str[i];
+                out += (odMap[c] !== undefined ? odMap[c] : c);
+            }
+            return out;
+        }
+
+        // Voice Gender Inspector (Enforces Real Male Voice for Male Heroes & Real Female Voice for Female Heroes)
+        function getVoiceGender(v) {
+            if (!v) return 'neutral';
+            const name = (v.name || '').toLowerCase();
+            const femaleKeywords = [
+                'swara', 'zira', 'jenny', 'aria', 'samantha', 'victoria', 'karen', 'denise', 
+                'katja', 'nanami', 'sunhi', 'female', 'woman', 'girl', 'helena', 'laura', 
+                'monica', 'neerja', 'kalpana', 'catherine', 'hazel', 'susan', 'heera', 'priya'
+            ];
+            const maleKeywords = [
+                'madhur', 'guy', 'david', 'mark', 'george', 'christopher', 'eric', 'keita', 
+                'injoon', 'henri', 'conrad', 'stefan', 'male', 'man', 'boy', 'raul', 'pablo', 
+                'hector', 'james', 'richard', 'hemant', 'ravi', 'kunal'
+            ];
+            if (femaleKeywords.some(k => name.includes(k))) return 'female';
+            if (maleKeywords.some(k => name.includes(k))) return 'male';
+            if (v.gender) {
+                const g = String(v.gender).toLowerCase();
+                if (g.includes('female')) return 'female';
+                if (g.includes('male')) return 'male';
+            }
+            return 'neutral';
+        }
+
         function fallbackWebSpeechSynthesis(cleanSpeech, vMeta, onComplete) {
             if (!('speechSynthesis' in window)) {
                 if (onComplete) onComplete();
@@ -3464,15 +4448,7 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                 }
             } catch(e) {}
 
-            window.speechSynthesis.cancel();
             if (speechSafetyTimer) clearTimeout(speechSafetyTimer);
-
-            const utter = new SpeechSynthesisUtterance(cleanSpeech);
-            currentUtterance = utter;
-            window.activeUtterances.push(utter); // Prevent iOS Safari early garbage collection
-
-            agentSpeechStartTime = Date.now();
-            currentAgentSpokenText = cleanSpeech.toLowerCase();
 
             // Detect language script from text characters
             const hasHindi = /[\u0900-\u097F]/.test(cleanSpeech);
@@ -3481,56 +4457,93 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
             let targetLang = vMeta.lang || 'en';
             if (hasOdia || currentLanguage === 'or-IN') {
                 targetLang = 'or';
-                utter.lang = 'or-IN';
             } else if (hasHindi || currentLanguage === 'hi-IN') {
                 targetLang = 'hi';
-                utter.lang = 'hi-IN';
-            } else {
-                utter.lang = (targetLang === 'en' ? 'en-US' : (targetLang + '-US'));
             }
 
-            // Match best natural voice by language and gender
+            const LANG_MAP = {
+                hi: 'hi-IN',
+                or: 'hi-IN', // Standard browsers synthesize Indic phonetics via Hindi engine
+                en: 'en-US',
+                ja: 'ja-JP',
+                ko: 'ko-KR',
+                es: 'es-ES',
+                fr: 'fr-FR',
+                de: 'de-DE'
+            };
+            const defaultLangCode = LANG_MAP[targetLang] || 'en-US';
+            const targetGender = vMeta.gender || 'male';
+
+            // Match best natural voice by language and STRICT GENDER MATCHING
             if (voicesList.length === 0) {
                 voicesList = window.speechSynthesis.getVoices();
             }
 
             let bestVoice = null;
             if (voicesList.length > 0) {
-                // 1. Try exact target language (hi or or) with natural/online/Google
-                bestVoice = voicesList.find(v => v.lang.toLowerCase().startsWith(targetLang) && 
-                    (v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Google') || v.name.includes('Swara') || v.name.includes('Madhur')));
+                const langVoices = voicesList.filter(v => v.lang.toLowerCase().startsWith(targetLang));
 
-                // 2. Any voice matching target language
-                if (!bestVoice) {
-                    bestVoice = voicesList.find(v => v.lang.toLowerCase().startsWith(targetLang));
+                // Step 1: Matching target language + strict target gender (e.g. Madhur for Male, Swara for Female)
+                if (langVoices.length > 0) {
+                    bestVoice = langVoices.find(v => getVoiceGender(v) === targetGender && 
+                        (v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Google') || (targetGender === 'male' ? v.name.includes('Madhur') : v.name.includes('Swara'))));
+                    if (!bestVoice) {
+                        bestVoice = langVoices.find(v => getVoiceGender(v) === targetGender);
+                    }
                 }
 
-                // 3. Fallback for Odia if no native Odia voice exists in browser -> use Hindi/Indic synthesizer
+                // Step 2: Odia fallback to Indic voices with gender match
                 if (!bestVoice && targetLang === 'or') {
-                    bestVoice = voicesList.find(v => v.lang.toLowerCase().startsWith('hi') || v.lang.toLowerCase().startsWith('bn'));
+                    const indicVoices = voicesList.filter(v => v.lang.toLowerCase().startsWith('hi') || v.lang.toLowerCase().startsWith('bn'));
+                    bestVoice = indicVoices.find(v => getVoiceGender(v) === targetGender && (v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Google')));
+                    if (!bestVoice) {
+                        bestVoice = indicVoices.find(v => getVoiceGender(v) === targetGender);
+                    }
                 }
 
-                // 4. Default gender voice for other languages
-                if (!bestVoice && !hasHindi && !hasOdia) {
-                    const genderNames = vMeta.gender === 'female' 
-                        ? ['Jenny', 'Aria', 'Samantha', 'Zira', 'Nanami', 'SunHi', 'Denise', 'Katja'] 
-                        : ['Guy', 'Christopher', 'Eric', 'David', 'Keita', 'InJoon', 'Henri', 'Conrad'];
-                    bestVoice = voicesList.find(v => v.lang.startsWith(targetLang) && genderNames.some(n => v.name.includes(n)));
-                }
-
-                // 5. Global fallback
-                if (!bestVoice && !hasHindi && !hasOdia) {
-                    bestVoice = voicesList.find(v => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google'))) || voicesList[0];
-                }
-
+                // Step 3: English / OS voices with STRICT GENDER MATCH
+                // (e.g. Microsoft David / Guy for Male heroes, Microsoft Zira / Jenny for Female heroes)
                 if (!bestVoice) {
-                    bestVoice = voicesList[0];
+                    const engVoices = voicesList.filter(v => v.lang.toLowerCase().startsWith('en'));
+                    bestVoice = engVoices.find(v => getVoiceGender(v) === targetGender && 
+                        (v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Google') || (targetGender === 'male' ? (v.name.includes('David') || v.name.includes('Guy')) : (v.name.includes('Zira') || v.name.includes('Jenny')))));
+                    if (!bestVoice) {
+                        bestVoice = engVoices.find(v => getVoiceGender(v) === targetGender);
+                    }
+                }
+
+                // Step 4: Fallback if no exact gender-match exists
+                if (!bestVoice) {
+                    bestVoice = langVoices[0] || voicesList[0];
                 }
             }
 
-            if (bestVoice) utter.voice = bestVoice;
-            utter.rate = vMeta.rate || 1.1; // 1.1x brisk natural cadence
-            utter.pitch = vMeta.pitch || 1.0;
+            const isNativeIndicVoice = bestVoice && (bestVoice.lang.toLowerCase().startsWith('hi') || bestVoice.lang.toLowerCase().startsWith('or') || bestVoice.lang.toLowerCase().startsWith('bn') || bestVoice.lang.toLowerCase().startsWith('mr'));
+
+            // Prepare spoken text: if OS only has English voices installed, transliterate Devanagari/Odia to Roman phonetics
+            // so English SAPI voices speak it aloud instead of staying mute!
+            let utterText = cleanSpeech;
+            if (!isNativeIndicVoice) {
+                if (hasOdia) utterText = odiaToPhonetic(cleanSpeech);
+                else if (hasHindi) utterText = devanagariToPhonetic(cleanSpeech);
+            }
+
+            const utter = new SpeechSynthesisUtterance(utterText);
+            currentUtterance = utter;
+            window.activeUtterances.push(utter); // Prevent iOS Safari early garbage collection
+
+            agentSpeechStartTime = Date.now();
+            currentAgentSpokenText = cleanSpeech.toLowerCase();
+
+            if (bestVoice) {
+                utter.voice = bestVoice;
+                utter.lang = bestVoice.lang;
+            } else {
+                utter.lang = defaultLangCode;
+            }
+
+            utter.rate = vMeta.rate || 1.05;
+            utter.pitch = vMeta.pitch || (targetGender === 'male' ? 0.94 : 1.08);
 
             let finished = false;
             const finishOnce = () => {
@@ -3541,6 +4554,9 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                 window.activeUtterances = window.activeUtterances.filter(u => u !== utter);
                 setAgentState('listening', isPushToTalkMode ? 'Push-to-Talk Standby' : 'Listening to your voice...');
                 document.getElementById('callSubtitles').innerText = "Speak anytime... (or type below)";
+                if (inCallMode && !isCallMuted && !isPushToTalkMode) {
+                    startSpeechRecognition();
+                }
                 if (onComplete) onComplete();
             };
 
@@ -3552,12 +4568,27 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
             };
 
             utter.onend = finishOnce;
+
+            let retryDone = false;
             utter.onerror = (e) => {
-                console.warn("Speech synthesis notice:", e);
+                console.warn("Speech synthesis notice:", e?.error || e);
+                if (!retryDone && (e?.error === 'language-unavailable' || e?.error === 'voice-unavailable' || e?.error === 'synthesis-failed')) {
+                    retryDone = true;
+                    try {
+                        const fallbackUtter = new SpeechSynthesisUtterance(utterText);
+                        fallbackUtter.rate = vMeta.rate || 1.0;
+                        fallbackUtter.pitch = vMeta.pitch || 1.0;
+                        fallbackUtter.lang = 'en-US';
+                        fallbackUtter.onend = finishOnce;
+                        fallbackUtter.onerror = () => finishOnce();
+                        window.speechSynthesis.speak(fallbackUtter);
+                        return;
+                    } catch(err) {}
+                }
                 finishOnce();
             };
 
-            const wordCount = cleanSpeech.split(/\s+/).length;
+            const wordCount = utterText.split(/\s+/).length;
             const maxDurationMs = Math.max(3500, wordCount * 550 + 2000);
             speechSafetyTimer = setTimeout(() => {
                 if (isSpeaking) {
@@ -3565,7 +4596,7 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                 }
             }, maxDurationMs);
 
-            setTimeout(() => {
+            const startSpeaking = () => {
                 try {
                     if (window.speechSynthesis.paused) {
                         window.speechSynthesis.resume();
@@ -3575,7 +4606,15 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                     console.error("Speak execution notice:", err);
                     finishOnce();
                 }
-            }, 35);
+            };
+
+            // Avoid Chrome cancel collision: if already speaking, cancel with brief settling delay, else speak immediately
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+                setTimeout(startSpeaking, 90);
+            } else {
+                startSpeaking();
+            }
         }
 
         function changeRealVoice() {
@@ -3597,8 +4636,10 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                 const p = PERSONAS[currentPersonaId];
                 document.body.className = (p.theme ? ('theme-' + p.theme) : '');
                 playHeroSound(currentPersonaId);
-                speakAgentResponse(p.greeting);
-                appendTranscript('agent', p.greeting);
+                setTimeout(() => {
+                    speakAgentResponse(p.greeting);
+                    appendTranscript('agent', p.greeting);
+                }, 180);
                 return;
             }
 
@@ -3645,8 +4686,10 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
         function testVoiceAudioOutput() {
             playHeroSound(currentPersonaId);
             const p = PERSONAS[currentPersonaId] || PERSONAS.ironman;
-            speakAgentResponse(p.greeting);
-            appendTranscript('agent', p.greeting);
+            setTimeout(() => {
+                speakAgentResponse(p.greeting);
+                appendTranscript('agent', p.greeting);
+            }, 180);
         }
 
         // ==========================================
@@ -3664,10 +4707,21 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
             document.getElementById('tabBtnMissions').classList.toggle('active', tab === 'missions');
             document.getElementById('tabBtnIot').classList.toggle('active', tab === 'iot');
             document.getElementById('tabBtnTranscript').classList.toggle('active', tab === 'transcript');
+            document.getElementById('tabBtnDevTools')?.classList.toggle('active', tab === 'devtools');
 
             document.getElementById('hudTabContentMissions').style.display = (tab === 'missions' ? 'flex' : 'none');
             document.getElementById('hudTabContentIot').style.display = (tab === 'iot' ? 'flex' : 'none');
             document.getElementById('hudTabContentTranscript').style.display = (tab === 'transcript' ? 'flex' : 'none');
+            const dtEl = document.getElementById('hudTabContentDevTools');
+            if (dtEl) {
+                dtEl.style.display = (tab === 'devtools' ? 'flex' : 'none');
+                if (tab === 'devtools') {
+                    updatePromptInspector();
+                    populateDevTtsVoices();
+                    refreshDevEpoch();
+                    updateAudioDiagDisplay();
+                }
+            }
         }
 
         function logMissionToHud(intent, result) {
@@ -3908,8 +4962,10 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
             playHeroSound(currentPersonaId);
 
             // Announce superhero greeting
-            speakAgentResponse(p.greeting);
-            appendTranscript('agent', p.greeting);
+            setTimeout(() => {
+                speakAgentResponse(p.greeting);
+                appendTranscript('agent', p.greeting);
+            }, 180);
         }
 
         function openSettingsModal() {
@@ -4417,10 +5473,491 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                 } else if (heroId === 'thanos') {
                     // Infinity Stones cosmic surge
                     playHarmonicChime([65.4, 98.0, 130.8, 196.0]);
+                } else if (heroId === 'blackwidow') {
+                    // Electro-baton stun shock
+                    playHarmonicChime([880, 1320, 1760]);
+                } else if (heroId === 'scarletwitch') {
+                    // Chaos magic mystic resonance
+                    playHarmonicChime([329.63, 440, 523.25, 659.25]);
+                } else if (heroId === 'shuri') {
+                    // Wakandan Vibranium kinetic blast
+                    playHarmonicChime([440, 659.25, 1318.5]);
                 } else {
                     playHarmonicChime([523.25, 659.25]);
                 }
             } catch(e) {}
+        }
+
+        // ==========================================
+        // 14. ADVANCED DEVELOPER TOOLS WORKBENCH SUITE
+        // ==========================================
+        let currentDevSubTab = 'code';
+
+        function openDevToolsTab() {
+            if (window.innerWidth <= 960) {
+                switchMobileView('hud');
+            }
+            switchHudTab('devtools');
+        }
+
+        function switchDevSubTab(subTab) {
+            currentDevSubTab = subTab;
+            const subTabs = ['code', 'api', 'audio', 'tts', 'prompt', 'utils'];
+            subTabs.forEach(t => {
+                const btn = document.getElementById(`btnDevSub${t.charAt(0).toUpperCase() + t.slice(1)}`);
+                const panel = document.getElementById(`devPanel${t.charAt(0).toUpperCase() + t.slice(1)}`);
+                if (btn) btn.classList.toggle('active', t === subTab);
+                if (panel) panel.style.display = (t === subTab ? 'flex' : 'none');
+            });
+
+            if (subTab === 'prompt') updatePromptInspector();
+            if (subTab === 'tts') populateDevTtsVoices();
+            if (subTab === 'utils') refreshDevEpoch();
+            if (subTab === 'audio') updateAudioDiagDisplay();
+        }
+
+        const DEV_SNIPPETS = {
+            fibonacci: {
+                lang: 'python',
+                code: `# Fibonacci sequence computation benchmark\ndef fib(n):\n    a, b = 0, 1\n    res = []\n    for _ in range(n):\n        res.append(a)\n        a, b = b, a + b\n    return res\n\nprint("Calculated Fibonacci (10 terms):", fib(10))\nprint("Status: Execution clean.")`
+            },
+            telemetry: {
+                lang: 'python',
+                code: `# Local hardware and system telemetry\nimport platform, os, shutil\ntotal, used, free = shutil.disk_usage('.')\nprint(f"OS: {platform.system()} {platform.release()} ({platform.machine()})")\nprint(f"Python: {platform.python_version()} | CPU Cores: {os.cpu_count()}")\nprint(f"Free Disk: {round(free / (1024**3), 2)} GB / {round(total / (1024**3), 2)} GB")`
+            },
+            files: {
+                lang: 'python',
+                code: `# Inspect workspace project directory\nimport os\nfiles = sorted([f for f in os.listdir('.') if os.path.isfile(f)])\nprint(f"Workspace contains {len(files)} files:")\nfor f in files[:8]:\n    size_kb = round(os.path.getsize(f) / 1024, 1)\n    print(f"  • {f} ({size_kb} KB)")`
+            },
+            prime: {
+                lang: 'python',
+                code: `# Prime number sieve\ndef primes(limit):\n    sieve = [True] * limit\n    for i in range(2, int(limit**0.5)+1):\n        if sieve[i]:\n            for j in range(i*i, limit, i): sieve[j] = False\n    return [i for i in range(2, limit) if sieve[i]]\n\nprint("Primes under 50:", primes(50))`
+            },
+            audiocontext: {
+                lang: 'javascript',
+                code: `// AudioContext and Web Speech state\nconst ctx = window.audioCtx || (window.AudioContext ? new AudioContext() : null);\nconsole.log("AudioContext State:", ctx ? ctx.state : "Not created");\nconsole.log("Sample Rate:", ctx ? ctx.sampleRate + " Hz" : "N/A");\nconsole.log("SpeechSynthesis available:", 'speechSynthesis' in window);\nconsole.log("SpeechRecognition available:", ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window));`
+            },
+            voices: {
+                lang: 'javascript',
+                code: `// Enumerate all browser TTS voices\nconst voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];\nconsole.log("Total voices detected:", voices.length);\nvoices.slice(0, 12).forEach((v, i) => {\n    console.log(\`[\${i+1}] \${v.name} (\${v.lang}) \${v.default ? '★ DEFAULT' : ''}\`);\n});`
+            }
+        };
+
+        function onDevLangChange() {
+            const lang = document.getElementById('devCodeLangSelect').value;
+            const editor = document.getElementById('devCodeEditor');
+            if (lang === 'javascript' && (!editor.value || editor.value.startsWith('#'))) {
+                loadDevSnippet('audiocontext');
+            } else if (lang === 'python' && (!editor.value || editor.value.startsWith('//'))) {
+                loadDevSnippet('fibonacci');
+            }
+        }
+
+        function loadDevSnippet(snippetId) {
+            const snip = DEV_SNIPPETS[snippetId];
+            if (!snip) return;
+            const langSelect = document.getElementById('devCodeLangSelect');
+            const editor = document.getElementById('devCodeEditor');
+            if (langSelect) langSelect.value = snip.lang;
+            if (editor) editor.value = snip.code;
+        }
+
+        async function runDevCode() {
+            const lang = document.getElementById('devCodeLangSelect').value;
+            const code = document.getElementById('devCodeEditor').value.trim();
+            const outputEl = document.getElementById('devTerminalOutput');
+            const statusEl = document.getElementById('devExecStatus');
+            const durationEl = document.getElementById('devExecDuration');
+
+            if (!code) {
+                outputEl.innerText = "Error: Code buffer is empty. Enter or select code to execute.";
+                return;
+            }
+
+            statusEl.innerText = "Executing...";
+            durationEl.innerText = "...";
+            const startT = performance.now();
+
+            if (lang === 'javascript') {
+                const logs = [];
+                const origLog = console.log;
+                const origWarn = console.warn;
+                const origErr = console.error;
+                try {
+                    console.log = (...args) => logs.push(args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' '));
+                    console.warn = (...args) => logs.push('[WARN] ' + args.join(' '));
+                    console.error = (...args) => logs.push('[ERR] ' + args.join(' '));
+
+                    const result = new Function(code)();
+                    if (result !== undefined) logs.push(`[RETURN] ${typeof result === 'object' ? JSON.stringify(result, null, 2) : String(result)}`);
+                    
+                    const duration = Math.round(performance.now() - startT);
+                    statusEl.innerText = "Status: 0 (OK)";
+                    durationEl.innerText = `${duration} ms`;
+                    outputEl.innerText = logs.length > 0 ? logs.join('\n') : "Code executed successfully (no stdout logged).";
+                    outputEl.style.color = "#10b981";
+                } catch (err) {
+                    const duration = Math.round(performance.now() - startT);
+                    statusEl.innerText = "Status: Error";
+                    durationEl.innerText = `${duration} ms`;
+                    outputEl.innerText = `[JavaScript Exception]\n${err.stack || err.message}`;
+                    outputEl.style.color = "#f43f5e";
+                } finally {
+                    console.log = origLog;
+                    console.warn = origWarn;
+                    console.error = origErr;
+                }
+                return;
+            }
+
+            // Python Execution
+            if (bridgeOnline) {
+                try {
+                    const res = await fetch(`${bridgeUrl}/api/execute`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ code: code, description: "Dev Tools REPL Execution" }),
+                        signal: AbortSignal.timeout(15000)
+                    });
+                    const data = await res.json();
+                    const duration = Math.round(performance.now() - startT);
+                    durationEl.innerText = `${duration} ms`;
+
+                    if (data.success) {
+                        statusEl.innerText = "Status: 0 (OK via Python Bridge)";
+                        outputEl.innerText = data.mission.result.stdout || "Execution finished clean (0 output).";
+                        outputEl.style.color = "#10b981";
+                    } else {
+                        statusEl.innerText = "Status: Non-zero Return Code";
+                        outputEl.innerText = data.mission.result.stderr || data.mission.result.stdout || "Error during Python execution.";
+                        outputEl.style.color = "#f43f5e";
+                    }
+                } catch(e) {
+                    const duration = Math.round(performance.now() - startT);
+                    durationEl.innerText = `${duration} ms`;
+                    statusEl.innerText = "Status: Bridge Error";
+                    outputEl.innerText = `Bridge communication failed: ${e.message}\nMake sure 'launch_agent.bat' is running on port 8765.`;
+                    outputEl.style.color = "#f43f5e";
+                }
+            } else {
+                // Simulated Python execution fallback
+                const duration = Math.round(performance.now() - startT + 12);
+                durationEl.innerText = `${duration} ms`;
+                statusEl.innerText = "Status: Simulated (Start Bridge for Local Python)";
+                if (code.includes('fib')) {
+                    outputEl.innerText = "Calculated Fibonacci (10 terms): [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]\nStatus: Execution clean. (Simulated Python Runner)";
+                } else if (code.includes('primes')) {
+                    outputEl.innerText = "Primes under 50: [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]\n(Simulated Python Runner)";
+                } else {
+                    outputEl.innerText = `Executed Python block.\nCode: ${code.slice(0, 80)}...\nTip: Launch 'launch_agent.bat' on your PC to execute real native Python on port 8765.`;
+                }
+                outputEl.style.color = "#38bdf8";
+            }
+        }
+
+        function clearDevCode() {
+            document.getElementById('devCodeEditor').value = '';
+            document.getElementById('devTerminalOutput').innerText = '# Terminal output cleared.';
+            document.getElementById('devExecStatus').innerText = 'Terminal Output: Ready';
+            document.getElementById('devExecDuration').innerText = '-- ms';
+        }
+
+        function copyDevOutput() {
+            const text = document.getElementById('devTerminalOutput').innerText;
+            navigator.clipboard.writeText(text);
+            const statusEl = document.getElementById('devExecStatus');
+            const prev = statusEl.innerText;
+            statusEl.innerText = 'Copied to clipboard!';
+            setTimeout(() => statusEl.innerText = prev, 1800);
+        }
+
+        // ==========================================
+        // API & NETWORK LATENCY PING
+        // ==========================================
+        async function pingAllEndpoints() {
+            // Groq
+            const groqTag = document.getElementById('apiStatusGroqTag');
+            const groqLat = document.getElementById('apiLatencyGroq');
+            if (groqTag && groqLat) {
+                groqTag.innerText = "PINGING...";
+                groqTag.className = "mission-tag script";
+                const startG = performance.now();
+                try {
+                    const url = groqKey ? "https://api.groq.com/openai/v1/models" : "https://api.groq.com";
+                    const headers = groqKey ? { "Authorization": `Bearer ${groqKey}` } : {};
+                    await fetch(url, { headers, mode: groqKey ? "cors" : "no-cors", signal: AbortSignal.timeout(4000) });
+                    const dur = Math.round(performance.now() - startG);
+                    groqTag.innerText = groqKey ? "AUTHENTICATED" : "REACHABLE";
+                    groqTag.className = "mission-tag iot";
+                    groqLat.innerText = `${dur} ms`;
+                } catch(e) {
+                    groqTag.innerText = "FAILED";
+                    groqTag.className = "mission-tag telemetry";
+                    groqLat.innerText = "Timeout / Error";
+                }
+            }
+
+            // Bridge
+            const brTag = document.getElementById('apiStatusBridgeTag');
+            const brLat = document.getElementById('apiLatencyBridge');
+            if (brTag && brLat) {
+                brTag.innerText = "PROBING...";
+                const startB = performance.now();
+                try {
+                    const res = await fetch(`${bridgeUrl}/api/status`, { signal: AbortSignal.timeout(2000) });
+                    if (res.ok) {
+                        const dur = Math.round(performance.now() - startB);
+                        brTag.innerText = "ONLINE";
+                        brTag.className = "mission-tag iot";
+                        brLat.innerText = `${dur} ms`;
+                        bridgeOnline = true;
+                        updateBridgeUI(true);
+                    } else throw new Error();
+                } catch(e) {
+                    brTag.innerText = "OFFLINE";
+                    brTag.className = "mission-tag telemetry";
+                    brLat.innerText = "Offline";
+                    bridgeOnline = false;
+                    updateBridgeUI(false);
+                }
+            }
+
+            // OpenAI
+            const oaiTag = document.getElementById('apiStatusOpenAiTag');
+            const oaiLat = document.getElementById('apiLatencyOpenAi');
+            if (oaiTag && oaiLat) {
+                if (!openaiKey) {
+                    oaiTag.innerText = "NO KEY";
+                    oaiLat.innerText = "Not Configured";
+                } else {
+                    oaiTag.innerText = "PINGING...";
+                    const startO = performance.now();
+                    try {
+                        await fetch("https://api.openai.com/v1/models", { headers: { "Authorization": `Bearer ${openaiKey}` }, signal: AbortSignal.timeout(4000) });
+                        const dur = Math.round(performance.now() - startO);
+                        oaiTag.innerText = "ACTIVE";
+                        oaiTag.className = "mission-tag iot";
+                        oaiLat.innerText = `${dur} ms`;
+                    } catch(e) {
+                        oaiTag.innerText = "FAILED";
+                        oaiLat.innerText = "Error";
+                    }
+                }
+            }
+
+            // Gemini
+            const gemTag = document.getElementById('apiStatusGeminiTag');
+            const gemLat = document.getElementById('apiLatencyGemini');
+            if (gemTag && gemLat) {
+                gemTag.innerText = geminiKey ? "CONFIGURED" : "NO KEY";
+                gemLat.innerText = geminiKey ? "Ready" : "Not Set";
+            }
+        }
+
+        async function executeCustomHttpProbe() {
+            const verb = document.getElementById('devHttpVerb').value;
+            const url = document.getElementById('devHttpUrl').value.trim();
+            const outEl = document.getElementById('devHttpOutput');
+            if (!url) {
+                outEl.innerText = "Error: Please specify a URL to probe.";
+                return;
+            }
+            outEl.innerText = `Connecting to ${url}...`;
+            const startT = performance.now();
+            try {
+                const headers = {};
+                if (url.includes('groq.com') && groqKey) headers['Authorization'] = `Bearer ${groqKey}`;
+                if (url.includes('openai.com') && openaiKey) headers['Authorization'] = `Bearer ${openaiKey}`;
+
+                const res = await fetch(url, { method: verb, headers, signal: AbortSignal.timeout(5000) });
+                const dur = Math.round(performance.now() - startT);
+                let text = await res.text();
+                try {
+                    const parsed = JSON.parse(text);
+                    text = JSON.stringify(parsed, null, 2);
+                } catch(e) {}
+                outEl.innerText = `[${res.status} ${res.statusText}] (${dur} ms)\n\n${text.slice(0, 1500)}`;
+                outEl.style.color = res.ok ? "#10b981" : "#f43f5e";
+            } catch(err) {
+                outEl.innerText = `Request Failed: ${err.message}`;
+                outEl.style.color = "#f43f5e";
+            }
+        }
+
+        // ==========================================
+        // LIVE AUDIO VU METER & DIAGNOSTICS
+        // ==========================================
+        function updateAudioDiagDisplay() {
+            const ctxEl = document.getElementById('devAudioCtxState');
+            const rateEl = document.getElementById('devAudioCtxRate');
+            const recEl = document.getElementById('devSpeechRecState');
+            const countEl = document.getElementById('devTtsVoiceCount');
+            const lockEl = document.getElementById('devSpeechLockState');
+
+            if (ctxEl) ctxEl.innerText = audioCtx ? audioCtx.state.toUpperCase() : 'NOT INITIALIZED';
+            if (rateEl) rateEl.innerText = audioCtx ? `${audioCtx.sampleRate} Hz` : 'N/A';
+            if (recEl) recEl.innerText = isVoiceProcessing ? 'PROCESSING' : (recognition ? 'LISTENING' : 'IDLE');
+            if (countEl) countEl.innerText = window.speechSynthesis ? window.speechSynthesis.getVoices().length : '0';
+            if (lockEl) lockEl.innerText = isProcessingSpeechCommit ? 'LOCKED (COMMITTING)' : 'READY';
+        }
+
+        function resetAudioEngine() {
+            if (window.speechSynthesis) window.speechSynthesis.cancel();
+            if (recognition) {
+                try { recognition.stop(); } catch(e) {}
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            setTimeout(() => {
+                startSpeechRecognition();
+                updateAudioDiagDisplay();
+            }, 300);
+        }
+
+        // ==========================================
+        // TTS VOICE & CHARACTER STUDIO
+        // ==========================================
+        function populateDevTtsVoices() {
+            if (!('speechSynthesis' in window)) return;
+            const voices = window.speechSynthesis.getVoices();
+            const select = document.getElementById('devStudioVoiceSelect');
+            if (!select || voices.length === 0) return;
+
+            const langFilter = document.getElementById('devStudioLangFilter')?.value || 'all';
+            const genderFilter = document.getElementById('devStudioGenderFilter')?.value || 'all';
+
+            select.innerHTML = '';
+            voices.forEach((v, idx) => {
+                const lower = v.name.toLowerCase();
+                const vGender = getVoiceGender(v);
+
+                if (langFilter === 'en' && !v.lang.toLowerCase().startsWith('en')) return;
+                if (langFilter === 'hi' && !v.lang.toLowerCase().startsWith('hi')) return;
+                if (langFilter === 'or' && !v.lang.toLowerCase().startsWith('or')) return;
+
+                if (genderFilter === 'male' && vGender !== 'male') return;
+                if (genderFilter === 'female' && vGender !== 'female') return;
+
+                const opt = document.createElement('option');
+                opt.value = idx;
+                opt.innerText = `[${vGender.toUpperCase()}] ${v.name} (${v.lang})`;
+                select.appendChild(opt);
+            });
+
+            if (select.children.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = "";
+                opt.innerText = "No voices match current filters";
+                select.appendChild(opt);
+            }
+        }
+
+        function filterDevStudioVoices() {
+            populateDevTtsVoices();
+        }
+
+        function testDevStudioVoice() {
+            if (!('speechSynthesis' in window)) return;
+            const select = document.getElementById('devStudioVoiceSelect');
+            const text = document.getElementById('devStudioTestInput')?.value || "Hello Stark Industries.";
+            const pitch = parseFloat(document.getElementById('devStudioPitch')?.value || "1.0");
+            const rate = parseFloat(document.getElementById('devStudioRate')?.value || "1.05");
+
+            window.speechSynthesis.cancel();
+            const utt = new SpeechSynthesisUtterance(text);
+            const voices = window.speechSynthesis.getVoices();
+            const vIdx = parseInt(select.value, 10);
+            if (!isNaN(vIdx) && voices[vIdx]) {
+                utt.voice = voices[vIdx];
+            }
+            utt.pitch = pitch;
+            utt.rate = rate;
+            window.speechSynthesis.speak(utt);
+        }
+
+        // ==========================================
+        // SYSTEM PROMPT & CONTEXT INSPECTOR
+        // ==========================================
+        function updatePromptInspector() {
+            const personaNameEl = document.getElementById('devPromptPersonaName');
+            const fullTextEl = document.getElementById('devPromptFullText');
+            const tokenCountEl = document.getElementById('devPromptTokenCount');
+
+            const persona = PERSONAS[currentPersonaId] || PERSONAS['ironman'];
+            if (personaNameEl) personaNameEl.innerText = persona.name;
+
+            let langInstruction = "";
+            if (currentLanguage === 'hi-IN') {
+                langInstruction = "\n\n[HINDI INSTRUCTION]: Respond in natural Hindi (हिंदी). Keep under 1-2 short sentences.";
+            } else if (currentLanguage === 'or-IN') {
+                langInstruction = "\n\n[ODIA INSTRUCTION]: Respond in authentic natural Odia (ଓଡ଼ିଆ). Use respectful honorifics (ଆଜ୍ଞା, ଆପଣ, ନମସ୍କାର, ଧନ୍ୟବାଦ).";
+            } else if (currentLanguage === 'en-IN') {
+                langInstruction = "\n\n[ENGLISH INSTRUCTION]: Respond in crisp clear English. Keep under 1-2 sentences.";
+            }
+
+            const assembled = persona.systemPrompt + langInstruction;
+            if (fullTextEl) fullTextEl.innerText = assembled;
+            if (tokenCountEl) {
+                const words = assembled.trim().split(/\s+/).length;
+                const estTokens = Math.round(words * 1.33);
+                tokenCountEl.innerText = `~${estTokens} tokens (${assembled.length} chars)`;
+            }
+        }
+
+        function copyActivePromptContext() {
+            const text = document.getElementById('devPromptFullText')?.innerText || '';
+            navigator.clipboard.writeText(text);
+            alert("Active System Prompt copied to clipboard!");
+        }
+
+        // ==========================================
+        // DEVELOPER UTILITIES & STATE
+        // ==========================================
+        function devFormatJson(action) {
+            const input = document.getElementById('devJsonInput');
+            const msg = document.getElementById('devJsonMsg');
+            try {
+                const parsed = JSON.parse(input.value);
+                if (action === 'beautify') {
+                    input.value = JSON.stringify(parsed, null, 2);
+                    msg.innerText = "✓ Beautified clean JSON";
+                } else {
+                    input.value = JSON.stringify(parsed);
+                    msg.innerText = "✓ Minified JSON";
+                }
+                msg.style.color = "var(--accent-emerald)";
+            } catch(e) {
+                msg.innerText = `✗ Invalid JSON: ${e.message}`;
+                msg.style.color = "#f43f5e";
+            }
+        }
+
+        function refreshDevEpoch() {
+            const now = Date.now();
+            const el = document.getElementById('devEpochNow');
+            if (el) el.innerText = `${now} (${Math.floor(now / 1000)}s)`;
+        }
+
+        function exportDevStateBackup() {
+            const state = {
+                version: "2.5.0",
+                timestamp: new Date().toISOString(),
+                selectedEngine: selectedEngine,
+                currentPersonaId: currentPersonaId,
+                currentLanguage: currentLanguage,
+                groqModel: selectedGroqModel,
+                bridgeOnline: bridgeOnline,
+                transcriptLength: sessionTranscript.length,
+                localStorageKeys: Object.keys(localStorage)
+            };
+            const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `voice-agent-state-backup-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
         }
     </script>
 </body>
