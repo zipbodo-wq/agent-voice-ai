@@ -1552,6 +1552,17 @@
     <!-- JAVASCRIPT: COMPLETE REAL-TIME VOICE PIPELINE, ORB & TOOL EXECUTIONS -->
     <!-- ========================================================================= -->
     <script>
+        // GLOBAL HTML ESCAPING UTILITY
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
         // GLOBAL STATE
         let inCallMode = false;
         let isListening = false;
@@ -3414,9 +3425,36 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
 
             try {
                 if (eng === 'groq') {
-                    statusDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Scanning active models on your Groq account...';
+                    statusDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Checking Groq account & available models...';
                     
+                    let workingModel = null;
+                    let lastErrMsg = "";
+                    let modelsFound = [];
+
+                    // Step 1: Query Groq's active models endpoint
+                    try {
+                        const mRes = await fetch("https://api.groq.com/openai/v1/models", {
+                            method: "GET",
+                            headers: { "Authorization": `Bearer ${key}` }
+                        });
+                        if (mRes.status === 401) {
+                            statusDiv.style.color = '#ef4444';
+                            statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> <strong>Groq Error (401 Unauthorized): Invalid API Key</strong>.<br>Please generate a new key on <a href="https://console.groq.com/keys" target="_blank" style="color:var(--accent-cyan);">console.groq.com/keys</a>.`;
+                            return;
+                        }
+                        if (mRes.ok) {
+                            const mData = await mRes.json();
+                            if (mData.data && Array.isArray(mData.data)) {
+                                modelsFound = mData.data.map(m => m.id).filter(id => !id.includes('whisper'));
+                            }
+                        }
+                    } catch (e) {
+                        console.warn("Could not query /models endpoint:", e);
+                    }
+
+                    // Build candidate test list: detected models first, then common production models
                     const candidates = [
+                        ...modelsFound,
                         "llama-3.3-70b-versatile",
                         "llama-3.1-8b-instant",
                         "deepseek-r1-distill-llama-70b",
@@ -3427,11 +3465,9 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                         "llama3-70b-8192",
                         "llama3-8b-8192"
                     ];
+                    const uniqueCandidates = [...new Set(candidates)];
 
-                    let workingModel = null;
-                    let lastErrMsg = "";
-
-                    for (const mod of candidates) {
+                    for (const mod of uniqueCandidates) {
                         try {
                             const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                                 method: "POST",
@@ -3451,7 +3487,7 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                                 statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> <strong>Groq Error (401 Unauthorized): Invalid API Key</strong>.<br>Please generate a new key on <a href="https://console.groq.com/keys" target="_blank" style="color:var(--accent-cyan);">console.groq.com/keys</a>.`;
                                 return;
                             } else {
-                                lastErrMsg = d.error?.message || `HTTP ${res.status}`;
+                                lastErrMsg = `[${mod}] ${d.error?.message || res.statusText || res.status}`;
                             }
                         } catch (err) {
                             lastErrMsg = err.message;
@@ -3465,7 +3501,7 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                         statusDiv.innerHTML = `<i class="fa-solid fa-circle-check"></i> <strong>Groq Key Valid!</strong> Found & connected to <code>${workingModel}</code>. Model ready to answer everything!`;
                     } else {
                         statusDiv.style.color = '#ef4444';
-                        statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> <strong>No standard model enabled on this Groq key:</strong><br><span style="font-size:0.75rem;color:#cbd5e1;line-height:1.4;">${escapeHtml(lastErrMsg)}<br>👉 <strong>Alternative:</strong> Switch to <strong>Google Gemini</strong> in Settings for a free 1-click key from <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--accent-cyan);font-weight:700;">Google AI Studio</a>.</span>`;
+                        statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> <strong>Could not connect to any Groq model:</strong><br><span style="font-size:0.75rem;color:#cbd5e1;line-height:1.4;">${escapeHtml(lastErrMsg)}<br>👉 <strong>Fastest 100% Free Solution:</strong> Switch to <strong>Google Gemini</strong> in Settings for a free 1-click key from <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--accent-cyan);font-weight:700;">Google AI Studio</a>.</span>`;
                     }
                 } else if (eng === 'openai') {
                     const res = await fetch("https://api.openai.com/v1/chat/completions", {
