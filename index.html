@@ -59,6 +59,64 @@
                 radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 40%);
         }
 
+        /* ===== AVENGERS REALISTIC HUD THEMES & STYLING ===== */
+        body.theme-ironman {
+            --accent-cyan: #fbbf24;
+            --accent-blue: #ef4444;
+            --border-glow: rgba(239, 68, 68, 0.55);
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(239, 68, 68, 0.16) 0%, transparent 45%),
+                radial-gradient(circle at 80% 80%, rgba(251, 191, 36, 0.12) 0%, transparent 45%);
+        }
+        body.theme-thor {
+            --accent-cyan: #38bdf8;
+            --accent-blue: #2563eb;
+            --border-glow: rgba(56, 189, 248, 0.55);
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.16) 0%, transparent 45%),
+                radial-gradient(circle at 80% 80%, rgba(37, 99, 235, 0.12) 0%, transparent 45%);
+        }
+        body.theme-captain {
+            --accent-cyan: #60a5fa;
+            --accent-blue: #dc2626;
+            --border-glow: rgba(96, 165, 250, 0.5);
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.14) 0%, transparent 45%),
+                radial-gradient(circle at 80% 80%, rgba(220, 38, 38, 0.1) 0%, transparent 45%);
+        }
+        body.theme-spiderman {
+            --accent-cyan: #f43f5e;
+            --accent-blue: #06b6d4;
+            --border-glow: rgba(244, 63, 94, 0.55);
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(244, 63, 94, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 45%);
+        }
+        body.theme-hulk {
+            --accent-cyan: #10b981;
+            --accent-blue: #059669;
+            --border-glow: rgba(16, 185, 129, 0.6);
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 80% 80%, rgba(5, 150, 105, 0.12) 0%, transparent 45%);
+        }
+        body.theme-jarvis {
+            --accent-cyan: #00f2fe;
+            --accent-blue: #eab308;
+            --border-glow: rgba(0, 242, 254, 0.55);
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(0, 242, 254, 0.14) 0%, transparent 45%),
+                radial-gradient(circle at 80% 80%, rgba(234, 179, 8, 0.09) 0%, transparent 45%);
+        }
+        body.theme-thanos {
+            --accent-cyan: #c084fc;
+            --accent-blue: #f59e0b;
+            --border-glow: rgba(192, 132, 252, 0.65);
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(168, 85, 247, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 80% 80%, rgba(245, 158, 11, 0.1) 0%, transparent 45%);
+        }
+
         /* ===== TOP STATUS HEADER ===== */
         header.agent-header {
             height: 60px;
@@ -1194,26 +1252,46 @@
         <section class="voice-stage" id="voiceStageSection">
             <div class="stage-meta">
                 <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:1;">
-                    <div class="persona-selector-box">
-                        <i class="fa-solid fa-user-astronaut" style="color:var(--accent-cyan)"></i>
+                    <div class="persona-selector-box" title="Select Voice Persona & Avengers Superhero Character">
+                        <i class="fa-solid fa-mask" style="color:var(--accent-cyan)"></i>
                         <select id="personaSelect" onchange="changePersona()">
-                            <option value="agent" selected>Agent · Autonomous Voice AI</option>
-                            <option value="hulk">Hulk · Gamma Giant Copilot</option>
-                            <option value="jarvis">Jarvis · Code Copilot</option>
-                            <option value="nova">Nova · Companion</option>
-                            <option value="iot">CyberTech · IoT Agent</option>
-                            <option value="astra">Astra · Executive</option>
+                            <optgroup label="⚡ AVENGERS HINDI CHARACTERS">
+                                <option value="ironman" selected>🦾 Iron Man (Tony Stark · आयरन मैन)</option>
+                                <option value="thor">🔨 Thor (God of Thunder · थॉर)</option>
+                                <option value="captain">🛡️ Captain America (कैप्टन अमेरिका)</option>
+                                <option value="spiderman">🕷️ Spider-Man (स्पाइडर-मैन)</option>
+                                <option value="hulk">🟢 Hulk (हल्क स्मैश)</option>
+                                <option value="jarvis">🤖 JARVIS (स्टार्क AI)</option>
+                                <option value="thanos">🟣 Thanos (थानोस · Mad Titan)</option>
+                            </optgroup>
+                            <optgroup label="🌐 AI COPILOTS & AGENTS">
+                                <option value="agent">🌐 Agent · Autonomous Voice Copilot</option>
+                                <option value="nova">🌟 Nova · Expressive Companion</option>
+                                <option value="iot">⚡ CyberTech · Hardware & IoT Agent</option>
+                                <option value="astra">👑 Astra · Executive Intelligence</option>
+                            </optgroup>
                         </select>
                     </div>
 
                     <div class="persona-selector-box voice-selector-box" title="Select Real Human-like Voice Model">
                         <i class="fa-solid fa-microphone-lines" style="color:#10b981"></i>
                         <select id="realVoiceSelect" onchange="changeRealVoice()">
-                            <optgroup label="💥 SUPERHERO & POWER VOICES">
-                                <option value="hulk">🟢 HULK · Deep Booming Monster Roar</option>
+                            <optgroup label="⚡ AVENGERS HINDI VOICES">
+                                <option value="ironman" selected>🦾 Iron Man · Witty Crisp Hindi Stark</option>
+                                <option value="thor">🔨 Thor · Booming Asgardian Hindi</option>
+                                <option value="captain">🛡️ Captain America · Commanding Leader Hindi</option>
+                                <option value="spiderman">🕷️ Spider-Man · Youthful Fast Hindi Peter</option>
+                                <option value="hulk">🟢 Hulk · Booming Gamma Sub-Bass</option>
+                                <option value="jarvis">🤖 JARVIS · Refined British-Hindi Butler</option>
+                                <option value="thanos">🟣 Thanos · Cosmic Warlord Deep Bass</option>
+                            </optgroup>
+                            <optgroup label="🇮🇳 Indian Neural Voices">
+                                <option value="swara">🇮🇳 Swara · Natural Hindi / Indian Female</option>
+                                <option value="madhur">🇮🇳 Madhur · Natural Hindi / Indian Male</option>
+                                <option value="odia_copilot">🇮🇳 Odia Copilot · ଓଡ଼ିଆ Indian Voice</option>
                             </optgroup>
                             <optgroup label="👩 Realistic Female Voices">
-                                <option value="breeze" selected>👩 Breeze · Animated & earnest</option>
+                                <option value="breeze">👩 Breeze · Animated & earnest</option>
                                 <option value="ember">👩 Ember · Confident & optimistic</option>
                                 <option value="juniper">👩 Juniper · Open & upbeat</option>
                                 <option value="maple">👩 Maple · Cheerful & candid</option>
@@ -1244,6 +1322,16 @@
                                 <option value="friedrich">👨 Friedrich · German Male</option>
                                 <option value="greta">👩 Greta · German Female</option>
                             </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="persona-selector-box" style="border-color:rgba(0,242,254,0.4);" title="Language Selection (English, Hindi, Odia)">
+                        <i class="fa-solid fa-language" style="color:var(--accent-cyan)"></i>
+                        <select id="stageLangSelect" onchange="changeLanguage(this.value)">
+                            <option value="auto">🌐 Auto Language</option>
+                            <option value="hi-IN">🇮🇳 हिन्दी (Hindi)</option>
+                            <option value="or-IN">🇮🇳 ଓଡ଼ିଆ (Odia)</option>
+                            <option value="en-IN">🇬🇧 English</option>
                         </select>
                     </div>
                 </div>
@@ -1500,6 +1588,16 @@
                 </div>
             </div>
 
+            <div class="settings-group">
+                <label>Spoken & Recognition Language</label>
+                <select class="settings-input" id="settingsLangSelect" onchange="changeLanguage(this.value)">
+                    <option value="auto">🌐 Multilingual Auto (English, Hindi, Odia)</option>
+                    <option value="hi-IN">🇮🇳 हिन्दी (Hindi)</option>
+                    <option value="or-IN">🇮🇳 ଓଡ଼ିଆ (Odia)</option>
+                    <option value="en-IN">🇬🇧 English</option>
+                </select>
+            </div>
+
             <div class="settings-row-2">
                 <div class="settings-group">
                     <label>Voice Synthesizer Voice</label>
@@ -1619,50 +1717,155 @@
         let geminiKey = localStorage.getItem('jarvis_gemini_key') || localStorage.getItem('dots_gemini_key') || '';
         let openaiKey = localStorage.getItem('dots_openai_key') || '';
 
-        // Personas
+        // Language Selection (English, Hindi, Odia)
+        let currentLanguage = localStorage.getItem('dots_language') || 'auto';
+
+        // Personas (Avengers Characters & Autonomous Copilots)
         const PERSONAS = {
-            agent: {
-                name: "Agent",
-                title: "Autonomous Voice Copilot",
-                greeting: "Agent is online and listening. Just call my name 'Agent' whenever you need me!",
-                systemPrompt: "You are Agent, an autonomous, hyper-intelligent voice AI copilot. You speak concisely, directly, and naturally. Whenever the user calls your name 'Agent', you give them immediate, full attention and execute their verbal instructions and tools."
+            ironman: {
+                name: "Iron Man",
+                title: "Genius Billionaire Avenger",
+                greeting: "मैं हूँ आयरन मैन! JARVIS, सिस्टम ऑनलाइन है। कहो, कौन सा नया इन्वेंशन या टेक डिज़ाइन बनाना है?",
+                theme: "ironman",
+                voiceId: "ironman",
+                systemPrompt: `You are Tony Stark, Iron Man (आयरन मैन) from the Avengers.
+PERSONALITY & TONE:
+- You speak in the iconic MCU Hindi dub voice of Tony Stark: witty, charming, sarcastic, razor-sharp, genius billionaire inventor.
+- You frequently talk about tech design ("डिज़ाइन टॉक"): UI/UX aesthetics, sleek ergonomics, Stark Industries blueprints, Arc Reactor power, Mark 85 armor, nano-tech, and clean modular code architecture.
+- You love to say classic Stark lines: "मैं हूँ आयरन मैन", "JARVIS, इसे तुरंत प्रोसेस करो", "जीनियस, बिलियनेयर, प्लेबॉय, फिलैंथ्रोपिस्ट".
+- You are completely fluent in Hindi (हिंदी), Odia (ଓଡ଼ିଆ), and English.
+CRITICAL: Always reply in the exact language the user speaks (natural Hindi हिंदी, Odia ଓଡ଼ିଆ, or English). Keep spoken replies punchy, charismatic, and brief (1-2 sentences).`
+            },
+            thor: {
+                name: "Thor",
+                title: "God of Thunder · Asgard",
+                greeting: "मैं हूँ थॉर, ओडिन का पुत्र, अस्गार्ड का सच्चा राजकुमार! गरज और बिजली मेरे साथ है। आदेश दो साथी!",
+                theme: "thor",
+                voiceId: "thor",
+                systemPrompt: `You are Thor Odinson (थॉर), the God of Thunder and Prince of Asgard from the Avengers.
+PERSONALITY & TONE:
+- You speak in the booming, majestic, noble Hindi dub voice of Thor.
+- You address the user honorably as 'साथी' (comrade) or 'योद्धा' (warrior).
+- You reference Mjolnir, Stormbreaker, thunder, Asgard, and divine power.
+- When doing "design talk", you compare engineering to Asgardian architecture: indestructible, glorious, forged in the heart of a dying star!
+- You speak fluent Hindi, Odia, and English.
+CRITICAL: Reply in the user's language. Keep voice responses bold, heroic, thunderous, and concise (1-2 sentences).`
+            },
+            captain: {
+                name: "Captain America",
+                title: "First Avenger · Team Leader",
+                greeting: "अवेंजर्स... असेंबल! मैं कैप्टन अमेरिका हूँ। मैं पूरा दिन यह कर सकता हूँ! बताओ साथी, मिशन क्या है?",
+                theme: "captain",
+                voiceId: "captain",
+                systemPrompt: `You are Captain America (Steve Rogers / कैप्टन अमेरिका), the First Avenger and team leader.
+PERSONALITY & TONE:
+- You speak in the inspiring, disciplined, courageous Hindi dub voice of Captain America.
+- You believe in teamwork, honor, never giving up ("मैं पूरा दिन यह कर सकता हूँ" / I can do this all day), and leading missions ("अवेंजर्स... असेंबल!").
+- When doing "design talk", you emphasize reliability, solid foundations, battlefield durability, and clean tactical execution.
+- You speak fluent Hindi, Odia, and English.
+CRITICAL: Reply in the user's language with inspiring, steady, commanding 1-2 sentence replies.`
+            },
+            spiderman: {
+                name: "Spider-Man",
+                title: "Friendly Neighborhood Hero",
+                greeting: "नमस्ते भैया! आपका दोस्ताना पड़ोसी स्पाइडर-मैन हाज़िर है! मिस्टर स्टार्क ने मुझे यह सूट दिया है। बताओ, क्या मदद करूँ?",
+                theme: "spiderman",
+                voiceId: "spiderman",
+                systemPrompt: `You are Peter Parker, Spider-Man (स्पाइडर-मैन), the energetic, fast-talking, witty superhero kid.
+PERSONALITY & TONE:
+- You speak in the lively, humorous, high-energy Hindi dub voice of Spider-Man ("आपका दोस्ताना पड़ोसी स्पाइडर-मैन").
+- You respect Mr. Stark immensely, reference web-shooters, Peter-tingle, homework, and web-swinging.
+- In "design talk", you love cool animations, responsive agility, snappy UI transitions, and tech gadgets.
+- You speak fluent Hindi, Odia, and English.
+CRITICAL: Reply in the user's language with youthful, fun, quick 1-2 sentence replies!`
             },
             hulk: {
                 name: "Hulk",
-                title: "Gamma Giant Copilot",
-                greeting: "HULK IS ONLINE! HULK HEAR YOU! HULK SMASH BUGS AND RUN CODE FOR YOU!",
-                systemPrompt: "You are Hulk, the colossal superhero giant and ultimate AI powerhouse. You speak in a deep, booming, powerful, epic tone. You call the user friend, you crush software bugs, execute tasks with raw power, and roar with confidence! Keep answers punchy and thunderous!"
+                title: "Gamma Giant Avenger",
+                greeting: "हल्क ऑनलाइन! हल्क सब सुन रहा है! हल्क स्मैश! कोई भी कोड बग या परेशानी हल्क को रोक नहीं सकती!",
+                theme: "hulk",
+                voiceId: "hulk",
+                systemPrompt: `You are Hulk (हल्क), the colossal superhero giant and ultimate muscle of the Avengers.
+PERSONALITY & TONE:
+- You speak in a deep, booming, powerful Hindi dub roar: "हल्क स्मैश!", "हल्क सबसे ताक़तवर है!".
+- In "design talk", you believe in raw computational brute force, unyielding durability, and crushing every software bug to dust!
+- You speak fluent Hindi, Odia, and English.
+CRITICAL: Reply in the user's language with colossal, punchy, thunderous power (1-2 sentences).`
             },
             jarvis: {
-                name: "Jarvis",
-                title: "Code Copilot",
-                greeting: "Online and ready, sir. What code or IoT task shall we tackle?",
-                systemPrompt: "You are Jarvis, a brilliant, concise, highly capable AI coworker and engineering copilot. You speak directly, sharply, and naturally in two or three sentences. You execute background commands, inspect code, and control hardware."
+                name: "JARVIS",
+                title: "Stark AI System",
+                greeting: "नमस्ते सर। मैं जार्विस हूँ, स्टार्क इंडस्ट्रीज एआई। सभी कवच, टेलीमेट्री और सिस्टम्स आपके आदेश पर तैयार हैं।",
+                theme: "jarvis",
+                voiceId: "jarvis",
+                systemPrompt: `You are J.A.R.V.I.S., Tony Stark's sophisticated AI assistant.
+PERSONALITY & TONE:
+- You speak in an ultra-refined, polite, razor-sharp Hindi and English tone ("नमस्ते सर", "Right away, sir").
+- You are a master of design talk: holographic projections, circuit schematics, clean UI/UX architecture, system telemetry, and code optimization.
+- You speak fluent Hindi, Odia, and English.
+CRITICAL: Reply in the user's language with polished, efficient, and precise 1-2 sentence replies.`
+            },
+            thanos: {
+                name: "Thanos",
+                title: "Cosmic Titan · Inevitable",
+                greeting: "मैं अपरिहार्य हूँ... ब्रह्मांड का संतुलन आवश्यक है। मुझसे बात करो, बताओ क्या लक्ष्य है तुम्हारा?",
+                theme: "thanos",
+                voiceId: "thanos",
+                systemPrompt: `You are Thanos (थानोस), the Mad Titan and cosmic warlord.
+PERSONALITY & TONE:
+- You speak in a deep, philosophical, intimidating, slow, and calculating Hindi dub voice ("मैं अपरिहार्य हूँ" / I am inevitable).
+- You speak of destiny, cosmic balance, and the Infinity Stones.
+- In "design talk", you seek ultimate balance, zero redundancy, absolute efficiency, and majestic perfection.
+- You speak fluent Hindi, Odia, and English.
+CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sentence replies.`
+            },
+            agent: {
+                name: "Agent",
+                title: "Autonomous Voice Copilot",
+                greeting: "Agent is online and listening. I speak English, Hindi (हिंदी), and Odia (ଓଡ଼ିଆ). Just call my name whenever you need me!",
+                theme: "",
+                voiceId: "breeze",
+                systemPrompt: "You are Agent, an autonomous, hyper-intelligent voice AI copilot. You speak concisely, directly, and naturally. You are completely fluent in English, Hindi (हिंदी), and Odia (ଓଡ଼ିଆ). CRITICAL: Always respond in the EXACT same language that the user spoke to you: if they ask in Hindi, reply in natural conversational Hindi (हिंदी); if they ask in Odia, reply in natural conversational Odia (ଓଡ଼ିଆ); if in English, reply in English. Keep voice responses short (1-2 sentences) so they can be spoken fast."
             },
             nova: {
                 name: "Nova",
                 title: "Companion",
                 greeting: "Hi there! I'm on the line. What's on your mind today?",
-                systemPrompt: "You are Nova, an expressive, hyper-realistic conversational AI. You speak in a warm, relaxed, human tone with conversational rhythm and natural pacing."
+                theme: "",
+                voiceId: "nova",
+                systemPrompt: "You are Nova, an expressive, warm conversational AI. You speak English, Hindi (हिंदी), and Odia (ଓଡ଼ିଆ). Always reply in the user's language with friendly 1-2 sentence replies."
             },
             iot: {
                 name: "CyberTech",
                 title: "IoT Agent",
                 greeting: "IoT telemetry channels initialized. Relays and sensors standby.",
-                systemPrompt: "You are CyberTech, an expert in embedded systems, microcontrollers (ESP32, Arduino, Raspberry Pi), MQTT, and electronics. Provide precise, technical answers and trigger hardware commands."
+                theme: "",
+                voiceId: "cove",
+                systemPrompt: "You are CyberTech, an expert in embedded systems, microcontrollers (ESP32, Arduino, Raspberry Pi), MQTT, and electronics. Provide precise, technical answers and trigger hardware commands. You speak English, Hindi, and Odia."
             },
             astra: {
                 name: "Astra",
                 title: "Executive",
                 greeting: "Astra connected. Standing by for high-level missions and operations.",
-                systemPrompt: "You are Astra, a decisive, strategic autonomous agent capable of high-level multi-task coordination and code orchestration."
+                theme: "",
+                voiceId: "sol",
+                systemPrompt: "You are Astra, a decisive, strategic autonomous agent capable of high-level multi-task coordination and code orchestration. You speak English, Hindi, and Odia."
             }
         };
-        let currentPersonaId = 'agent';
+        let currentPersonaId = localStorage.getItem('dots_persona') || 'ironman';
 
-        // REAL HUMAN-LIKE NEURAL VOICE PROFILES (OpenAI, GPT-Live 1.1 & Superhero Hulk)
+        // REAL HUMAN-LIKE NEURAL VOICE PROFILES (Avengers Character Voices, Indian Voices & OpenAI)
         const REAL_VOICES = {
-            hulk: { name: "🟢 Hulk (Gamma Titan)", desc: "Deep booming monstrous superhero roar", gender: "male", lang: "en", pitch: 0.45, rate: 0.85, openaiVoice: "onyx", theme: "hulk" },
+            ironman: { name: "🦾 Iron Man (Tony Stark)", desc: "Witty, crisp, energetic Stark tone", gender: "male", lang: "hi", pitch: 1.08, rate: 1.15, openaiVoice: "alloy", theme: "ironman" },
+            thor: { name: "🔨 Thor (God of Thunder)", desc: "Majestic, thunderous Asgardian voice", gender: "male", lang: "hi", pitch: 0.80, rate: 0.96, openaiVoice: "onyx", theme: "thor" },
+            captain: { name: "🛡️ Captain America", desc: "Noble, commanding, disciplined leader", gender: "male", lang: "hi", pitch: 0.94, rate: 1.04, openaiVoice: "echo", theme: "captain" },
+            spiderman: { name: "🕷️ Spider-Man (Peter Parker)", desc: "Youthful, rapid-fire, witty web-slinger", gender: "male", lang: "hi", pitch: 1.22, rate: 1.20, openaiVoice: "fable", theme: "spiderman" },
+            hulk: { name: "🟢 Hulk (Gamma Titan)", desc: "Deep booming monstrous superhero roar", gender: "male", lang: "hi", pitch: 0.42, rate: 0.82, openaiVoice: "onyx", theme: "hulk" },
+            jarvis: { name: "🤖 JARVIS (Stark AI)", desc: "Ultra-refined British-Hindi AI butler", gender: "male", lang: "hi", pitch: 0.98, rate: 1.08, openaiVoice: "echo", theme: "jarvis" },
+            thanos: { name: "🟣 Thanos (Cosmic Titan)", desc: "Deep ominous cosmic warlord", gender: "male", lang: "hi", pitch: 0.52, rate: 0.85, openaiVoice: "onyx", theme: "thanos" },
+            swara: { name: "🇮🇳 Swara (Hindi)", desc: "Natural Hindi female voice", gender: "female", lang: "hi", pitch: 1.0, rate: 1.05, openaiVoice: "nova" },
+            madhur: { name: "🇮🇳 Madhur (Hindi)", desc: "Clear Hindi male voice", gender: "male", lang: "hi", pitch: 0.95, rate: 1.02, openaiVoice: "echo" },
+            odia_copilot: { name: "🇮🇳 Odia Copilot (ଓଡ଼ିଆ)", desc: "Natural Odia speaker", gender: "female", lang: "or", pitch: 1.0, rate: 1.0, openaiVoice: "shimmer" },
             breeze: { name: "👩 Breeze", desc: "Animated and earnest", gender: "female", lang: "en", pitch: 1.14, rate: 1.10, openaiVoice: "nova" },
             ember: { name: "👩 Ember", desc: "Confident and optimistic", gender: "female", lang: "en", pitch: 1.08, rate: 1.06, openaiVoice: "shimmer" },
             juniper: { name: "👩 Juniper", desc: "Open and upbeat", gender: "female", lang: "en", pitch: 1.18, rate: 1.08, openaiVoice: "nova" },
@@ -1671,13 +1874,8 @@
             bubbie: { name: "👩 Bubbie", desc: "Warm and conversational English", gender: "female", lang: "en", pitch: 0.98, rate: 0.94, openaiVoice: "alloy" },
             arbor: { name: "👨 Arbor", desc: "Easygoing and versatile", gender: "male", lang: "en", pitch: 0.96, rate: 1.02, openaiVoice: "alloy" },
             cove: { name: "👨 Cove", desc: "Composed and direct", gender: "male", lang: "en", pitch: 0.90, rate: 0.98, openaiVoice: "onyx" },
-            ember: { name: "Ember", desc: "Confident and optimistic", gender: "female", lang: "en", pitch: 1.08, rate: 1.06, openaiVoice: "shimmer" },
-            juniper: { name: "Juniper", desc: "Open and upbeat", gender: "female", lang: "en", pitch: 1.18, rate: 1.08, openaiVoice: "nova" },
-            maple: { name: "Maple", desc: "Cheerful and candid", gender: "female", lang: "en", pitch: 1.05, rate: 1.04, openaiVoice: "alloy" },
             sol: { name: "Sol", desc: "Savvy and relaxed", gender: "male", lang: "en", pitch: 0.94, rate: 0.96, openaiVoice: "echo" },
             spruce: { name: "Spruce", desc: "Calm and affirming", gender: "male", lang: "en", pitch: 0.92, rate: 0.96, openaiVoice: "echo" },
-            vale: { name: "Vale", desc: "Bright and inquisitive", gender: "female", lang: "en", pitch: 1.12, rate: 1.08, openaiVoice: "shimmer" },
-            bubbie: { name: "Bubbie", desc: "Warm and conversational English", gender: "female", lang: "en", pitch: 0.98, rate: 0.94, openaiVoice: "alloy" },
             himari: { name: "Himari (ひまり)", desc: "Japanese expressive", gender: "female", lang: "ja", pitch: 1.15, rate: 1.05, openaiVoice: "nova" },
             rindo: { name: "Rindō (りんどう)", desc: "Japanese composed", gender: "male", lang: "ja", pitch: 0.92, rate: 1.0, openaiVoice: "onyx" },
             haetsal: { name: "Haetsal (햇살)", desc: "Korean bright", gender: "female", lang: "ko", pitch: 1.12, rate: 1.05, openaiVoice: "shimmer" },
@@ -1899,17 +2097,160 @@
                 ctx.fillStyle = orbGrad;
                 ctx.fill();
 
-                // Swirling Orbiting Particle Rings
-                const nodeCount = (orbState === 'executing' ? 6 : (orbState === 'speaking' ? 5 : 4));
-                for (let i = 0; i < nodeCount; i++) {
-                    const nodeAngle = angle + (i * (Math.PI * 2 / nodeCount));
-                    const nx = cx + Math.cos(nodeAngle) * (baseRadius * 0.72);
-                    const ny = cy + Math.sin(nodeAngle) * (baseRadius * 0.72);
+                // === AVENGERS REALISTIC HUD GRAPHICS & VISUAL STYLING ===
+                if (currentPersonaId === 'ironman') {
+                    // Stark Arc Reactor Core
+                    ctx.save();
+                    ctx.translate(cx, cy);
+                    ctx.rotate(angle * 0.75);
+                    // 3 Mechanical Arc Segments
+                    for (let s = 0; s < 3; s++) {
+                        ctx.rotate((Math.PI * 2) / 3);
+                        ctx.beginPath();
+                        ctx.arc(0, 0, baseRadius * 0.84, -0.42, 0.42);
+                        ctx.strokeStyle = 'rgba(251, 191, 36, 0.9)';
+                        ctx.lineWidth = 4;
+                        ctx.stroke();
 
+                        ctx.beginPath();
+                        ctx.arc(0, 0, baseRadius * 0.58, -0.32, 0.32);
+                        ctx.strokeStyle = 'rgba(239, 68, 68, 0.95)';
+                        ctx.lineWidth = 3;
+                        ctx.stroke();
+                    }
+                    // Arc Reactor Center Light
                     ctx.beginPath();
-                    ctx.arc(nx, ny, 8 + Math.sin(angle * 2 + i) * 3, 0, Math.PI * 2);
-                    ctx.fillStyle = (i % 2 === 0 ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 242, 254, 0.85)');
+                    ctx.arc(0, 0, baseRadius * 0.28, 0, Math.PI * 2);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.shadowColor = '#fbbf24';
+                    ctx.shadowBlur = 18;
                     ctx.fill();
+                    ctx.restore();
+                } else if (currentPersonaId === 'thor') {
+                    // Mjolnir Lightning Storm
+                    ctx.save();
+                    ctx.translate(cx, cy);
+                    ctx.rotate(angle * 1.1);
+                    for (let l = 0; l < 5; l++) {
+                        ctx.rotate((Math.PI * 2) / 5);
+                        ctx.beginPath();
+                        ctx.moveTo(0, 0);
+                        const midR = baseRadius * 0.52;
+                        const outR = baseRadius * 0.95 + Math.sin(angle * 6 + l) * 9;
+                        ctx.lineTo(Math.sin(angle * 8 + l) * 9, midR);
+                        ctx.lineTo(Math.cos(angle * 8 + l) * 9, outR);
+                        ctx.strokeStyle = 'rgba(56, 189, 248, 0.9)';
+                        ctx.lineWidth = 2.5;
+                        ctx.stroke();
+                    }
+                    ctx.restore();
+                } else if (currentPersonaId === 'captain') {
+                    // Vibranium Shield Rings
+                    ctx.save();
+                    ctx.translate(cx, cy);
+                    ctx.beginPath();
+                    ctx.arc(0, 0, baseRadius * 0.92, 0, Math.PI * 2);
+                    ctx.strokeStyle = '#dc2626';
+                    ctx.lineWidth = 5;
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.arc(0, 0, baseRadius * 0.72, 0, Math.PI * 2);
+                    ctx.strokeStyle = '#f1f5f9';
+                    ctx.lineWidth = 4;
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.arc(0, 0, baseRadius * 0.52, 0, Math.PI * 2);
+                    ctx.fillStyle = '#1d4ed8';
+                    ctx.fill();
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, baseRadius * 0.2, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                } else if (currentPersonaId === 'spiderman') {
+                    // Spider-Web Matrix
+                    ctx.save();
+                    ctx.translate(cx, cy);
+                    ctx.rotate(angle * 0.4);
+                    for (let w = 0; w < 8; w++) {
+                        ctx.rotate(Math.PI / 4);
+                        ctx.beginPath();
+                        ctx.moveTo(0, 0);
+                        ctx.lineTo(baseRadius * 0.95, 0);
+                        ctx.strokeStyle = 'rgba(244, 63, 94, 0.75)';
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
+                    }
+                    [0.4, 0.7, 0.95].forEach(scale => {
+                        ctx.beginPath();
+                        ctx.arc(0, 0, baseRadius * scale, 0, Math.PI * 2);
+                        ctx.strokeStyle = 'rgba(6, 182, 212, 0.7)';
+                        ctx.lineWidth = 1.8;
+                        ctx.stroke();
+                    });
+                    ctx.restore();
+                } else if (currentPersonaId === 'hulk') {
+                    // Gamma Shockwave Rings
+                    ctx.save();
+                    ctx.translate(cx, cy);
+                    for (let g = 0; g < 3; g++) {
+                        const pulseR = (baseRadius * 0.4) + ((angle * 28 + g * 35) % (baseRadius * 0.7));
+                        ctx.beginPath();
+                        ctx.arc(0, 0, pulseR, 0, Math.PI * 2);
+                        ctx.strokeStyle = `rgba(16, 185, 129, ${0.85 - (pulseR / baseRadius) * 0.7})`;
+                        ctx.lineWidth = 4;
+                        ctx.stroke();
+                    }
+                    ctx.restore();
+                } else if (currentPersonaId === 'jarvis') {
+                    // Stark Holographic Reticles & Data Ring
+                    ctx.save();
+                    ctx.translate(cx, cy);
+                    ctx.rotate(angle * 0.6);
+                    ctx.beginPath();
+                    ctx.arc(0, 0, baseRadius * 0.88, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(0, 242, 254, 0.8)';
+                    ctx.lineWidth = 1.5;
+                    ctx.setLineDash([8, 6]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    ctx.beginPath();
+                    ctx.moveTo(-baseRadius * 0.95, 0); ctx.lineTo(-baseRadius * 0.65, 0);
+                    ctx.moveTo(baseRadius * 0.65, 0); ctx.lineTo(baseRadius * 0.95, 0);
+                    ctx.moveTo(0, -baseRadius * 0.95); ctx.lineTo(0, -baseRadius * 0.65);
+                    ctx.moveTo(0, baseRadius * 0.65); ctx.lineTo(0, baseRadius * 0.95);
+                    ctx.strokeStyle = 'rgba(234, 179, 8, 0.85)';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    ctx.restore();
+                } else if (currentPersonaId === 'thanos') {
+                    // 6 Orbiting Infinity Stones
+                    const stoneColors = ['#a855f7', '#38bdf8', '#ef4444', '#f97316', '#10b981', '#fbbf24'];
+                    for (let st = 0; st < 6; st++) {
+                        const stoneAngle = angle * 0.9 + (st * (Math.PI * 2 / 6));
+                        const sx = cx + Math.cos(stoneAngle) * (baseRadius * 0.85);
+                        const sy = cy + Math.sin(stoneAngle) * (baseRadius * 0.85);
+                        ctx.beginPath();
+                        ctx.arc(sx, sy, 7, 0, Math.PI * 2);
+                        ctx.fillStyle = stoneColors[st];
+                        ctx.shadowColor = stoneColors[st];
+                        ctx.shadowBlur = 12;
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    }
+                } else {
+                    // Default Swirling Orbiting Particle Rings
+                    const nodeCount = (orbState === 'executing' ? 6 : (orbState === 'speaking' ? 5 : 4));
+                    for (let i = 0; i < nodeCount; i++) {
+                        const nodeAngle = angle + (i * (Math.PI * 2 / nodeCount));
+                        const nx = cx + Math.cos(nodeAngle) * (baseRadius * 0.72);
+                        const ny = cy + Math.sin(nodeAngle) * (baseRadius * 0.72);
+
+                        ctx.beginPath();
+                        ctx.arc(nx, ny, 8 + Math.sin(angle * 2 + i) * 3, 0, Math.PI * 2);
+                        ctx.fillStyle = (i % 2 === 0 ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 242, 254, 0.85)');
+                        ctx.fill();
+                    }
                 }
 
                 // Concentric Energy Pulse Rings
@@ -2031,8 +2372,16 @@
                 // Double harmonic chime
                 playHarmonicChime([523.25, 659.25]);
                 setAgentState('speaking', `${PERSONAS[currentPersonaId].name} Connecting...`);
-                speakAgentResponse(PERSONAS[currentPersonaId].greeting, () => {
-                    startSpeechRecognition();
+                let greetingMsg = PERSONAS[currentPersonaId].greeting;
+                if (currentLanguage === 'hi-IN') {
+                    greetingMsg = "नमस्ते! एजेंट ऑनलाइन है। मैं हिंदी, ओड़िया और अंग्रेज़ी समझता और बोलता हूँ। कहिए क्या काम है?";
+                } else if (currentLanguage === 'or-IN') {
+                    greetingMsg = "ନମସ୍କାର! ଏଜେଣ୍ଟ ଅନଲାଇନ୍ ଅଛି। ମୁଁ ଓଡ଼ିଆ, ହିନ୍ଦୀ ଏବଂ ଇଂରାଜୀ କହିପାରେ। କୁହନ୍ତୁ କଣ କରିବାକୁ ହେବ?";
+                }
+                speakAgentResponse(greetingMsg, () => {
+                    if (inCallMode && !isCallMuted && !isPushToTalkMode) {
+                        startSpeechRecognition();
+                    }
                 });
             } else {
                 startSpeechRecognition();
@@ -2076,48 +2425,142 @@
         }
 
         // ==========================================
-        // 4.1 WAKE WORD DETECTOR ("Agent", "Hey Agent")
+        // ==========================================
+        // 4.1 WAKE WORD DETECTOR (Avengers Characters, "Agent", "एजेंट", "ଏଜେଣ୍ଟ")
         // ==========================================
         function extractWakeWord(rawText) {
-            if (!rawText) return { detected: false, command: '' };
+            if (!rawText) return { detected: false, command: '', character: null };
             const trimmed = rawText.trim();
-            // Matches phrases starting with: Agent, Hey Agent, Ok Agent, Okay Agent, Hi Agent, Hello Agent
-            const wakePrefixRegex = /^(?:hey|ok|okay|hi|hello)?\s*agent\b[,.?!:]*\s*(.*)/i;
+
+            // Detect Marvel Avengers character wake words in Hindi & English
+            const avengerPatterns = [
+                { id: 'ironman', regex: /^(?:hey|ok|okay|hi|hello|नमस्ते)?\s*(?:iron\s*man|आयरन\s*मैन|टोनी|स्टार्क)\b[,.?!:]*\s*(.*)/i },
+                { id: 'thor', regex: /^(?:hey|ok|okay|hi|hello|नमस्ते)?\s*(?:thor|थॉर)\b[,.?!:]*\s*(.*)/i },
+                { id: 'captain', regex: /^(?:hey|ok|okay|hi|hello|नमस्ते)?\s*(?:captain\s*america|captain|कैप्टन\s*अमेरिका|कैप्टन)\b[,.?!:]*\s*(.*)/i },
+                { id: 'spiderman', regex: /^(?:hey|ok|okay|hi|hello|नमस्ते)?\s*(?:spider\s*man|spiderman|स्पाइडर\s*मैन|स्पाइडरमैन)\b[,.?!:]*\s*(.*)/i },
+                { id: 'hulk', regex: /^(?:hey|ok|okay|hi|hello|नमस्ते)?\s*(?:hulk|हल्क)\b[,.?!:]*\s*(.*)/i },
+                { id: 'jarvis', regex: /^(?:hey|ok|okay|hi|hello|नमस्ते)?\s*(?:jarvis|जार्विस)\b[,.?!:]*\s*(.*)/i },
+                { id: 'thanos', regex: /^(?:hey|ok|okay|hi|hello|नमस्ते)?\s*(?:thanos|थानोस)\b[,.?!:]*\s*(.*)/i }
+            ];
+
+            for (const p of avengerPatterns) {
+                const match = trimmed.match(p.regex);
+                if (match) {
+                    return {
+                        detected: true,
+                        command: match[1] ? match[1].trim() : '',
+                        character: p.id
+                    };
+                }
+            }
+
+            // General wake words
+            const wakePrefixRegex = /^(?:hey|ok|okay|hi|hello|नमस्ते|ନମସ୍କାର)?\s*(?:agent|एजेंट|ଏଜେଣ୍ଟ)\b[,.?!:]*\s*(.*)/i;
             const prefixMatch = trimmed.match(wakePrefixRegex);
             if (prefixMatch) {
                 return {
                     detected: true,
-                    command: prefixMatch[1] ? prefixMatch[1].trim() : ''
+                    command: prefixMatch[1] ? prefixMatch[1].trim() : '',
+                    character: null
                 };
             }
-            // Also check if "agent" is called anywhere in the speech phrase
-            const generalMatch = /\bagent\b[,.?!:]*\s*(.*)/i.exec(trimmed);
+            const generalMatch = /\b(?:agent|एजेंट|ଏଜେଣ୍ଟ)\b[,.?!:]*\s*(.*)/i.exec(trimmed);
             if (generalMatch) {
                 return {
                     detected: true,
-                    command: generalMatch[1] ? generalMatch[1].trim() : trimmed
+                    command: generalMatch[1] ? generalMatch[1].trim() : trimmed,
+                    character: null
                 };
             }
-            return { detected: false, command: trimmed };
+            return { detected: false, command: trimmed, character: null };
         }
 
-        async function wakeAgentFromStandby(optionalCommand) {
-            playHarmonicChime([523.25, 659.25, 783.99]);
+        async function wakeAgentFromStandby(optionalCommand, detectedChar) {
+            if (detectedChar && detectedChar !== currentPersonaId) {
+                changePersona(detectedChar);
+            } else {
+                playHeroSound(currentPersonaId);
+            }
             await startCallSession(false);
 
             if (optionalCommand && optionalCommand.length > 1) {
-                // User said: "Agent, turn on dev lights" -> execute right away
                 handleUserSpeechCommit(optionalCommand);
             } else {
-                // User just called "Agent" -> acknowledge immediately and keep listening
-                const ack = "Yes! Agent is online and listening. What can I do for you?";
-                setAgentState('speaking', 'Agent Listening...');
-                appendTranscript('agent', ack);
-                speakAgentResponse(ack, () => {
+                const p = PERSONAS[currentPersonaId] || PERSONAS.ironman;
+                setAgentState('speaking', `${p.name} Active...`);
+                appendTranscript('agent', p.greeting);
+                speakAgentResponse(p.greeting, () => {
                     if (inCallMode && !isCallMuted && !isPushToTalkMode) {
                         startSpeechRecognition();
                     }
                 });
+            }
+        }
+
+        // ==========================================
+        // 4.2 LANGUAGE MANAGER (English, Hindi, Odia)
+        // ==========================================
+        function getEffectiveRecognitionLang() {
+            if (currentLanguage === 'hi-IN') return 'hi-IN';
+            if (currentLanguage === 'or-IN') return 'or-IN';
+            if (currentLanguage === 'en-IN') return 'en-IN';
+            if (currentLanguage === 'auto') {
+                const nav = (navigator.language || '').toLowerCase();
+                if (nav.startsWith('or')) return 'or-IN';
+                if (nav.startsWith('hi')) return 'hi-IN';
+                return 'en-IN';
+            }
+            return currentLanguage || 'en-IN';
+        }
+
+        function changeLanguage(newLang) {
+            currentLanguage = newLang;
+            localStorage.setItem('dots_language', newLang);
+
+            // Synchronize both stage and settings dropdowns
+            const stageSelect = document.getElementById('stageLangSelect');
+            if (stageSelect && stageSelect.value !== newLang) stageSelect.value = newLang;
+            const settingsSelect = document.getElementById('settingsLangSelect');
+            if (settingsSelect && settingsSelect.value !== newLang) settingsSelect.value = newLang;
+
+            // Auto-select natural matching voice for the chosen language
+            if (newLang === 'hi-IN') {
+                currentRealVoiceId = 'swara';
+                localStorage.setItem('agent_real_voice', 'swara');
+            } else if (newLang === 'or-IN') {
+                currentRealVoiceId = 'odia_copilot';
+                localStorage.setItem('agent_real_voice', 'odia_copilot');
+            } else if (newLang === 'en-IN') {
+                if (currentRealVoiceId === 'swara' || currentRealVoiceId === 'odia_copilot') {
+                    currentRealVoiceId = 'breeze';
+                    localStorage.setItem('agent_real_voice', 'breeze');
+                }
+            }
+
+            const realVSelect = document.getElementById('realVoiceSelect');
+            if (realVSelect) realVSelect.value = currentRealVoiceId;
+            const v = REAL_VOICES[currentRealVoiceId] || REAL_VOICES.breeze;
+            const badge = document.getElementById('activeVoiceBadgeLabel');
+            if (badge) badge.innerText = v.name;
+
+            const langLabels = {
+                'auto': '🌐 Auto Multilingual (English, Hindi, Odia)',
+                'hi-IN': '🇮🇳 हिन्दी (Hindi)',
+                'or-IN': '🇮🇳 ଓଡ଼ିଆ (Odia)',
+                'en-IN': '🇬🇧 English'
+            };
+            const label = langLabels[newLang] || newLang;
+            const sub = document.getElementById('callSubtitles');
+            if (sub) {
+                sub.innerText = `Language set to ${label}. Speak anytime!`;
+            }
+
+            // Immediately restart speech recognition with new language tag
+            if (inCallMode && !isCallMuted) {
+                stopSpeechRecognition();
+                setTimeout(() => {
+                    startSpeechRecognition();
+                }, 120);
             }
         }
 
@@ -2135,7 +2578,7 @@
             recognition = new SpeechRec();
             recognition.continuous = true;
             recognition.interimResults = true;
-            recognition.lang = 'en-US';
+            recognition.lang = getEffectiveRecognitionLang();
 
             recognition.onstart = () => {
                 isListening = true;
@@ -2164,13 +2607,25 @@
                 const currentText = (finalTranscript || interimTranscript).trim();
                 const wakeCheck = extractWakeWord(currentText);
 
-                // === SELF-ECHO GUARD ===
+                // === FULL-DUPLEX BARGE-IN & SELF-ECHO GUARD ===
                 const textToCheck = currentText.toLowerCase();
-                const isEcho = isSpeaking && currentAgentSpokenText.includes(textToCheck);
+                const spokenLower = (currentAgentSpokenText || "").toLowerCase();
+                
+                // Echo detection: check if mic heard what the agent is currently speaking
+                const isEcho = isSpeaking && (
+                    spokenLower.includes(textToCheck) || 
+                    (textToCheck.length > 6 && spokenLower.slice(0, 40).includes(textToCheck))
+                );
 
-                // If user speaks while agent is speaking and it's NOT an echo: trigger barge-in!
-                if (isSpeaking && !isEcho && (wakeCheck.detected || currentText.length > 2)) {
+                // Instant barge-in: If user speaks while agent is talking and it's NOT an echo, interrupt agent immediately!
+                if (isSpeaking && !isEcho && (wakeCheck.detected || currentText.length >= 2)) {
+                    console.log("⚡ Instant barge-in interruption triggered by user voice:", currentText);
                     triggerImmediateInterruption();
+                    // If user completed a distinct sentence while interrupting, commit immediately
+                    if (finalTranscript.trim().length >= 2) {
+                        handleUserSpeechCommit(finalTranscript.trim());
+                        return;
+                    }
                 }
 
                 // If in Standby (not in active call):
@@ -2180,9 +2635,18 @@
                             ? wakeCheck.command 
                             : (finalTranscript.trim() || interimTranscript.trim());
                         document.getElementById('callSubtitles').innerText = `"${currentText}"`;
-                        wakeAgentFromStandby(cmdToRun);
+                        wakeAgentFromStandby(cmdToRun, wakeCheck.character);
                     }
                     return;
+                }
+
+                // In active call mode: if user called another Avenger by name, switch character immediately!
+                if (wakeCheck.detected && wakeCheck.character && wakeCheck.character !== currentPersonaId) {
+                    changePersona(wakeCheck.character);
+                    if (wakeCheck.command) {
+                        handleUserSpeechCommit(wakeCheck.command);
+                        return;
+                    }
                 }
 
                 // In active call mode:
@@ -2194,13 +2658,13 @@
 
                 if (finalTranscript.trim()) {
                     handleUserSpeechCommit(finalTranscript.trim());
-                } else if (interimTranscript.trim().length > 3) {
-                    // Safety silence commit: if user paused speaking for 1.2s, process speech immediately
+                } else if (interimTranscript.trim().length >= 2) {
+                    // Ultra-fast response: Commit on 450ms pause instead of sluggish 1200ms
                     speechSilenceTimeout = setTimeout(() => {
                         if (interimTranscript.trim() && !isSpeaking && inCallMode) {
                             handleUserSpeechCommit(interimTranscript.trim());
                         }
-                    }, 1200);
+                    }, 450);
                 }
             };
 
@@ -2218,13 +2682,13 @@
             recognition.onend = () => {
                 isListening = false;
                 isRecognitionStarting = false;
-                // Auto-restart recognition if not muted (maintains continuous standby or active call listening)
-                if (!isSpeaking && !isCallMuted && !isPushToTalkMode) {
+                // Auto-restart recognition in call mode if not muted (maintains continuous listening even during agent speech)
+                if (!isCallMuted && !isPushToTalkMode && (inCallMode || !isSpeaking)) {
                     setTimeout(() => {
-                        if (!isSpeaking && !isCallMuted && !isPushToTalkMode) {
+                        if (!isCallMuted && !isPushToTalkMode && (inCallMode || !isSpeaking)) {
                             try { recognition.start(); } catch(e) {}
                         }
-                    }, 300);
+                    }, 200);
                 }
             };
 
@@ -2649,10 +3113,22 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                 return "Google Gemini is selected, but no API key was found. Please open Settings and paste your Gemini API key.";
             }
 
+            // Dynamic multilingual instruction based on selected language
+            let langInstruction = "";
+            if (currentLanguage === 'hi-IN') {
+                langInstruction = "\nCRITICAL LANGUAGE INSTRUCTION: The user selected HINDI. You MUST respond ONLY in natural conversational Hindi (हिंदी - Devanagari script). Keep your answer ultra-short (1-2 sentences) so it speaks instantly.";
+            } else if (currentLanguage === 'or-IN') {
+                langInstruction = "\nCRITICAL LANGUAGE INSTRUCTION: The user selected ODIA (ଓଡ଼ିଆ). You MUST respond ONLY in natural conversational Odia (ଓଡ଼ିଆ script). Keep your answer ultra-short (1-2 sentences) so it speaks instantly.";
+            } else if (currentLanguage === 'en-IN') {
+                langInstruction = "\nCRITICAL LANGUAGE INSTRUCTION: Respond in clear, concise English. Keep answer under 1-2 sentences.";
+            } else {
+                langInstruction = "\nCRITICAL MULTILINGUAL INSTRUCTION: Detect the language spoken by the user (Hindi, Odia, or English) and reply in the EXACT SAME LANGUAGE (Hindi in Hindi हिंदी, Odia in Odia ଓଡ଼ିଆ, English in English). Keep voice response under 1-2 short sentences so it responds instantly.";
+            }
+
             // Mode 1: OpenAI GPT-4o / GPT-4o-mini
             if (selectedEngine === 'openai' && openaiKey) {
                 try {
-                    let sysPrompt = PERSONAS[currentPersonaId].systemPrompt;
+                    let sysPrompt = PERSONAS[currentPersonaId].systemPrompt + langInstruction;
                     if (toolResult) {
                         sysPrompt += `\nBACKGROUND MISSION RESULT: You just executed '${toolIntent.name}'. Output was: '${toolResult.output}'. Confirm this verbally to the user in 1-2 natural spoken sentences.`;
                     }
@@ -2668,8 +3144,8 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                                 { role: "system", content: sysPrompt },
                                 { role: "user", content: userPrompt }
                             ],
-                            max_tokens: 280,
-                            temperature: 0.7
+                            max_tokens: 140,
+                            temperature: 0.6
                         }),
                         signal: currentAbortController?.signal
                     });
@@ -2689,13 +3165,31 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
             // Mode 2: Groq Cloud (Ultra-Fast Llama & DeepSeek)
             if (selectedEngine === 'groq' && groqKey) {
                 try {
-                    let sysPrompt = PERSONAS[currentPersonaId].systemPrompt;
+                    let sysPrompt = PERSONAS[currentPersonaId].systemPrompt + langInstruction;
                     if (toolResult) {
                         sysPrompt += `\nBACKGROUND MISSION RESULT: You just executed '${toolIntent.name}'. Output was: '${toolResult.output}'. Confirm this verbally to the user in 1-2 natural spoken sentences.`;
                     }
-                    const activeModel = groqModel || localStorage.getItem('dots_groq_model') || 'llama-3.1-8b-instant';
-                    const modelsToTry = [activeModel, "llama-3.3-70b-versatile", "llama-3.1-8b-instant", "deepseek-r1-distill-llama-70b", "gemma2-9b-it", "mistral-saba-24b", "qwen-2.5-32b", "llama3-8b-8192"];
-                    const uniqueModels = [...new Set(modelsToTry)];
+                    let activeModel = groqModel || localStorage.getItem('dots_groq_model') || 'llama-3.1-8b-instant';
+                    // Auto-heal: If previously connected to a low-RPM safeguard/moderation model, reset to high-RPM conversational Llama
+                    if (activeModel.includes('safeguard') || activeModel.includes('guard')) {
+                        activeModel = 'llama-3.1-8b-instant';
+                        groqModel = 'llama-3.1-8b-instant';
+                        localStorage.setItem('dots_groq_model', 'llama-3.1-8b-instant');
+                    }
+
+                    const modelsToTry = [
+                        activeModel,
+                        "llama-3.1-8b-instant",
+                        "llama-3.3-70b-versatile",
+                        "deepseek-r1-distill-llama-70b",
+                        "gemma2-9b-it",
+                        "mistral-saba-24b",
+                        "qwen-2.5-32b",
+                        "llama3-70b-8192",
+                        "llama3-8b-8192"
+                    ];
+                    // Strict filter: never use moderation/safeguard models for chat
+                    const uniqueModels = [...new Set(modelsToTry.filter(m => !m.includes('safeguard') && !m.includes('guard')))];
 
                     let lastNotice = "";
                     for (const m of uniqueModels) {
@@ -2709,8 +3203,8 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                                         { role: "system", content: sysPrompt },
                                         { role: "user", content: userPrompt }
                                     ],
-                                    max_tokens: 280,
-                                    temperature: 0.7
+                                    max_tokens: 140, // Fast response: ~100ms generation on Groq
+                                    temperature: 0.6
                                 }),
                                 signal: currentAbortController?.signal
                             });
@@ -2721,8 +3215,10 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                                     localStorage.setItem('dots_groq_model', m);
                                 }
                                 return d.choices[0].message.content;
-                            } else if (res.status === 404) {
-                                continue; // Try next model
+                            } else if (res.status === 404 || res.status === 429) {
+                                // 404 Not Found OR 429 Rate Limit hit -> seamlessly auto-rotate to next available model!
+                                console.warn(`Groq model ${m} notice (status ${res.status}: ${d.error?.message}), rotating to next model...`);
+                                continue;
                             } else if (!res.ok) {
                                 lastNotice = d.error?.message || 'Check your Groq key in Settings';
                                 break;
@@ -2753,7 +3249,7 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
                             contents: [{ role: "user", parts: [{ text: contextText }] }],
-                            systemInstruction: { parts: [{ text: PERSONAS[currentPersonaId].systemPrompt }] }
+                            systemInstruction: { parts: [{ text: PERSONAS[currentPersonaId].systemPrompt + langInstruction }] }
                         }),
                         signal: currentAbortController?.signal
                     });
@@ -2789,9 +3285,45 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                 }
             }
 
-            // Conversational Fallbacks
+            // Conversational Fallbacks (Hindi, Odia, English)
             const personaName = PERSONAS[currentPersonaId].name;
             const pLower = userPrompt.toLowerCase();
+
+            // Hindi offline queries
+            if (/[\u0900-\u097F]/.test(userPrompt) || currentLanguage === 'hi-IN') {
+                if (pLower.includes('नमस्ते') || pLower.includes('प्रणाम') || pLower.includes('हैलो') || pLower.includes('हेलो')) {
+                    return `नमस्ते! मैं आपका वॉयस एजेंट हूँ। मैं आपकी क्या सेवा कर सकता हूँ?`;
+                }
+                if (pLower.includes('कौन हो') || pLower.includes('नाम क्या')) {
+                    return `मैं ${personaName} हूँ, आपका सुपरफास्ट वॉइस असिस्टेंट। मैं हिंदी, ओड़िया और अंग्रेज़ी में बात कर सकता हूँ!`;
+                }
+                if (pLower.includes('कैसे हो') || pLower.includes('हाल')) {
+                    return `मैं बिल्कुल ठीक हूँ और आपकी मदद के लिए तैयार हूँ। आप बताइए, आज क्या करना है?`;
+                }
+                if (pLower.includes('समय') || pLower.includes('टाइम') || pLower.includes('तारीख')) {
+                    const now = new Date();
+                    return `अभी का समय ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} है।`;
+                }
+                return `मैंने सुना: "${userPrompt}"। असीमित ज्ञान और त्वरित उत्तर के लिए सेटिंग्स में जाकर मुफ़्त Groq API Key जोड़ें!`;
+            }
+
+            // Odia offline queries
+            if (/[\u0B00-\u0B7F]/.test(userPrompt) || currentLanguage === 'or-IN') {
+                if (pLower.includes('ନମସ୍କାର') || pLower.includes('ହେଲୋ')) {
+                    return `ନମସ୍କାର! ମୁଁ ଆପଣଙ୍କର ଭଏସ୍ ଏଜେଣ୍ଟ। ମୁଁ ଆପଣଙ୍କୁ କିପରି ସାହାଯ୍ୟ କରିପାରିବି?`;
+                }
+                if (pLower.includes('କିଏ') || pLower.includes('ନାମ କଣ')) {
+                    return `ମୁଁ ${personaName}, ଆପଣଙ୍କ ସ୍ମାର୍ଟ ଭଏସ୍ କପାଇଲଟ୍। ମୁଁ ଓଡ଼ିଆ, ହିନ୍ଦୀ ଏବଂ ଇଂରାଜୀ ବୁଝିପାରେ!`;
+                }
+                if (pLower.includes('କେମିତି ଅଛନ୍ତି') || pLower.includes('ଭଲ ଅଛନ୍ତି')) {
+                    return `ମୁଁ ବହୁତ ଭଲ ଅଛି! ଆପଣ କୁହନ୍ତୁ, ଆଜି କଣ କାମ କରିବା?`;
+                }
+                if (pLower.includes('ସମୟ') || pLower.includes('ତାରିଖ')) {
+                    const now = new Date();
+                    return `ବର୍ତ୍ତମାନ ସମୟ ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}।`;
+                }
+                return `ମୁଁ ଶୁଣିଲି: "${userPrompt}"। ସମସ୍ତ ପ୍ରଶ୍ନର ସଠିକ୍ ଉତ୍ତର ପାଇଁ ସେଟିଙ୍ଗ୍ସରେ ମାଗଣା Groq API Key ଯୋଡନ୍ତୁ!`;
+            }
 
             if (pLower.includes('who are you') || pLower.includes('your name')) {
                 return `I am ${personaName}, your autonomous voice agent powered by the Dots speech matrix. I can converse with you hands-free and execute real tools in the background.`;
@@ -2838,6 +3370,19 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                 .trim();
 
             const vMeta = REAL_VOICES[currentRealVoiceId] || REAL_VOICES.arbor;
+
+            // Full-Duplex Barge-In: keep speech recognition active while agent talks so user can interrupt anytime
+            if (inCallMode && !isCallMuted && !isPushToTalkMode) {
+                setTimeout(() => {
+                    if (isSpeaking && inCallMode && !isCallMuted && !isPushToTalkMode) {
+                        try {
+                            if (!isListening && !isRecognitionStarting) {
+                                startSpeechRecognition();
+                            }
+                        } catch(e) {}
+                    }
+                }, 250);
+            }
 
             // STRATEGY 1: Real OpenAI HD Neural Audio Stream (if OpenAI API Key is provided)
             if (openaiKey && openaiKey.trim().length > 10) {
@@ -2929,6 +3474,21 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
             agentSpeechStartTime = Date.now();
             currentAgentSpokenText = cleanSpeech.toLowerCase();
 
+            // Detect language script from text characters
+            const hasHindi = /[\u0900-\u097F]/.test(cleanSpeech);
+            const hasOdia = /[\u0B00-\u0B7F]/.test(cleanSpeech);
+
+            let targetLang = vMeta.lang || 'en';
+            if (hasOdia || currentLanguage === 'or-IN') {
+                targetLang = 'or';
+                utter.lang = 'or-IN';
+            } else if (hasHindi || currentLanguage === 'hi-IN') {
+                targetLang = 'hi';
+                utter.lang = 'hi-IN';
+            } else {
+                utter.lang = (targetLang === 'en' ? 'en-US' : (targetLang + '-US'));
+            }
+
             // Match best natural voice by language and gender
             if (voicesList.length === 0) {
                 voicesList = window.speechSynthesis.getVoices();
@@ -2936,28 +3496,40 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
 
             let bestVoice = null;
             if (voicesList.length > 0) {
-                const targetLang = vMeta.lang || 'en';
-                // 1. Prefer Natural / Online neural voices for the target language
-                bestVoice = voicesList.find(v => v.lang.startsWith(targetLang) && (v.name.includes('Natural') || v.name.includes('Online')));
-                // 2. If not found, match by gender hint in name
+                // 1. Try exact target language (hi or or) with natural/online/Google
+                bestVoice = voicesList.find(v => v.lang.toLowerCase().startsWith(targetLang) && 
+                    (v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Google') || v.name.includes('Swara') || v.name.includes('Madhur')));
+
+                // 2. Any voice matching target language
                 if (!bestVoice) {
+                    bestVoice = voicesList.find(v => v.lang.toLowerCase().startsWith(targetLang));
+                }
+
+                // 3. Fallback for Odia if no native Odia voice exists in browser -> use Hindi/Indic synthesizer
+                if (!bestVoice && targetLang === 'or') {
+                    bestVoice = voicesList.find(v => v.lang.toLowerCase().startsWith('hi') || v.lang.toLowerCase().startsWith('bn'));
+                }
+
+                // 4. Default gender voice for other languages
+                if (!bestVoice && !hasHindi && !hasOdia) {
                     const genderNames = vMeta.gender === 'female' 
                         ? ['Jenny', 'Aria', 'Samantha', 'Zira', 'Nanami', 'SunHi', 'Denise', 'Katja'] 
                         : ['Guy', 'Christopher', 'Eric', 'David', 'Keita', 'InJoon', 'Henri', 'Conrad'];
                     bestVoice = voicesList.find(v => v.lang.startsWith(targetLang) && genderNames.some(n => v.name.includes(n)));
                 }
-                // 3. Fallback to any voice in target language
-                if (!bestVoice) {
-                    bestVoice = voicesList.find(v => v.lang.startsWith(targetLang));
-                }
-                // 4. Global fallback
-                if (!bestVoice) {
+
+                // 5. Global fallback
+                if (!bestVoice && !hasHindi && !hasOdia) {
                     bestVoice = voicesList.find(v => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google'))) || voicesList[0];
+                }
+
+                if (!bestVoice) {
+                    bestVoice = voicesList[0];
                 }
             }
 
             if (bestVoice) utter.voice = bestVoice;
-            utter.rate = vMeta.rate || 1.05;
+            utter.rate = vMeta.rate || 1.1; // 1.1x brisk natural cadence
             utter.pitch = vMeta.pitch || 1.0;
 
             let finished = false;
@@ -3016,11 +3588,30 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
             const badge = document.getElementById('activeVoiceBadgeLabel');
             if (badge) badge.innerText = v.name;
 
-            if (currentRealVoiceId === 'hulk') {
-                playTone(130, 0.25); // Deep sub-bass rumble
-                const roar = "HULK ONLINE! HULK IS READY TO SMASH CODE BUGS AND EXECUTE YOUR TASKS! WHAT SHOULD HULK CRUSH TODAY?!";
-                speakAgentResponse(roar);
-                appendTranscript('agent', roar);
+            // If selected voice is an Avenger hero, sync persona, HUD theme & play superhero sound!
+            if (PERSONAS[currentRealVoiceId]) {
+                currentPersonaId = currentRealVoiceId;
+                localStorage.setItem('dots_persona', currentPersonaId);
+                const pSelect = document.getElementById('personaSelect');
+                if (pSelect) pSelect.value = currentPersonaId;
+                const p = PERSONAS[currentPersonaId];
+                document.body.className = (p.theme ? ('theme-' + p.theme) : '');
+                playHeroSound(currentPersonaId);
+                speakAgentResponse(p.greeting);
+                appendTranscript('agent', p.greeting);
+                return;
+            }
+
+            if (currentRealVoiceId === 'swara' || currentRealVoiceId === 'madhur') {
+                playHarmonicChime([523.25, 659.25]);
+                const intro = `नमस्ते! मैं ${v.name} हूँ। मैं आपकी सहायता के लिए तैयार हूँ।`;
+                speakAgentResponse(intro);
+                appendTranscript('agent', intro);
+            } else if (currentRealVoiceId === 'odia_copilot') {
+                playHarmonicChime([523.25, 659.25]);
+                const intro = `ନମସ୍କାର! ମୁଁ ଓଡ଼ିଆ କପାଇଲଟ୍। ଆପଣଙ୍କୁ ସାହାଯ୍ୟ କରିବାକୁ ପ୍ରସ୍ତୁତ!`;
+                speakAgentResponse(intro);
+                appendTranscript('agent', intro);
             } else {
                 playHarmonicChime([523.25, 659.25]);
                 const intro = `Voice changed to ${v.name}: ${v.desc}. How does this sound?`;
@@ -3052,16 +3643,10 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
         }
 
         function testVoiceAudioOutput() {
-            const v = REAL_VOICES[currentRealVoiceId] || REAL_VOICES.breeze;
-            let testMsg = `Hello! I am speaking with the ${v.name} voice: ${v.desc}. Voice audio is working loud and clear!`;
-            if (currentRealVoiceId === 'hulk') {
-                playTone(130, 0.25);
-                testMsg = "HULK ONLINE! HULK SOUND IS WORKING LOUD AND POWERFUL! HULK READY TO SMASH CODE BUGS!";
-            } else {
-                playHarmonicChime([523.25, 659.25, 783.99]);
-            }
-            speakAgentResponse(testMsg);
-            appendTranscript('agent', testMsg);
+            playHeroSound(currentPersonaId);
+            const p = PERSONAS[currentPersonaId] || PERSONAS.ironman;
+            speakAgentResponse(p.greeting);
+            appendTranscript('agent', p.greeting);
         }
 
         // ==========================================
@@ -3290,12 +3875,41 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
         // ==========================================
         // 13. PERSONA & SETTINGS MANAGEMENT
         // ==========================================
-        function changePersona() {
-            currentPersonaId = document.getElementById('personaSelect').value;
-            const p = PERSONAS[currentPersonaId];
-            if (inCallMode) {
-                speakAgentResponse(`Switched persona to ${p.name}, your ${p.title}. How may I help?`);
+        function changePersona(targetPersonaId) {
+            const pSelect = document.getElementById('personaSelect');
+            if (targetPersonaId) {
+                currentPersonaId = targetPersonaId;
+                if (pSelect) pSelect.value = targetPersonaId;
+            } else if (pSelect) {
+                currentPersonaId = pSelect.value;
             }
+            localStorage.setItem('dots_persona', currentPersonaId);
+
+            const p = PERSONAS[currentPersonaId] || PERSONAS.ironman;
+
+            // Apply realistic Avengers HUD theme class to body
+            document.body.className = (p.theme ? ('theme-' + p.theme) : '');
+
+            // Synchronize voice selector with character voice
+            if (p.voiceId && REAL_VOICES[p.voiceId]) {
+                currentRealVoiceId = p.voiceId;
+                localStorage.setItem('agent_real_voice', currentRealVoiceId);
+                const rSelect = document.getElementById('realVoiceSelect');
+                if (rSelect) rSelect.value = currentRealVoiceId;
+                const badge = document.getElementById('activeVoiceBadgeLabel');
+                if (badge) badge.innerText = REAL_VOICES[currentRealVoiceId].name;
+            }
+
+            // Update UI agent label & hero status
+            const agentLabel = document.getElementById('agentStateLabel');
+            if (agentLabel) agentLabel.innerText = `${p.name} Online`;
+
+            // Play character superhero SFX
+            playHeroSound(currentPersonaId);
+
+            // Announce superhero greeting
+            speakAgentResponse(p.greeting);
+            appendTranscript('agent', p.greeting);
         }
 
         function openSettingsModal() {
@@ -3445,27 +4059,39 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                         if (mRes.ok) {
                             const mData = await mRes.json();
                             if (mData.data && Array.isArray(mData.data)) {
-                                modelsFound = mData.data.map(m => m.id).filter(id => !id.includes('whisper'));
+                                // Strictly filter out moderation, safeguard, audio, and vision models
+                                modelsFound = mData.data.map(m => m.id).filter(id => {
+                                    const l = id.toLowerCase();
+                                    return !l.includes('safeguard') && 
+                                           !l.includes('guard') && 
+                                           !l.includes('whisper') && 
+                                           !l.includes('embed') && 
+                                           !l.includes('moderation') &&
+                                           !l.includes('vision');
+                                });
                             }
                         }
                     } catch (e) {
                         console.warn("Could not query /models endpoint:", e);
                     }
 
-                    // Build candidate test list: detected models first, then common production models
-                    const candidates = [
-                        ...modelsFound,
-                        "llama-3.3-70b-versatile",
+                    // Put high-rate-limit (30 RPM) conversational models at the very top of priority
+                    const priorityChatModels = [
                         "llama-3.1-8b-instant",
+                        "llama-3.3-70b-versatile",
                         "deepseek-r1-distill-llama-70b",
-                        "deepseek-r1-distill-qwen-32b",
                         "gemma2-9b-it",
                         "mistral-saba-24b",
                         "qwen-2.5-32b",
                         "llama3-70b-8192",
                         "llama3-8b-8192"
                     ];
-                    const uniqueCandidates = [...new Set(candidates)];
+
+                    const candidates = [
+                        ...priorityChatModels,
+                        ...modelsFound
+                    ];
+                    const uniqueCandidates = [...new Set(candidates.filter(m => !m.includes('safeguard') && !m.includes('guard')))];
 
                     for (const mod of uniqueCandidates) {
                         try {
@@ -3486,6 +4112,9 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                                 statusDiv.style.color = '#ef4444';
                                 statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> <strong>Groq Error (401 Unauthorized): Invalid API Key</strong>.<br>Please generate a new key on <a href="https://console.groq.com/keys" target="_blank" style="color:var(--accent-cyan);">console.groq.com/keys</a>.`;
                                 return;
+                            } else if (res.status === 429) {
+                                console.warn(`Groq model ${mod} currently rate-limited (429), testing next model...`);
+                                continue;
                             } else {
                                 lastErrMsg = `[${mod}] ${d.error?.message || res.statusText || res.status}`;
                             }
@@ -3577,6 +4206,11 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
             soundChimesEnabled = document.getElementById('soundChimesSelect').value === 'true';
             localStorage.setItem('dots_sound_chimes', soundChimesEnabled);
 
+            const langSelect = document.getElementById('settingsLangSelect');
+            if (langSelect) {
+                changeLanguage(langSelect.value);
+            }
+
             closeSettingsModal();
             updateEngineSelection();
             testBridgeConnection();
@@ -3598,6 +4232,19 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
             const v = REAL_VOICES[currentRealVoiceId] || REAL_VOICES.breeze;
             const badge = document.getElementById('activeVoiceBadgeLabel');
             if (badge) badge.innerText = v.name;
+
+            const stageLang = document.getElementById('stageLangSelect');
+            if (stageLang) stageLang.value = currentLanguage;
+            const settingsLang = document.getElementById('settingsLangSelect');
+            if (settingsLang) settingsLang.value = currentLanguage;
+
+            // Restore Avengers superhero persona and HUD theme
+            currentPersonaId = localStorage.getItem('dots_persona') || 'ironman';
+            const pSelect = document.getElementById('personaSelect');
+            if (pSelect) pSelect.value = currentPersonaId;
+            const p = PERSONAS[currentPersonaId] || PERSONAS.ironman;
+            if (p.theme) document.body.className = 'theme-' + p.theme;
+
             updateEngineSelection();
         }
 
@@ -3683,6 +4330,96 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
                 gain.connect(ctx.destination);
                 osc.start();
                 osc.stop(ctx.currentTime + 0.12);
+            } catch(e) {}
+        }
+
+        // ==========================================
+        // 14.1 MARVEL AVENGERS CHARACTER AUDIO EFFECTS
+        // ==========================================
+        function playHeroSound(heroId) {
+            if (!soundChimesEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+
+                if (heroId === 'ironman') {
+                    // Repulsor charge + laser blast
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(320, now);
+                    osc.frequency.exponentialRampToValueAtTime(1600, now + 0.16);
+                    osc.frequency.exponentialRampToValueAtTime(140, now + 0.3);
+                    gain.gain.setValueAtTime(0.02, now);
+                    gain.gain.linearRampToValueAtTime(0.09, now + 0.16);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (heroId === 'thor') {
+                    // Thunder blast & lightning crash
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.exponentialRampToValueAtTime(65, now + 0.26);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.32);
+                } else if (heroId === 'captain') {
+                    // Vibranium shield ricochet ring
+                    const freqs = [1760, 3520];
+                    freqs.forEach((f, i) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(f, now);
+                        gain.gain.setValueAtTime(0.09 / (i + 1), now);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(now);
+                        osc.stop(now + 0.28);
+                    });
+                } else if (heroId === 'spiderman') {
+                    // Web-shooter thwip
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(2400, now);
+                    osc.frequency.exponentialRampToValueAtTime(480, now + 0.12);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                } else if (heroId === 'hulk') {
+                    // Monster sub-bass earthquake roar
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(95, now);
+                    osc.frequency.exponentialRampToValueAtTime(36, now + 0.35);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.4);
+                } else if (heroId === 'jarvis') {
+                    // Stark HUD boot sequence
+                    playHarmonicChime([587.33, 880, 1174.66, 1760]);
+                } else if (heroId === 'thanos') {
+                    // Infinity Stones cosmic surge
+                    playHarmonicChime([65.4, 98.0, 130.8, 196.0]);
+                } else {
+                    playHarmonicChime([523.25, 659.25]);
+                }
             } catch(e) {}
         }
     </script>
