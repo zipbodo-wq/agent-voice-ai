@@ -14,7 +14,7 @@ import wave
 import io
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
-PORT = 8766
+PORT = int(os.environ.get("MAYA_PORT", 8766))
 WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
 CLONE_STORAGE_DIR = os.path.join(WORKSPACE_DIR, "cloned_voices")
 os.makedirs(CLONE_STORAGE_DIR, exist_ok=True)
@@ -192,7 +192,9 @@ def run_server():
     print(" Supported Languages: Hindi (hi), Odia (or)")
     print("=" * 68)
     check_and_load_maya()
-    server = HTTPServer(("0.0.0.0", PORT), MayaServerHandler)
+    allow_lan = os.environ.get("ALLOW_LAN", "0") == "1"
+    bind_host = "0.0.0.0" if allow_lan else "127.0.0.1"
+    server = HTTPServer((bind_host, PORT), MayaServerHandler)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
