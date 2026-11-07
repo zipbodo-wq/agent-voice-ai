@@ -2102,32 +2102,34 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                     if (toolResult) {
                         sysPrompt += `\nBACKGROUND MISSION RESULT: You just executed '${toolIntent.name}'. Output was: '${toolResult.output}'. Confirm this verbally to the user in 1-2 natural spoken sentences.`;
                     }
-                    let activeModel = groqModel || localStorage.getItem('dots_groq_model') || 'llama-3.1-8b-instant';
-                    // Auto-heal: If previously connected to a low-RPM safeguard/moderation model, reset to high-RPM conversational Llama
-                    if (activeModel.includes('safeguard') || activeModel.includes('guard')) {
-                        activeModel = 'llama-3.1-8b-instant';
-                        groqModel = 'llama-3.1-8b-instant';
-                        localStorage.setItem('dots_groq_model', 'llama-3.1-8b-instant');
+                    let activeModel = groqModel || localStorage.getItem('dots_groq_model') || 'llama-3.3-70b-versatile';
+                    // Auto-heal: If previously connected to a decommissioned, retired, or safeguard model, reset to active Llama 3.3/3.1
+                    if (!activeModel || activeModel.includes('safeguard') || activeModel.includes('guard') || activeModel.includes('qwen') || activeModel.includes('saba') || activeModel.includes('llama3-') || activeModel.includes('gemma2')) {
+                        activeModel = 'llama-3.3-70b-versatile';
+                        groqModel = 'llama-3.3-70b-versatile';
+                        localStorage.setItem('dots_groq_model', 'llama-3.3-70b-versatile');
                     }
 
                     const isOdiaQuery = currentLanguage === 'or-IN' || /[\u0B00-\u0B7F]/.test(userPrompt);
                     const modelsToTry = isOdiaQuery ? [
                         "llama-3.3-70b-versatile",
-                        "qwen-2.5-32b",
+                        "llama-3.1-8b-instant",
                         "deepseek-r1-distill-llama-70b",
-                        activeModel,
-                        "llama-3.1-8b-instant"
+                        activeModel
                     ] : [
                         activeModel,
-                        "llama-3.1-8b-instant",
                         "llama-3.3-70b-versatile",
-                        "deepseek-r1-distill-llama-70b",
-                        "gemma2-9b-it",
-                        "mistral-saba-24b",
-                        "qwen-2.5-32b"
+                        "llama-3.1-8b-instant",
+                        "deepseek-r1-distill-llama-70b"
                     ];
-                    // Strict filter: never use moderation/safeguard models for chat
-                    const uniqueModels = [...new Set(modelsToTry.filter(m => !m.includes('safeguard') && !m.includes('guard')))];
+                    // Strict filter: never use moderation/safeguard or decommissioned models for chat
+                    const uniqueModels = [...new Set(modelsToTry.filter(m => 
+                        !m.includes('safeguard') && 
+                        !m.includes('guard') && 
+                        !m.includes('qwen') && 
+                        !m.includes('saba') && 
+                        !m.includes('llama3-')
+                    ))];
 
                     let lastNotice = "";
                     for (const m of uniqueModels) {
@@ -2153,13 +2155,16 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                                     localStorage.setItem('dots_groq_model', m);
                                 }
                                 return d.choices[0].message.content;
-                            } else if (res.status === 404 || res.status === 429) {
-                                // 404 Not Found OR 429 Rate Limit hit -> seamlessly auto-rotate to next available model!
-                                console.warn(`Groq model ${m} notice (status ${res.status}: ${d.error?.message}), rotating to next model...`);
+                            } else if (res.status === 404 || res.status === 429 || (d.error?.message && (d.error.message.includes('decommissioned') || d.error.message.includes('deprecated') || d.error.message.includes('not found') || d.error.message.includes('no longer supported')))) {
+                                // 404 Not Found, 429 Rate Limit, OR decommissioned notice -> seamlessly auto-rotate to next available model!
+                                console.warn(`Groq model ${m} notice (${d.error?.message}), rotating to next model...`);
                                 continue;
                             } else if (!res.ok) {
                                 lastNotice = d.error?.message || 'Check your Groq key in Settings';
-                                break;
+                                if (res.status === 401) {
+                                    break; // Only stop early on invalid key authentication error
+                                }
+                                continue;
                             }
                         } catch (err) {
                             if (err.name === 'AbortError') return "";
@@ -3645,23 +3650,26 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                         console.warn("Could not query /models endpoint:", e);
                     }
 
-                    // Put high-rate-limit (30 RPM) conversational models at the very top of priority
+                    // Put active high-rate-limit conversational models at top of priority
                     const priorityChatModels = [
-                        "llama-3.1-8b-instant",
                         "llama-3.3-70b-versatile",
-                        "deepseek-r1-distill-llama-70b",
-                        "gemma2-9b-it",
-                        "mistral-saba-24b",
-                        "qwen-2.5-32b",
-                        "llama3-70b-8192",
-                        "llama3-8b-8192"
+                        "llama-3.1-8b-instant",
+                        "deepseek-r1-distill-llama-70b"
                     ];
 
                     const candidates = [
                         ...priorityChatModels,
                         ...modelsFound
                     ];
-                    const uniqueCandidates = [...new Set(candidates.filter(m => !m.includes('safeguard') && !m.includes('guard')))];
+                    const uniqueCandidates = [...new Set(candidates.filter(m => 
+                        !m.includes('safeguard') && 
+                        !m.includes('guard') && 
+                        !m.includes('qwen') && 
+                        !m.includes('saba') && 
+                        !m.includes('llama3-') && 
+                        !m.includes('whisper') && 
+                        !m.includes('vision')
+                    ))];
 
                     for (const mod of uniqueCandidates) {
                         try {
