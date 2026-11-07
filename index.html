@@ -757,11 +757,12 @@
                     <span id="sarvamConfigBadge" style="font-size:0.72rem;color:var(--text-muted);">Checking bridge...</span>
                 </div>
                 <div style="display:flex;gap:8px;">
-                    <input type="password" class="settings-input" id="sarvamApiKeyInput" placeholder="Enter Sarvam api-subscription-key (or set SARVAM_API_KEY env)" style="flex:1;">
+                    <input type="password" class="settings-input" id="sarvamApiKeyInput" oninput="onSarvamKeyInputChanged()" placeholder="Enter Sarvam api-subscription-key (or set SARVAM_API_KEY env)" style="flex:1;">
                     <button type="button" class="action-chip" style="padding:0 10px;font-size:0.74rem;" onclick="testSarvamTtsDirect()">
                         <i class="fa-solid fa-vial"></i> Test
                     </button>
                 </div>
+                <div id="sarvamTestStatus" style="display:none;font-size:0.75rem;margin-top:6px;padding:6px 10px;border-radius:6px;line-height:1.4;"></div>
                 <div style="font-size:0.72rem;color:var(--text-muted);margin-top:3px;line-height:1.3;">
                     Natively supports Hindi (<code>hi-IN</code>) and Odia (<code>od-IN</code>) with speakers Shubh &amp; Ritu. Get key at <a href="https://www.sarvam.ai/" target="_blank" style="color:var(--accent-cyan);">sarvam.ai</a>.
                 </div>

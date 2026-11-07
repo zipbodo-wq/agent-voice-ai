@@ -2807,19 +2807,183 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
             reader.readAsDataURL(file);
         }
 
+        function onSarvamKeyInputChanged() {
+            const input = document.getElementById('sarvamApiKeyInput');
+            const badge = document.getElementById('sarvamConfigBadge');
+            const statusDiv = document.getElementById('sarvamTestStatus');
+            if (statusDiv) statusDiv.style.display = 'none';
+            if (!input) return;
+            const cleaned = input.value.trim().replace(/^['"]+|['"]+$/g, '');
+            if (cleaned !== input.value) input.value = cleaned;
+            window.sarvamApiKey = cleaned;
+            localStorage.setItem('sarvam_api_key', cleaned);
+            if (badge) {
+                if (cleaned.length > 5) {
+                    badge.innerText = "🟢 Key Saved (Click Test)";
+                    badge.style.color = "var(--accent-emerald)";
+                } else if (window.sarvamBridgeAvailable) {
+                    badge.innerText = "🟢 Bridge Key Active";
+                    badge.style.color = "var(--accent-emerald)";
+                } else {
+                    badge.innerText = "⚪ Bridge: SARVAM_API_KEY not set";
+                    badge.style.color = "var(--text-muted)";
+                }
+            }
+        }
+        window.onSarvamKeyInputChanged = onSarvamKeyInputChanged;
+
         async function testSarvamTtsDirect() {
             const input = document.getElementById('sarvamApiKeyInput');
-            if (input && input.value.trim()) {
-                window.sarvamApiKey = input.value.trim();
-                localStorage.setItem('sarvam_api_key', window.sarvamApiKey);
+            const statusDiv = document.getElementById('sarvamTestStatus');
+            const badge = document.getElementById('sarvamConfigBadge');
+
+            let key = (input ? input.value : '').trim().replace(/^['"]+|['"]+$/g, '');
+            if (input) input.value = key;
+            if (!key) {
+                key = (window.sarvamApiKey || localStorage.getItem('sarvam_api_key') || '').trim();
             }
-            const currentLang = localStorage.getItem('agent_language') || 'hi';
-            const sample = currentLang === 'or' 
-                ? "ନମସ୍କାର, ମୁଁ ଆପଣଙ୍କୁ କିପରି ସାହାଯ୍ୟ କରିପାରିବି?"
-                : "नमस्ते, मैं आपकी कैसे मदद कर सकता हूँ?";
+
+            if (!key && !window.sarvamBridgeAvailable) {
+                if (statusDiv) {
+                    statusDiv.style.display = 'block';
+                    statusDiv.style.background = 'rgba(239, 68, 68, 0.15)';
+                    statusDiv.style.border = '1px solid #ef4444';
+                    statusDiv.style.color = '#fca5a5';
+                    statusDiv.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> <strong>Please paste your Sarvam API Key first!</strong> Get a free key at <a href="https://dashboard.sarvam.ai" target="_blank" style="color:#67e8f9;text-decoration:underline;">dashboard.sarvam.ai</a>.';
+                }
+                showToast("Please enter a Sarvam API Key first");
+                return;
+            }
+
+            if (key) {
+                window.sarvamApiKey = key;
+                localStorage.setItem('sarvam_api_key', key);
+            }
+
+            if (statusDiv) {
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = 'rgba(14, 165, 233, 0.15)';
+                statusDiv.style.border = '1px solid #0ea5e9';
+                statusDiv.style.color = '#7dd3fc';
+                statusDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Contacting Sarvam Bulbul v3 with your key...';
+            }
             showToast("Testing Sarvam AI Bulbul v3...");
-            speak(sample, currentLang);
+
+            const currentLang = localStorage.getItem('agent_language') || 'hi';
+            const sampleText = currentLang === 'or' 
+                ? "ନମସ୍କାର, ମୁଁ ଆପଣଙ୍କ ସ୍ୱର ସହାୟକ ଅଟେ। ମୁଁ ଆପଣଙ୍କୁ କିପରି ସାହାଯ୍ୟ କରିପାରିବି?"
+                : "नमस्ते, मैं आपका वॉयस असिस्टेंट हूँ। मैं आपकी कैसे मदद कर सकता हूँ?";
+            const targetCode = currentLang === 'or' ? 'od-IN' : 'hi-IN';
+            const speaker = 'ritu';
+
+            let audioBlob = null;
+            let errorDetail = '';
+
+            // 1. Try local bridge if online
+            if (bridgeOnline) {
+                try {
+                    const bRes = await fetch(`${bridgeUrl}/tts`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            text: sampleText,
+                            language: currentLang,
+                            speaker: speaker,
+                            api_key: key
+                        })
+                    });
+                    if (bRes.ok) {
+                        const blob = await bRes.blob();
+                        if (blob && blob.size > 1000) audioBlob = blob;
+                    } else {
+                        const errData = await bRes.json().catch(() => ({}));
+                        errorDetail = errData.error || `Bridge HTTP ${bRes.status}`;
+                    }
+                } catch(e) {
+                    console.warn("Bridge TTS test notice:", e.message || e);
+                }
+            }
+
+            // 2. Direct Sarvam API call if not resolved by bridge and key present
+            if (!audioBlob && key) {
+                try {
+                    const sRes = await fetch("https://api.sarvam.ai/text-to-speech", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "api-subscription-key": key
+                        },
+                        body: JSON.stringify({
+                            text: sampleText,
+                            inputs: [sampleText],
+                            target_language_code: targetCode,
+                            speaker: speaker,
+                            model: "bulbul:v3"
+                        })
+                    });
+
+                    if (sRes.ok) {
+                        const data = await sRes.json();
+                        const b64 = (data.audios && data.audios[0]) ? data.audios[0] : null;
+                        if (b64) {
+                            const byteChars = atob(b64);
+                            const byteNumbers = new Array(byteChars.length);
+                            for (let i = 0; i < byteChars.length; i++) byteNumbers[i] = byteChars.charCodeAt(i);
+                            const byteArray = new Uint8Array(byteNumbers);
+                            audioBlob = new Blob([byteArray], { type: "audio/wav" });
+                        } else {
+                            errorDetail = "Sarvam returned HTTP 200 but audios array was empty.";
+                        }
+                    } else {
+                        const errJson = await sRes.json().catch(() => null);
+                        const errMsg = (errJson && errJson.error && errJson.error.message) 
+                            ? errJson.error.message 
+                            : (errJson && errJson.error ? JSON.stringify(errJson.error) : `HTTP ${sRes.status}`);
+                        if (sRes.status === 401 || sRes.status === 403) {
+                            errorDetail = `Key Rejected (${sRes.status}): ${errMsg}. Check key or dashboard credits at sarvam.ai`;
+                        } else if (sRes.status === 429) {
+                            errorDetail = `Rate limit or credits exhausted (429): ${errMsg}`;
+                        } else {
+                            errorDetail = `Sarvam API error (${sRes.status}): ${errMsg}`;
+                        }
+                    }
+                } catch(e) {
+                    errorDetail = `Network error: ${e.message || e}`;
+                }
+            }
+
+            if (audioBlob && audioBlob.size > 1000) {
+                if (badge) {
+                    badge.innerText = "🟢 Verified & Working";
+                    badge.style.color = "var(--accent-emerald)";
+                }
+                if (statusDiv) {
+                    statusDiv.style.display = 'block';
+                    statusDiv.style.background = 'rgba(16, 185, 129, 0.15)';
+                    statusDiv.style.border = '1px solid #10b981';
+                    statusDiv.style.color = '#6ee7b7';
+                    statusDiv.innerHTML = `<i class="fa-solid fa-circle-check"></i> <strong>Sarvam Key Verified!</strong> Playing natural human speech sample (${currentLang === 'or' ? 'Odia' : 'Hindi'})...`;
+                }
+                showToast("Playing natural Sarvam speech sample!");
+                const audioUrl = URL.createObjectURL(audioBlob);
+                const testAudio = new Audio(audioUrl);
+                testAudio.play().catch(e => console.warn("Audio autoplay blocked:", e));
+            } else {
+                if (badge) {
+                    badge.innerText = "🔴 Key Rejected / Failed";
+                    badge.style.color = "#ef4444";
+                }
+                if (statusDiv) {
+                    statusDiv.style.display = 'block';
+                    statusDiv.style.background = 'rgba(239, 68, 68, 0.15)';
+                    statusDiv.style.border = '1px solid #ef4444';
+                    statusDiv.style.color = '#fca5a5';
+                    statusDiv.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> <strong>Sarvam TTS Failed:</strong> ${errorDetail || 'Check your API key and credits at dashboard.sarvam.ai.'}`;
+                }
+                showToast("Sarvam test failed: " + (errorDetail || "Invalid key"));
+            }
         }
+        window.testSarvamTtsDirect = testSarvamTtsDirect;
 
         async function testMayaCloneInSettings() {
             const langSelect = document.getElementById('mayaLangSelect');
