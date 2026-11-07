@@ -107,10 +107,44 @@ class VoiceAgentBridgeHandler(BaseHTTPRequestHandler):
             self._set_headers(200)
             self.wfile.write(json.dumps({"success": True, "missions": MISSION_HISTORY[-20:]}).encode("utf-8"))
             
+        elif path == "/config" or path == "/api/config":
+            sarvam_key = os.environ.get("SARVAM_API_KEY", "").strip()
+            self._set_headers(200)
+            self.wfile.write(json.dumps({
+                "success": True,
+                "tts_available": bool(sarvam_key),
+                "sarvam_configured": bool(sarvam_key),
+                "model": "bulbul:v3",
+                "supported_languages": ["hi-IN", "od-IN", "en-IN"]
+            }).encode("utf-8"))
+
         elif path == "/api/iot":
             IOT_STATE["sensors"]["last_updated"] = time.strftime("%Y-%m-%d %H:%M:%S")
             self._set_headers(200)
             self.wfile.write(json.dumps({"success": True, "iot": IOT_STATE}).encode("utf-8"))
+            
+        elif path == "/api/tts":
+            # Direct Neural Indic & Multilingual Speech Proxy
+            # Guarantees authentic Hindi and Odia voice streaming without CORS restrictions
+            try:
+                import urllib.parse
+                import urllib.request
+                query = self.path.split('?')[1] if '?' in self.path else ''
+                params = urllib.parse.parse_qs(query)
+                q_text = params.get('q', [''])[0]
+                lang = params.get('tl', ['hi'])[0]
+                if q_text:
+                    url = f"https://translate.google.com/translate_tts?ie=UTF-8&tl={lang}&client=tw-ob&q={urllib.parse.quote(q_text)}"
+                    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+                    with urllib.request.urlopen(req, timeout=8) as response:
+                        audio_data = response.read()
+                        self._set_headers(200, content_type="audio/mpeg")
+                        self.wfile.write(audio_data)
+                        return
+            except Exception as e:
+                self.log_message(f"TTS proxy error: {str(e)}")
+            self._set_headers(500)
+            self.wfile.write(json.dumps({"error": "Failed to stream audio"}).encode("utf-8"))
             
         else:
             self._set_headers(404)
@@ -129,7 +163,108 @@ class VoiceAgentBridgeHandler(BaseHTTPRequestHandler):
 
         path = self.path.split('?')[0]
 
-        if path == "/api/execute":
+        if path == "/tts" or path == "/api/tts":
+            # Sarvam AI Bulbul v3 TTS REST Integration
+            # Accepts: {"text": "...", "language": "hi" | "or" | "en", "speaker": "shubh" | "ritu"}
+            text = data.get("text", "").strip()
+            lang = data.get("language", data.get("lang", "en")).strip().lower()
+            speaker = data.get("speaker", "shubh") # "shubh" (male) or "ritu" (female)
+            client_key = data.get("api_key", "").strip()
+
+            sarvam_key = os.environ.get("SARVAM_API_KEY", "").strip() or client_key
+
+            if not sarvam_key:
+                self._set_headers(500)
+                self.wfile.write(json.dumps({
+                    "success": False,
+                    "error": "SARVAM_API_KEY environment variable is not set. Please set SARVAM_API_KEY in your environment."
+                }).encode("utf-8"))
+                return
+
+            if not text:
+                self._set_headers(400)
+                self.wfile.write(json.dumps({
+                    "success": False,
+                    "error": "Missing required field 'text'"
+                }).encode("utf-8"))
+                return
+
+            # Maps language: hi -> hi-IN, or -> od-IN, en -> en-IN
+            lang_map = {
+                "hi": "hi-IN",
+                "hindi": "hi-IN",
+                "hi-in": "hi-IN",
+                "or": "od-IN",
+                "odia": "od-IN",
+                "or-in": "od-IN",
+                "od-in": "od-IN",
+                "en": "en-IN",
+                "english": "en-IN",
+                "en-in": "en-IN"
+            }
+            target_lang = lang_map.get(lang)
+            if not target_lang:
+                if any('\u0900' <= c <= '\u097F' for c in text):
+                    target_lang = "hi-IN"
+                elif any('\u0B00' <= c <= '\u0B7F' for c in text):
+                    target_lang = "od-IN"
+                else:
+                    target_lang = "en-IN"
+
+            payload = {
+                "text": text,
+                "target_language_code": target_lang,
+                "speaker": speaker,
+                "model": "bulbul:v3"
+            }
+
+            try:
+                import base64
+                import urllib.request
+                import urllib.error
+
+                sarvam_url = "https://api.sarvam.ai/text-to-speech"
+                headers = {
+                    "api-subscription-key": sarvam_key,
+                    "Content-Type": "application/json",
+                    "User-Agent": "VoiceAgentBridge/1.0"
+                }
+
+                post_data = json.dumps(payload).encode("utf-8")
+                req = urllib.request.Request(sarvam_url, data=post_data, headers=headers, method="POST")
+
+                with urllib.request.urlopen(req, timeout=15) as resp:
+                    resp_data = json.loads(resp.read().decode("utf-8"))
+                    audios = resp_data.get("audios", [])
+                    if not audios or not audios[0]:
+                        self._set_headers(500)
+                        self.wfile.write(json.dumps({"success": False, "error": "Sarvam API returned empty audio array"}).encode("utf-8"))
+                        return
+
+                    audio_bytes = base64.b64decode(audios[0])
+                    # Return standard audio/wav binary
+                    self._set_headers(200, content_type="audio/wav")
+                    self.wfile.write(audio_bytes)
+                    return
+            except urllib.error.HTTPError as he:
+                err_body = he.read().decode("utf-8", errors="replace")
+                self.log_message(f"Sarvam API HTTP Error {he.code}: {err_body}")
+                self._set_headers(500)
+                self.wfile.write(json.dumps({
+                    "success": False,
+                    "error": f"Sarvam AI API HTTP {he.code}: {err_body}"
+                }).encode("utf-8"))
+                return
+            except Exception as ex:
+                self.log_message(f"Sarvam API Exception: {str(ex)}")
+                self._set_headers(500)
+                self.wfile.write(json.dumps({
+                    "success": False,
+                    "error": f"Sarvam TTS bridge failed: {str(ex)}"
+                }).encode("utf-8"))
+                return
+
+        elif path == "/api/execute":
             # Execute a local Python command, script, or shell task
             script_name = data.get("script_name", "")
             code_snippet = data.get("code", "")

@@ -12,25 +12,24 @@ A low-latency, full-duplex two-way voice AI agent inspired by OpenAI's "Dots". S
 
 - 🗣️ **Wake Word Detection ("Agent" / "Hey Agent"):**
   Call out *"Agent"* from across the room to wake it up from standby into continuous listening.
-- 🎙️ **Hyper-Realistic OpenAI, GPT-Live 1.1 & Superhero Voices:**
-  Switch between human-sounding voices or superhero personas right from the top bar:
-  - 🟢 **Hulk (Gamma Titan)**: Massive deep roaring superhero voice!
-  - **Arbor**: Easygoing and versatile
-  - **Breeze**: Animated and earnest
-  - **Cove**: Composed and direct
-  - **Ember**: Confident and optimistic
-  - **Juniper**: Open and upbeat
-  - **Maple**: Cheerful and candid
-  - **Sol**: Savvy and relaxed
-  - **Spruce**: Calm and affirming
-  - **Vale**: Bright and inquisitive
-  - **Bubbie**: Warm English conversational
-  - **Himari & Rindō**: Japanese (Expressive & Composed)
-  - **Haetsal & Hanul**: Korean (Bright & Smooth)
-  - **Tinta & Arrullo**: Mexican Spanish (Expressive & Melodic)
-  - **Céleste & Léopold**: French (Refined & Classic)
-  - **Friedrich & Greta**: German (Authoritative & Dynamic)
-  - *Plus classic Alloy, Echo, Fable, Onyx, Nova, and Shimmer.*
+- 🎙️ **Hyper-Realistic OpenAI, Indian Languages & Superhero Voices:**
+  - 🇮🇳 **Hindi (हिंदी) & Odia (ଓଡ଼ିଆ) Native Speech Engine:**
+    - High-fidelity **Neural Indic Audio Stream (100% Free)** with natural human-like pronunciation for Hindi and Odia.
+    - Native support for Windows/Edge **Microsoft Madhur** (Male) and **Microsoft Swara** (Female) voices.
+    - Advanced Abugida transliteration ensures audible speech on any device, even if no Indian language packs are installed.
+  - 🦸 **Avengers Superhero Personas with Real Gender-Matched Voices:**
+    - 🦾 **Iron Man** (Tony Stark - Male)
+    - 🔨 **Thor** (God of Thunder - Male)
+    - 🛡️ **Captain America** (Steve Rogers - Male)
+    - 🕷️ **Spider-Man** (Peter Parker - Male)
+    - 🟢 **Hulk** (Gamma Titan - Male)
+    - 🤖 **JARVIS** (Stark AI - Male)
+    - 🟣 **Thanos** (Cosmic Titan - Male)
+    - 🕷️ **Black Widow** (Natasha Romanoff - Female)
+    - 🔮 **Scarlet Witch** (Wanda Maximoff - Female)
+    - 🐆 **Shuri** (Wakandan Princess - Female)
+  - 🌐 **Global Voice Roster:**
+    - **Arbor, Breeze, Cove, Ember, Juniper, Maple, Sol, Spruce, Vale, Bubbie**, plus classic Alloy, Echo, Fable, Onyx, Nova, and Shimmer.
 - ⚡ **Full-Duplex Speech & Instant Barge-In:**
   No need to wait for the agent to finish talking. Interrupt mid-sentence to shift tasks or clarify instructions.
 - 📱 **Mobile & Desktop Responsive:**
@@ -49,6 +48,84 @@ A low-latency, full-duplex two-way voice AI agent inspired by OpenAI's "Dots". S
 
 ---
 
+## 🇮🇳 Indian Language Support (Hindi / Odia)
+
+Agent features deterministic, native Hindi (`hi-IN`) and Odia (`od-IN`) Text-to-Speech powered by **Sarvam AI Bulbul v3 REST API**:
+
+### 1. Get a Sarvam AI API Key
+1. Visit [Sarvam AI Platform](https://www.sarvam.ai/) and create an account.
+2. Generate your API subscription key.
+
+### 2. Configure Environment Variable or Settings UI
+- **Via Environment Variable (Recommended for bridge):**
+  - **Windows (CMD):**
+    ```cmd
+    set SARVAM_API_KEY=your_sarvam_api_key
+    ```
+  - **Windows (PowerShell):**
+    ```powershell
+    $env:SARVAM_API_KEY="your_sarvam_api_key"
+    ```
+  - **Linux / macOS:**
+    ```bash
+    export SARVAM_API_KEY="your_sarvam_api_key"
+    ```
+- **Via In-App Settings:**
+  - Open **⚙️ Settings** in the app header.
+  - Paste your key into **Sarvam AI TTS (Bulbul v3)** and click **Save Settings** (or click **🧪 Test**).
+
+### 3. How to Select Language in the UI
+- In the top header bar, use the language dropdown to choose **🌐 Auto Language**, **🇮🇳 हिन्दी (Hindi)**, **🇮🇳 ଓଡ଼ିଆ (Odia)**, or **🇬🇧 English**.
+- Or open **⚙️ Settings** and select **Spoken & Recognition Language**:
+  - `English`
+  - `हिन्दी (Hindi - hi-IN)`
+  - `ଓଡ଼ିଆ (Odia - od-IN)`
+- **Auto Script Detection:** If text contains Devanagari characters (`\u0900-\u097F`), the agent automatically speaks Hindi. If text contains Odia characters (`\u0B00-\u0B7F`), the agent automatically speaks Odia.
+
+### 4. Running the Verification Test Script
+Verify your Sarvam AI endpoint anytime by running:
+```bash
+python test_tts.py
+```
+*(If `SARVAM_API_KEY` is not set, the test will cleanly report `[SKIPPED]` with setup guidance).*
+
+---
+
+## 🦾 Free Local Voice Cloning (Maya 2 Native · Port 8766)
+
+Clone any voice (such as Avengers superheroes or custom reference audio) for **Hindi** and **Odia** with zero API cost using **Maya 2 Native**:
+
+### Prerequisites
+- NVIDIA GPU with 12GB+ VRAM
+- CUDA 12.8 drivers installed
+- Python 3.10+
+
+### 1. Install Maya 2 Native Dependencies
+```bash
+pip install "maya3[server] @ git+https://github.com/MayaResearch/maya2-native" --extra-index-url https://download.pytorch.org/whl/cu128
+```
+
+### 2. Start the Inference Server
+```bash
+python maya_tts_server.py
+```
+*The local inference server runs on port `8766` separate from the main bridge.*
+
+### 3. Clone a Voice in the UI
+1. Open **⚙️ Settings** > **Avenger Voice Clone (Local · Maya 2 Native)**.
+2. Upload a 3–10 second reference audio clip (`.wav` or `.mp3`).
+3. Enter the exact reference transcript (`ref_text`) of what was spoken in the audio clip.
+4. Select the target language (**Hindi** or **Odia**) and click **Test Clone**.
+5. When reference audio is loaded and the language is Hindi or Odia, the agent will automatically synthesize speech using your cloned voice!
+
+### 4. Running the Voice Cloning Test Script
+```bash
+python test_maya_clone.py
+```
+*(Tests both Hindi and Odia cloned generation against `http://127.0.0.1:8766/tts/clone` and prints a PASS/FAIL table).*
+
+---
+
 ## 🧠 Unlocking Full AI Intelligence (Knows Everything)
 
 Out of the box without an API key, the app runs on a **basic offline rule engine** (handling basic greetings, device toggles, and system telemetry).
@@ -57,7 +134,7 @@ To give the agent **infinite world knowledge** (coding, math, history, science, 
 
 1. Click the **⚙️ Settings** icon in the top header.
 2. Select your **AI Intelligence Engine**:
-   - ⚡ **Groq Cloud (Recommended)**: **100% Free** and ultra-low latency (<200ms speech response). Powered by `llama-3.3-70b-versatile`.
+   - ⚡ **Groq Cloud (Recommended)**: **100% Free** and ultra-low latency (<200ms speech response). Powered by Meta's `llama-3.1-8b-instant` (or `llama-3.3-70b-versatile`).
      - Get a free key at: [console.groq.com/keys](https://console.groq.com/keys)
    - 🤖 **OpenAI**: Connects `gpt-4o-mini` or `gpt-4o`.
      - Get key at: [platform.openai.com/api-keys](https://platform.openai.com/api-keys)

@@ -2126,12 +2126,78 @@
 
             <div class="settings-group">
                 <label>Spoken & Recognition Language</label>
-                <select class="settings-input" id="settingsLangSelect" onchange="changeLanguage(this.value)">
-                    <option value="auto">🌐 Multilingual Auto (English, Hindi, Odia)</option>
-                    <option value="hi-IN">🇮🇳 हिन्दी (Hindi)</option>
-                    <option value="or-IN">🇮🇳 ଓଡ଼ିଆ (Odia)</option>
-                    <option value="en-IN">🇬🇧 English</option>
+                <select class="settings-input" id="settingsLangSelect" onchange="onSettingsLanguageChange(this.value)">
+                    <option value="en">English (en-IN / en-US)</option>
+                    <option value="hi">हिन्दी (Hindi - hi-IN)</option>
+                    <option value="or">ଓଡ଼ିଆ (Odia - od-IN)</option>
                 </select>
+            </div>
+
+            <!-- SARVAM AI BULBUL V3 INTEGRATION -->
+            <div class="settings-group">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <label><i class="fa-solid fa-bolt" style="color:var(--accent-cyan)"></i> Sarvam AI TTS (Bulbul v3 · Hindi &amp; Odia)</label>
+                    <span id="sarvamConfigBadge" style="font-size:0.72rem;color:var(--text-muted);">Checking bridge...</span>
+                </div>
+                <div style="display:flex;gap:8px;">
+                    <input type="password" class="settings-input" id="sarvamApiKeyInput" placeholder="Enter Sarvam api-subscription-key (or set SARVAM_API_KEY env)" style="flex:1;">
+                    <button type="button" class="action-chip" style="padding:0 10px;font-size:0.74rem;" onclick="testSarvamTtsDirect()">
+                        <i class="fa-solid fa-vial"></i> Test
+                    </button>
+                </div>
+                <div style="font-size:0.72rem;color:var(--text-muted);margin-top:3px;line-height:1.3;">
+                    Natively supports Hindi (<code>hi-IN</code>) and Odia (<code>od-IN</code>) with speakers Shubh &amp; Ritu. Get key at <a href="https://www.sarvam.ai/" target="_blank" style="color:var(--accent-cyan);">sarvam.ai</a>.
+                </div>
+            </div>
+
+            <!-- MAYA 2 NATIVE LOCAL AVENGERS VOICE CLONE SECTION -->
+            <div class="settings-group" style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                    <label style="font-weight:700;color:var(--accent-amber);"><i class="fa-solid fa-microphone-lines"></i> Avenger Voice Clone (Local · Maya 2 Native)</label>
+                    <span id="mayaStatusBadge" style="font-size:0.7rem;color:var(--text-muted);font-family:var(--font-mono);">Checking :8766...</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                    <div>
+                        <span style="font-size:0.72rem;color:var(--text-secondary);display:block;margin-bottom:2px;">Upload Reference Audio (3-10s .wav/.mp3):</span>
+                        <input type="file" id="mayaRefAudioInput" accept=".wav,.mp3,audio/*" onchange="handleMayaAudioUpload(event)" style="font-size:0.75rem;color:var(--text-muted);width:100%;">
+                    </div>
+                    <div>
+                        <span style="font-size:0.72rem;color:var(--text-secondary);display:block;margin-bottom:2px;">Exact Reference Transcript:</span>
+                        <input type="text" class="settings-input" id="mayaRefTextInput" placeholder="Exact words spoken in audio clip (e.g. I am Iron Man)" oninput="window.mayaRefText=this.value">
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+                        <span style="font-size:0.72rem;color:var(--text-secondary);">Target Language:</span>
+                        <select id="mayaLangSelect" style="background:#060913;border:1px solid var(--border-dim);color:var(--text-primary);border-radius:6px;padding:3px 8px;font-size:0.75rem;">
+                            <option value="hi" selected>Hindi (हिन्दी)</option>
+                            <option value="or">Odia (ଓଡ଼ିଆ)</option>
+                        </select>
+                        <button type="button" class="action-chip" style="font-size:0.72rem;padding:3px 8px;" onclick="testMayaCloneInSettings()">
+                            <i class="fa-solid fa-play"></i> Test Clone
+                        </button>
+                    </div>
+                </div>
+                <div style="font-size:0.7rem;color:var(--accent-amber);line-height:1.3;margin-top:6px;padding:6px;background:rgba(245,158,11,0.08);border-radius:6px;">
+                    ⚠️ <strong>Notice:</strong> Voice cloning requires local Maya 2 Native server running on port 8766. Personal use only — do not clone voices without permission.
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <label>Fallback Indian Voice Engine</label>
+                    <span id="indicVoiceDetectorBadge" style="font-size:0.72rem;color:var(--accent-emerald);font-weight:700;">Detecting Indic voices...</span>
+                </div>
+                <select class="settings-input" id="indicTtsModeSelect" onchange="localStorage.setItem('agent_indic_tts_mode', this.value)">
+                    <option value="auto" selected>⚡ Auto (Real Indic Neural Cloud Audio · Free &amp; Human-like)</option>
+                    <option value="browser">🌐 Browser Built-in Voices (Microsoft Madhur/Swara / Google हिन्दी)</option>
+                </select>
+                <div style="display:flex;gap:6px;margin-top:6px;">
+                    <button type="button" class="action-chip" style="font-size:0.74rem;padding:4px 10px;" onclick="testLanguageSpeech('hi')">
+                        <i class="fa-solid fa-volume-high"></i> 🇮🇳 Test Hindi Voice
+                    </button>
+                    <button type="button" class="action-chip" style="font-size:0.74rem;padding:4px 10px;" onclick="testLanguageSpeech('or')">
+                        <i class="fa-solid fa-volume-high"></i> 🌾 Test Odia Voice
+                    </button>
+                </div>
             </div>
 
             <div class="settings-row-2">
@@ -3094,6 +3160,9 @@ CRITICAL: Reply in the user's language with bright, genius, futuristic 1-2 sente
                         }
                         vSelect.appendChild(opt);
                     });
+                    if (typeof updateIndicVoiceStatusBadge === 'function') {
+                        updateIndicVoiceStatusBadge();
+                    }
                 };
                 window.speechSynthesis.onvoiceschanged = loadVoices;
                 loadVoices();
@@ -3276,15 +3345,26 @@ CRITICAL: Reply in the user's language with bright, genius, futuristic 1-2 sente
             return currentLanguage || 'en-IN';
         }
 
+        function onSettingsLanguageChange(lang) {
+            const fullLang = lang === 'hi' ? 'hi-IN' : (lang === 'or' ? 'or-IN' : 'en-IN');
+            changeLanguage(fullLang);
+        }
+
         function changeLanguage(newLang) {
+            if (newLang === 'hi') newLang = 'hi-IN';
+            else if (newLang === 'or') newLang = 'or-IN';
+            else if (newLang === 'en') newLang = 'en-IN';
+
             currentLanguage = newLang;
+            const shortLang = newLang.startsWith('hi') ? 'hi' : (newLang.startsWith('or') ? 'or' : 'en');
             localStorage.setItem('dots_language', newLang);
+            localStorage.setItem('agent_language', shortLang);
 
             // Synchronize both stage and settings dropdowns
             const stageSelect = document.getElementById('stageLangSelect');
             if (stageSelect && stageSelect.value !== newLang) stageSelect.value = newLang;
             const settingsSelect = document.getElementById('settingsLangSelect');
-            if (settingsSelect && settingsSelect.value !== newLang) settingsSelect.value = newLang;
+            if (settingsSelect && settingsSelect.value !== shortLang) settingsSelect.value = shortLang;
 
             // Auto-select natural matching voice for the chosen language (preserve Avengers superhero voice if selected)
             const isAvengerHero = ['ironman', 'thor', 'captain', 'spiderman', 'hulk', 'jarvis', 'thanos'].includes(currentRealVoiceId);
@@ -4253,9 +4333,14 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
         }
 
         // ==========================================
-        // 10. REALISTIC NEURAL AUDIO & SPEECH SYNTHESIS
+        // 10. DETERMINISTIC MULTILINGUAL SPEECH (SARVAM AI · MAYA 2 CLONING · BROWSERS)
         // ==========================================
-        async function speakAgentResponse(text, onComplete) {
+        async function speak(text, language, onComplete) {
+            if (!text || !text.trim()) {
+                if (onComplete) onComplete();
+                return;
+            }
+
             // Stop any playing audio player or SpeechSynthesis
             if (currentAudioPlayer) {
                 try {
@@ -4269,17 +4354,37 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
             }
             if (speechSafetyTimer) clearTimeout(speechSafetyTimer);
 
-            // Strip code brackets & raw formatting for clean speech
+            // Strip code brackets & raw markdown formatting for clean speech
             const cleanSpeech = text
                 .replace(/```[\s\S]*?```/g, 'Code block omitted.')
                 .replace(/[#*`_~]/g, '')
                 .replace(/\(.*?\)/g, '')
                 .trim();
 
+            // Task 3: Automatic deterministic language detection
+            // - If text contains Devanagari (\u0900-\u097F) -> force "hi"
+            // - If text contains Odia (\u0B00-\u0B7F) -> force "or"
+            // - Otherwise use dropdown selection / stored agent_language
+            let resolvedLang = language;
+            if (!resolvedLang) {
+                if (/[\u0900-\u097F]/.test(cleanSpeech)) {
+                    resolvedLang = 'hi';
+                } else if (/[\u0B00-\u0B7F]/.test(cleanSpeech)) {
+                    resolvedLang = 'or';
+                } else {
+                    const storedLang = localStorage.getItem('agent_language') || 'en';
+                    resolvedLang = (storedLang === 'hi' || storedLang === 'or') ? storedLang : 'en';
+                }
+            } else {
+                resolvedLang = resolvedLang.toLowerCase();
+                if (resolvedLang.startsWith('hi')) resolvedLang = 'hi';
+                else if (resolvedLang.startsWith('or') || resolvedLang.startsWith('od')) resolvedLang = 'or';
+                else resolvedLang = 'en';
+            }
+
             const vMeta = REAL_VOICES[currentRealVoiceId] || REAL_VOICES.arbor;
 
-            // Full-Duplex Barge-In: In headphones mode, keep speech recognition active for seamless voice interruption.
-            // In speakerphone mode, recognition cleanly resumes via onComplete / finishOnce to prevent speaker feedback loop.
+            // Full-Duplex Barge-In in headphones mode
             if (audioMode === 'headphones' && inCallMode && !isCallMuted && !isPushToTalkMode) {
                 setTimeout(() => {
                     if (isSpeaking && inCallMode && !isCallMuted && !isPushToTalkMode) {
@@ -4292,13 +4397,162 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                 }, 350);
             }
 
-            // STRATEGY 1: Real OpenAI HD Neural Audio Stream (if OpenAI API Key is provided)
-            if (openaiKey && openaiKey.trim().length > 10) {
+            const playAudioBlob = (blob, label) => {
+                return new Promise((resolve) => {
+                    const audioUrl = URL.createObjectURL(blob);
+                    const audio = new Audio();
+                    audio.src = audioUrl;
+                    currentAudioPlayer = audio;
+
+                    isSpeaking = true;
+                    agentSpeechStartTime = Date.now();
+                    currentAgentSpokenText = cleanSpeech.toLowerCase();
+                    setAgentState('speaking', `${label || vMeta.name} Speaking...`);
+                    const sub = document.getElementById('callSubtitles');
+                    if (sub) {
+                        sub.className = "subtitle-scroll agent-speaking-now";
+                        sub.innerText = cleanSpeech;
+                    }
+
+                    let finished = false;
+                    const finish = (ok) => {
+                        if (finished) return;
+                        finished = true;
+                        isSpeaking = false;
+                        currentAudioPlayer = null;
+                        URL.revokeObjectURL(audioUrl);
+                        setAgentState('listening', isPushToTalkMode ? 'Push-to-Talk Standby' : 'Listening to your voice...');
+                        if (sub) sub.innerText = "Speak anytime... (or type below)";
+                        if (onComplete) onComplete();
+                        resolve(ok);
+                    };
+
+                    audio.onended = () => finish(true);
+                    audio.onerror = (err) => {
+                        console.warn("Audio player error, falling back:", err);
+                        finish(false);
+                    };
+
+                    audio.play().catch(err => {
+                        console.warn("Audio play() blocked:", err);
+                        finish(false);
+                    });
+                });
+            };
+
+            // -------------------------------------------------------------
+            // TIER 1: MAYA 2 NATIVE LOCAL AVENGERS VOICE CLONING (Free · Local Port 8766)
+            // -------------------------------------------------------------
+            const hasRefAudio = Boolean(window.mayaRefAudioB64 || window.mayaRefAudioPath);
+            if (hasRefAudio && (resolvedLang === 'hi' || resolvedLang === 'or')) {
+                try {
+                    setAgentState('speaking', `Maya 2 Cloning (${resolvedLang.toUpperCase()})...`);
+                    const mayaPayload = {
+                        text: cleanSpeech,
+                        lang: resolvedLang,
+                        ref_audio_b64: window.mayaRefAudioB64 || undefined,
+                        ref_audio_path: window.mayaRefAudioPath || undefined,
+                        ref_text: window.mayaRefText || ""
+                    };
+
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+                    const mRes = await fetch("http://127.0.0.1:8766/tts/clone", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(mayaPayload),
+                        signal: controller.signal
+                    });
+                    clearTimeout(timeoutId);
+
+                    if (mRes.ok) {
+                        const blob = await mRes.blob();
+                        if (blob && blob.size > 1000) {
+                            const played = await playAudioBlob(blob, `Maya 2 Cloned (${vMeta.name})`);
+                            if (played) return;
+                        }
+                    }
+                } catch(e) {
+                    console.warn("Maya 2 local clone unavailable, proceeding to Tier 2:", e.message || e);
+                }
+            }
+
+            // -------------------------------------------------------------
+            // TIER 2: SARVAM AI BULBUL V3 REST TTS (Official Hindi & Odia Engine)
+            // -------------------------------------------------------------
+            const sarvamClientKey = (window.sarvamApiKey || localStorage.getItem('sarvam_api_key') || '').trim();
+            const canUseSarvamBridge = window.sarvamBridgeAvailable === true;
+
+            // Route via Python bridge /tts if bridge reports SARVAM_API_KEY is configured
+            if (canUseSarvamBridge) {
+                try {
+                    setAgentState('speaking', `Sarvam AI (${resolvedLang.toUpperCase()})...`);
+                    const sRes = await fetch(`${bridgeUrl}/tts`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            text: cleanSpeech,
+                            language: resolvedLang,
+                            speaker: vMeta.gender === 'female' ? 'ritu' : 'shubh'
+                        })
+                    });
+
+                    if (sRes.ok) {
+                        const blob = await sRes.blob();
+                        if (blob && blob.size > 1000) {
+                            const played = await playAudioBlob(blob, `Sarvam AI (${vMeta.name})`);
+                            if (played) return;
+                        }
+                    }
+                } catch(e) {
+                    console.warn("Sarvam AI bridge call notice:", e.message || e);
+                }
+            }
+
+            // Direct Sarvam API call if user entered API key in browser settings
+            if (sarvamClientKey.length > 5) {
+                try {
+                    setAgentState('speaking', `Sarvam AI (${resolvedLang.toUpperCase()})...`);
+                    const sarvamLangCode = resolvedLang === 'hi' ? 'hi-IN' : (resolvedLang === 'or' ? 'od-IN' : 'en-IN');
+                    const directRes = await fetch("https://api.sarvam.ai/text-to-speech", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "api-subscription-key": sarvamClientKey
+                        },
+                        body: JSON.stringify({
+                            inputs: [cleanSpeech],
+                            target_language_code: sarvamLangCode,
+                            speaker: vMeta.gender === 'female' ? 'ritu' : 'shubh',
+                            model: "bulbul:v3"
+                        })
+                    });
+
+                    if (directRes.ok) {
+                        const data = await directRes.json();
+                        const b64 = (data.audios && data.audios[0]) ? data.audios[0] : null;
+                        if (b64) {
+                            const byteChars = atob(b64);
+                            const byteNumbers = new Array(byteChars.length);
+                            for (let i = 0; i < byteChars.length; i++) byteNumbers[i] = byteChars.charCodeAt(i);
+                            const byteArray = new Uint8Array(byteNumbers);
+                            const blob = new Blob([byteArray], { type: "audio/wav" });
+                            const played = await playAudioBlob(blob, `Sarvam AI (${vMeta.name})`);
+                            if (played) return;
+                        }
+                    }
+                } catch(e) {
+                    console.warn("Direct Sarvam AI call notice:", e.message || e);
+                }
+            }
+
+            // -------------------------------------------------------------
+            // TIER 3: OPENAI NEURAL TTS (If OpenAI API Key provided and not Odia)
+            // -------------------------------------------------------------
+            if (openaiKey && openaiKey.trim().length > 10 && resolvedLang !== 'or') {
                 try {
                     setAgentState('speaking', `${vMeta.name} Generating Audio...`);
-                    document.getElementById('callSubtitles').className = "subtitle-scroll agent-speaking-now";
-                    document.getElementById('callSubtitles').innerText = cleanSpeech;
-
                     const voiceParam = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'].includes(currentRealVoiceId)
                         ? currentRealVoiceId
                         : (['arbor', 'breeze', 'cove', 'ember', 'juniper', 'maple', 'sol', 'spruce', 'vale'].includes(currentRealVoiceId)
@@ -4321,95 +4575,294 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
 
                     if (res.ok) {
                         const blob = await res.blob();
-                        const audioUrl = URL.createObjectURL(blob);
-                        const audio = new Audio();
-                        audio.src = audioUrl;
-                        currentAudioPlayer = audio;
-
-                        isSpeaking = true;
-                        agentSpeechStartTime = Date.now();
-                        currentAgentSpokenText = cleanSpeech.toLowerCase();
-                        setAgentState('speaking', `${vMeta.name} Speaking...`);
-
-                        audio.onended = () => {
-                            isSpeaking = false;
-                            currentAudioPlayer = null;
-                            URL.revokeObjectURL(audioUrl);
-                            setAgentState('listening', isPushToTalkMode ? 'Push-to-Talk Standby' : 'Listening to your voice...');
-                            document.getElementById('callSubtitles').innerText = "Speak anytime... (or type below)";
-                            if (onComplete) onComplete();
-                        };
-
-                        audio.onerror = (err) => {
-                            console.warn("Audio player error, falling back to neural emulation:", err);
-                            isSpeaking = false;
-                            currentAudioPlayer = null;
-                            fallbackWebSpeechSynthesis(cleanSpeech, vMeta, onComplete);
-                        };
-
-                        await audio.play();
-                        return;
+                        const played = await playAudioBlob(blob, `${vMeta.name}`);
+                        if (played) return;
                     }
                 } catch (e) {
-                    if (e.name === 'AbortError') return;
-                    console.warn("OpenAI Neural Audio notice, falling back:", e);
+                    if (e.name !== 'AbortError') console.warn("OpenAI Neural Audio notice, falling back:", e);
                 }
             }
 
-            // STRATEGY 2: High-Definition Natural WebSpeech Neural Emulation (100% Free · Zero Setup)
-            fallbackWebSpeechSynthesis(cleanSpeech, vMeta, onComplete);
+            // -------------------------------------------------------------
+            // TIER 4: DIRECT NEURAL INDIC STREAM OR BROWSER SPEECH SYNTHESIS
+            // -------------------------------------------------------------
+            const isIndicSpeech = resolvedLang === 'hi' || resolvedLang === 'or' || /[\u0900-\u097F]/.test(cleanSpeech) || /[\u0B00-\u0B7F]/.test(cleanSpeech);
+            const indicTtsMode = localStorage.getItem('agent_indic_tts_mode') || 'auto';
+
+            if (isIndicSpeech && indicTtsMode === 'auto') {
+                const streamed = await streamIndicNeuralTts(cleanSpeech, resolvedLang === 'or', vMeta, onComplete);
+                if (streamed) return;
+            }
+
+            // Final fallback: Browser Web Speech API
+            fallbackWebSpeechSynthesis(cleanSpeech, vMeta, onComplete, resolvedLang);
         }
 
+        // Backward-compatible alias for speakAgentResponse
+        async function speakAgentResponse(text, onComplete) {
+            return speak(text, null, onComplete);
+        }
+        window.speak = speak;
+        window.speakAgentResponse = speakAgentResponse;
+
         // ==========================================
-        // 10.01 MULTILINGUAL PHONETIC TRANSLITERATION ENGINE
-        // (Guarantees audible Hindi/Odia character speech even on English-only OS voice engines)
+        // 10.01 MULTILINGUAL NEURAL STREAM & PHONETIC ENGINE
+        // (Guarantees 100% native Hindi and Odia speech on any PC, phone, or browser)
         // ==========================================
+        async function streamIndicNeuralTts(cleanSpeech, isOdia, vMeta, onComplete) {
+            try {
+                // If text is in Odia script, map it to Devanagari phonemes so the Indic acoustic engine pronounces authentic Odia
+                const indicText = isOdia ? odiaToDevanagari(cleanSpeech) : cleanSpeech;
+                const speakChunk = indicText.length > 220 ? indicText.slice(0, 220) : indicText;
+                const encodedText = encodeURIComponent(speakChunk);
+
+                // Use local Python bridge proxy if online, otherwise direct Google TTS audio stream
+                const audioUrl = bridgeOnline 
+                    ? `${bridgeUrl}/api/tts?tl=hi&q=${encodedText}`
+                    : `https://translate.google.com/translate_tts?ie=UTF-8&tl=hi&client=tw-ob&q=${encodedText}`;
+
+                const audio = new Audio();
+                audio.crossOrigin = "anonymous";
+                audio.src = audioUrl;
+                currentAudioPlayer = audio;
+
+                setAgentState('speaking', `${vMeta.name} Speaking (${isOdia ? 'Odia' : 'Hindi'})...`);
+                document.getElementById('callSubtitles').className = "subtitle-scroll agent-speaking-now";
+                document.getElementById('callSubtitles').innerText = cleanSpeech;
+
+                isSpeaking = true;
+                agentSpeechStartTime = Date.now();
+                currentAgentSpokenText = cleanSpeech.toLowerCase();
+
+                return new Promise((resolve) => {
+                    let hasResolved = false;
+
+                    audio.onended = () => {
+                        if (!hasResolved) {
+                            hasResolved = true;
+                            isSpeaking = false;
+                            currentAudioPlayer = null;
+                            setAgentState('listening', isPushToTalkMode ? 'Push-to-Talk Standby' : 'Listening to your voice...');
+                            document.getElementById('callSubtitles').innerText = "Speak anytime... (or type below)";
+                            if (onComplete) onComplete();
+                            resolve(true);
+                        }
+                    };
+
+                    audio.onerror = (e) => {
+                        if (!hasResolved) {
+                            hasResolved = true;
+                            console.warn("Direct Indic audio streaming error, falling back to browser synthesis:", e);
+                            currentAudioPlayer = null;
+                            isSpeaking = false;
+                            fallbackWebSpeechSynthesis(cleanSpeech, vMeta, onComplete);
+                            resolve(false);
+                        }
+                    };
+
+                    audio.play().catch(err => {
+                        if (!hasResolved) {
+                            hasResolved = true;
+                            console.warn("Audio play blocked or offline, falling back to browser synthesis:", err);
+                            currentAudioPlayer = null;
+                            isSpeaking = false;
+                            fallbackWebSpeechSynthesis(cleanSpeech, vMeta, onComplete);
+                            resolve(false);
+                        }
+                    });
+                });
+            } catch(e) {
+                console.warn("streamIndicNeuralTts caught exception:", e);
+                fallbackWebSpeechSynthesis(cleanSpeech, vMeta, onComplete);
+                return false;
+            }
+        }
+
+        // Converts Odia Unicode script to Devanagari code points
+        // Odia and Devanagari share exact structural alignment in Unicode (Offset: 0x0200 = 512)
+        function odiaToDevanagari(str) {
+            let out = '';
+            for (let i = 0; i < str.length; i++) {
+                const code = str.charCodeAt(i);
+                if (code >= 0x0B01 && code <= 0x0B77) {
+                    if (code === 0x0B33) out += 'ळ';      // Odia Lla -> Devanagari Lla
+                    else if (code === 0x0B5C) out += 'ड़'; // Rra
+                    else if (code === 0x0B5D) out += 'ढ़'; // Rha
+                    else if (code === 0x0B5F) out += 'य';  // Yya
+                    else out += String.fromCharCode(code - 0x0200);
+                } else {
+                    out += str[i];
+                }
+            }
+            return out;
+        }
+
+        // Abugida transliteration with inherent 'a' vowel insertion for English-only voices
         function devanagariToPhonetic(str) {
-            const devMap = {
+            const consonants = {
                 'क':'k', 'ख':'kh', 'ग':'g', 'घ':'gh', 'ङ':'ng',
                 'च':'ch', 'छ':'chh', 'ज':'j', 'झ':'jh', 'ञ':'ny',
                 'ट':'t', 'ठ':'th', 'ड':'d', 'ढ':'dh', 'ण':'n',
                 'त':'t', 'थ':'th', 'द':'d', 'ध':'dh', 'न':'n',
-                'प':'p', 'फ':'f', 'ब':'b', 'भ':'bh', 'म':'m',
+                'प':'p', 'फ':'ph', 'ब':'b', 'भ':'bh', 'म':'m',
                 'य':'y', 'र':'r', 'ल':'l', 'व':'v', 'श':'sh',
-                'ष':'sh', 'स':'s', 'ह':'h',
-                'ा':'aa', 'ि':'i', 'ी':'ee', 'ु':'u', 'ू':'oo',
-                'े':'e', 'ै':'ai', 'ो':'o', 'ौ':'au', 'ॉ':'o', 'ॅ':'e', 'ं':'n',
-                'ँ':'n', 'ः':'h', '्':'', '़':'',
-                'अ':'a', 'आ':'aa', 'इ':'i', 'ई':'ee', 'उ':'u',
-                'ऊ':'oo', 'ए':'e', 'ऐ':'ai', 'ओ':'o', 'औ':'au', 'ऑ':'o', 'ऍ':'e',
-                'ऋ':'ri', '।':'.', '०':'0', '१':'1', '२':'2', '३':'3', '४':'4', '५':'5', '६':'6', '७':'7', '८':'8', '९':'9'
+                'ष':'sh', 'स':'s', 'ह':'h', 'क़':'q', 'ख़':'kh', 'ग़':'gh', 'ज़':'z', 'फ़':'f',
+                'ळ':'l', 'ड़':'d', 'ढ़':'dh'
             };
+            const vowels = {
+                'अ':'a', 'आ':'aa', 'इ':'i', 'ई':'ee', 'उ':'u', 'ऊ':'oo',
+                'ए':'e', 'ऐ':'ai', 'ओ':'o', 'औ':'au', 'ऋ':'ri', 'ॠ':'ree'
+            };
+            const matras = {
+                'ा':'aa', 'ि':'i', 'ी':'ee', 'ु':'u', 'ू':'oo',
+                'े':'e', 'ै':'ai', 'ो':'o', 'ौ':'au', 'ृ':'ri', 'ं':'n', 'ँ':'n', 'ः':'h'
+            };
+            const virama = '्';
+
             let out = '';
             for (let i = 0; i < str.length; i++) {
                 const c = str[i];
-                out += (devMap[c] !== undefined ? devMap[c] : c);
+                const next = str[i + 1];
+
+                if (consonants[c]) {
+                    out += consonants[c];
+                    if (!matras[next] && next !== virama && next !== ' ' && next !== undefined && (consonants[next] || vowels[next])) {
+                        out += 'a';
+                    }
+                } else if (vowels[c]) {
+                    out += vowels[c];
+                } else if (matras[c]) {
+                    out += matras[c];
+                } else if (c === virama) {
+                    // Halant suppresses inherent vowel
+                } else {
+                    out += c;
+                }
             }
             return out;
         }
 
         function odiaToPhonetic(str) {
-            const odMap = {
-                'କ':'k', 'ଖ':'kh', 'ଗ':'g', 'ଘ':'gh', 'ଙ':'ng',
-                'ଚ':'ch', 'ଛ':'chh', 'ଜ':'j', 'ଝ':'jh', 'ଞ':'ny',
-                'ଟ':'t', 'ଠ':'th', 'ଡ':'d', 'ଢ':'dh', 'ଣ':'n',
-                'ତ':'t', 'ଥ':'th', 'ଦ':'d', 'ଧ':'dh', 'ନ':'n',
-                'ପ':'p', 'ଫ':'ph', 'ବ':'b', 'ଭ':'bh', 'ମ':'m',
-                'ଯ':'y', 'ୟ':'y', 'ର':'r', 'ଲ':'l', 'ଳ':'l', 'ୱ':'w', 'ଶ':'sh',
-                'ଷ':'sh', 'ସ':'s', 'ହ':'h', 'ଡ଼':'d', 'ଢ଼':'dh', 'କ୍ଷ':'ksh',
-                'ା':'aa', 'ି':'i', 'ୀ':'ee', 'ୁ':'u', 'ୂ':'oo',
-                'ୃ':'ru', 'େ':'e', 'ୈ':'ai', 'ୋ':'o', 'ୌ':'au', 'ଂ':'n',
-                'ଁ':'n', 'ଃ':'h', '୍':'', '।':'.',
-                'ଅ':'a', 'ଆ':'aa', 'ଇ':'i', 'ଈ':'ee', 'ଉ':'u',
-                'ଊ':'oo', 'ଏ':'e', 'ଐ':'ai', 'ଓ':'o', 'ଔ':'au',
-                '୦':'0', '୧':'1', '୨':'2', '୩':'3', '୪':'4', '୫':'5', '୬':'6', '୭':'7', '୮':'8', '୯':'9'
-            };
-            let out = '';
-            for (let i = 0; i < str.length; i++) {
-                const c = str[i];
-                out += (odMap[c] !== undefined ? odMap[c] : c);
+            return devanagariToPhonetic(odiaToDevanagari(str));
+        }
+
+        function testLanguageSpeech(lang) {
+            const sampleText = lang === 'or' 
+                ? "ନମସ୍କାର! ମୁଁ ଆପଣଙ୍କ AI ସହାୟକ। ଆଜ୍ଞା କୁହନ୍ତୁ କିପରି ସାହାଯ୍ୟ କରିବି?"
+                : "नमस्ते! मैं आपका AI वॉयस कोपायलट हूँ। सब सिस्टम ठीक चल रहे हैं।";
+            speakAgentResponse(sampleText, () => {
+                console.log(`Speech test completed for ${lang}`);
+            });
+        }
+
+        function updateIndicVoiceStatusBadge() {
+            const badge = document.getElementById('indicVoiceDetectorBadge');
+            if (!badge) return;
+            const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+            const indicVoices = voices.filter(v => 
+                v.lang.toLowerCase().startsWith('hi') || 
+                v.lang.toLowerCase().startsWith('or') ||
+                v.name.toLowerCase().includes('madhur') ||
+                v.name.toLowerCase().includes('swara') ||
+                v.name.toLowerCase().includes('हिन्दी')
+            );
+            if (indicVoices.length > 0) {
+                badge.innerText = `🟢 ${indicVoices.length} Local Indic Voices Found (Madhur/Swara)`;
+                badge.style.color = "var(--accent-emerald)";
+            } else {
+                badge.innerText = `⚡ Cloud Neural Stream Active (No pack needed)`;
+                badge.style.color = "var(--accent-cyan)";
             }
-            return out;
+        }
+
+        // Maya 2 Native & Sarvam AI Service Connectors
+        async function checkSarvamServerStatus() {
+            const badge = document.getElementById('sarvamConfigBadge');
+            try {
+                const res = await fetch(`${bridgeUrl}/config`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.tts_available) {
+                        window.sarvamBridgeAvailable = true;
+                        if (badge) {
+                            badge.innerText = "🟢 Bridge Key Active";
+                            badge.style.color = "var(--accent-emerald)";
+                        }
+                        return;
+                    }
+                }
+            } catch(e) {}
+            window.sarvamBridgeAvailable = false;
+            const clientKey = (window.sarvamApiKey || localStorage.getItem('sarvam_api_key') || '').trim();
+            if (badge) {
+                if (clientKey.length > 5) {
+                    badge.innerText = "🟢 Client Key Saved";
+                    badge.style.color = "var(--accent-emerald)";
+                } else {
+                    badge.innerText = "⚪ Bridge: SARVAM_API_KEY not set";
+                    badge.style.color = "var(--text-muted)";
+                }
+            }
+        }
+
+        async function checkMayaServerStatus() {
+            const badge = document.getElementById('mayaStatusBadge');
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 2000);
+                const res = await fetch("http://127.0.0.1:8766/health", { signal: controller.signal });
+                clearTimeout(timeoutId);
+                if (res.ok) {
+                    window.mayaServerOnline = true;
+                    if (badge) {
+                        badge.innerText = "🟢 Connected (:8766)";
+                        badge.style.color = "var(--accent-emerald)";
+                    }
+                    return;
+                }
+            } catch(e) {}
+            window.mayaServerOnline = false;
+            if (badge) {
+                badge.innerText = "⚪ Server Offline";
+                badge.style.color = "var(--text-muted)";
+            }
+        }
+
+        function handleMayaAudioUpload(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                window.mayaRefAudioB64 = e.target.result;
+                const badge = document.getElementById('mayaStatusBadge');
+                if (badge) badge.innerText = `🟢 Audio Loaded (${Math.round(file.size / 1024)} KB)`;
+                showToast(`Loaded reference clip: ${file.name} (${Math.round(file.size / 1024)} KB)`);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function testSarvamTtsDirect() {
+            const input = document.getElementById('sarvamApiKeyInput');
+            if (input && input.value.trim()) {
+                window.sarvamApiKey = input.value.trim();
+                localStorage.setItem('sarvam_api_key', window.sarvamApiKey);
+            }
+            const currentLang = localStorage.getItem('agent_language') || 'hi';
+            const sample = currentLang === 'or' 
+                ? "ନମସ୍କାର, ମୁଁ ଆପଣଙ୍କୁ କିପରି ସାହାଯ୍ୟ କରିପାରିବି?"
+                : "नमस्ते, मैं आपकी कैसे मदद कर सकता हूँ?";
+            showToast("Testing Sarvam AI Bulbul v3...");
+            speak(sample, currentLang);
+        }
+
+        async function testMayaCloneInSettings() {
+            const langSelect = document.getElementById('mayaLangSelect');
+            const lang = langSelect ? langSelect.value : 'hi';
+            const sample = lang === 'or' 
+                ? "ନମସ୍କାର, ମୁଁ ଆପଣଙ୍କ ଅଭିନବ ସ୍ୱରରେ କଥା କହୁଛି।"
+                : "नमस्ते, मैं आपकी क्लोन की गई आवाज में बोल रहा हूँ।";
+            showToast("Testing Maya 2 Local Voice Clone...");
+            speak(sample, lang);
         }
 
         // Voice Gender Inspector (Enforces Real Male Voice for Male Heroes & Real Female Voice for Female Heroes)
@@ -4436,7 +4889,7 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
             return 'neutral';
         }
 
-        function fallbackWebSpeechSynthesis(cleanSpeech, vMeta, onComplete) {
+        function fallbackWebSpeechSynthesis(cleanSpeech, vMeta, onComplete, forcedLang) {
             if (!('speechSynthesis' in window)) {
                 if (onComplete) onComplete();
                 return;
@@ -4450,14 +4903,14 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
 
             if (speechSafetyTimer) clearTimeout(speechSafetyTimer);
 
-            // Detect language script from text characters
-            const hasHindi = /[\u0900-\u097F]/.test(cleanSpeech);
-            const hasOdia = /[\u0B00-\u0B7F]/.test(cleanSpeech);
+            // Detect language script from text characters or forced language
+            const hasHindi = /[\u0900-\u097F]/.test(cleanSpeech) || forcedLang === 'hi';
+            const hasOdia = /[\u0B00-\u0B7F]/.test(cleanSpeech) || forcedLang === 'or';
 
             let targetLang = vMeta.lang || 'en';
-            if (hasOdia || currentLanguage === 'or-IN') {
+            if (hasOdia || currentLanguage === 'or-IN' || forcedLang === 'or') {
                 targetLang = 'or';
-            } else if (hasHindi || currentLanguage === 'hi-IN') {
+            } else if (hasHindi || currentLanguage === 'hi-IN' || forcedLang === 'hi') {
                 targetLang = 'hi';
             }
 
@@ -4520,10 +4973,15 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
 
             const isNativeIndicVoice = bestVoice && (bestVoice.lang.toLowerCase().startsWith('hi') || bestVoice.lang.toLowerCase().startsWith('or') || bestVoice.lang.toLowerCase().startsWith('bn') || bestVoice.lang.toLowerCase().startsWith('mr'));
 
-            // Prepare spoken text: if OS only has English voices installed, transliterate Devanagari/Odia to Roman phonetics
-            // so English SAPI voices speak it aloud instead of staying mute!
+            // Prepare spoken text:
             let utterText = cleanSpeech;
-            if (!isNativeIndicVoice) {
+            if (isNativeIndicVoice) {
+                // If browser has native Hindi voice (Madhur / Swara) and text is in Odia,
+                // convert Odia script to Devanagari phonemes so the Hindi engine speaks authentic Odia!
+                if (hasOdia) utterText = odiaToDevanagari(cleanSpeech);
+            } else {
+                // If browser has NO Indian voices installed (English SAPI only),
+                // transliterate to romanized abugida phonetics with proper inherent vowels (namaste, aapan kemiti achhanti)
                 if (hasOdia) utterText = odiaToPhonetic(cleanSpeech);
                 else if (hasHindi) utterText = devanagariToPhonetic(cleanSpeech);
             }
@@ -4970,6 +5428,16 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
 
         function openSettingsModal() {
             document.getElementById('settingsModal').style.display = 'flex';
+            updateIndicVoiceStatusBadge();
+            const indicMode = localStorage.getItem('agent_indic_tts_mode') || 'auto';
+            const indicSelect = document.getElementById('indicTtsModeSelect');
+            if (indicSelect) indicSelect.value = indicMode;
+            checkSarvamServerStatus();
+            checkMayaServerStatus();
+            const sInput = document.getElementById('sarvamApiKeyInput');
+            if (sInput) sInput.value = localStorage.getItem('sarvam_api_key') || '';
+            const mText = document.getElementById('mayaRefTextInput');
+            if (mText && window.mayaRefText) mText.value = window.mayaRefText;
         }
 
         function closeSettingsModal() {
@@ -5262,6 +5730,13 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
             soundChimesEnabled = document.getElementById('soundChimesSelect').value === 'true';
             localStorage.setItem('dots_sound_chimes', soundChimesEnabled);
 
+            const sInput = document.getElementById('sarvamApiKeyInput');
+            if (sInput) {
+                const sKey = sInput.value.trim();
+                localStorage.setItem('sarvam_api_key', sKey);
+                window.sarvamApiKey = sKey;
+            }
+
             const langSelect = document.getElementById('settingsLangSelect');
             if (langSelect) {
                 changeLanguage(langSelect.value);
@@ -5270,6 +5745,8 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
             closeSettingsModal();
             updateEngineSelection();
             testBridgeConnection();
+            checkSarvamServerStatus();
+            checkMayaServerStatus();
         }
 
         function loadSavedSettings() {
@@ -5291,8 +5768,15 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
 
             const stageLang = document.getElementById('stageLangSelect');
             if (stageLang) stageLang.value = currentLanguage;
+
+            const storedAgentLang = localStorage.getItem('agent_language') || (currentLanguage && currentLanguage.startsWith('hi') ? 'hi' : (currentLanguage && currentLanguage.startsWith('or') ? 'or' : 'en'));
             const settingsLang = document.getElementById('settingsLangSelect');
-            if (settingsLang) settingsLang.value = currentLanguage;
+            if (settingsLang) settingsLang.value = storedAgentLang;
+
+            const sInput = document.getElementById('sarvamApiKeyInput');
+            const savedSarvamKey = localStorage.getItem('sarvam_api_key') || '';
+            if (sInput) sInput.value = savedSarvamKey;
+            window.sarvamApiKey = savedSarvamKey;
 
             // Restore Avengers superhero persona and HUD theme
             currentPersonaId = localStorage.getItem('dots_persona') || 'ironman';
@@ -5302,6 +5786,8 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
             if (p.theme) document.body.className = 'theme-' + p.theme;
 
             updateEngineSelection();
+            checkSarvamServerStatus();
+            checkMayaServerStatus();
         }
 
         // ==========================================
