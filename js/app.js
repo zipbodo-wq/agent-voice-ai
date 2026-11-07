@@ -9,6 +9,31 @@
                 .replace(/'/g, '&#039;');
         }
 
+        // TOAST NOTIFICATION UTILITY
+        function showToast(msg) {
+            let el = document.getElementById('agentToast');
+            if (!el) {
+                el = document.createElement('div');
+                el.id = 'agentToast';
+                el.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(16,25,46,0.95);border:1px solid var(--accent-cyan);color:#fff;padding:10px 18px;border-radius:24px;font-size:0.85rem;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.5);pointer-events:none;transition:opacity 0.3s;';
+                document.body.appendChild(el);
+            }
+            el.innerText = msg;
+            el.style.opacity = '1';
+            clearTimeout(window.__toastT);
+            window.__toastT = setTimeout(() => { el.style.opacity = '0'; }, 2500);
+        }
+
+        // BRIDGE UI INDICATOR UTILITY
+        function updateBridgeUI(online) {
+            const btn = document.getElementById('bridgeStatusBtn');
+            const txt = document.getElementById('bridgeText');
+            if (!btn || !txt) return;
+            btn.classList.toggle('bridge-online', online);
+            btn.classList.toggle('bridge-cloud', !online);
+            txt.innerText = online ? "Bridge: Live" : (window.location.protocol === 'https:' ? "Cloud AI Ready" : "Bridge: Off");
+        }
+
         // GLOBAL STATE
         let inCallMode = false;
         let isListening = false;
@@ -16,6 +41,7 @@
         let isCallMuted = false;
         let isPushToTalkMode = false;
         let isSpacePressed = false;
+        let isVoiceProcessing = false;
         let orbState = 'idle'; // 'idle' | 'listening' | 'thinking' | 'speaking' | 'executing'
         let callSeconds = 0;
         let callTimerInterval = null;
@@ -1844,18 +1870,23 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
             const timeoutId = setTimeout(() => timeoutController.abort(), timeoutMs);
 
             const userSignal = options.signal || currentAbortController?.signal;
+            let abortHandler = null;
             if (userSignal) {
                 if (userSignal.aborted) {
                     clearTimeout(timeoutId);
                     throw new DOMException('Aborted', 'AbortError');
                 }
-                userSignal.addEventListener('abort', () => timeoutController.abort(), { once: true });
+                abortHandler = () => timeoutController.abort();
+                userSignal.addEventListener('abort', abortHandler, { once: true });
             }
 
             try {
                 return await fetch(url, { ...options, signal: timeoutController.signal });
             } finally {
                 clearTimeout(timeoutId);
+                if (userSignal && abortHandler) {
+                    userSignal.removeEventListener('abort', abortHandler);
+                }
             }
         }
 
@@ -1983,7 +2014,7 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                             if (fbRes.ok) {
                                 const fbd = await fbRes.json();
                                 if (fbd.choices && fbd.choices[0] && fbd.choices[0].message) {
-                                    return fbd.choices[0].message.content;
+                                    return "(Web search unavailable — Groq Compound not found. Answering from training data.) " + fbd.choices[0].message.content;
                                 }
                             }
                         } else {
@@ -3450,7 +3481,7 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                     helpText.innerHTML = `Powered by DeepSeek-V3 / R1 for advanced multi-step reasoning and deep knowledge synthesis.`;
                 }
                 document.getElementById('apiKeyInput').value = deepseekKey;
-                document.getElementById('activeEngineLabel').innerText = "DeepSeek Search";
+                document.getElementById('activeEngineLabel').innerText = "DeepSeek Chat";
             } else if (eng === 'gemini') {
                 grp.style.display = 'flex';
                 label.innerText = "Google Gemini API Key (AIza...)";
@@ -3540,7 +3571,38 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
             statusDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying key with ' + eng.toUpperCase() + ' servers...';
 
             try {
-                if (eng === 'groq' || eng === 'groq_compound') {
+                if (eng === 'groq_compound') {
+                    statusDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Testing Groq Compound (web search model)...';
+                    try {
+                        const res = await fetchWithTimeout("https://api.groq.com/openai/v1/chat/completions", {
+                            method: "POST",
+                            headers: { "Authorization": `Bearer ${key}`, "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                model: "groq/compound-mini",
+                                messages: [{ role: "user", content: "What is 2+2? Answer in 3 words." }],
+                                max_tokens: 20
+                            })
+                        }, 20000);
+                        if (res.ok) {
+                            statusDiv.style.color = '#10b981';
+                            statusDiv.innerHTML = '<i class="fa-solid fa-circle-check"></i> <strong>Groq Compound works!</strong> Web search is active.';
+                            return;
+                        } else if (res.status === 404) {
+                            statusDiv.style.color = '#ef4444';
+                            statusDiv.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> <strong>groq/compound-mini not found (404).</strong> Groq may have retired this model. Switch to <strong>Groq Cloud</strong> or <strong>Gemini</strong> for now.';
+                            return;
+                        } else {
+                            const d = await res.json().catch(() => ({}));
+                            statusDiv.style.color = '#ef4444';
+                            statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Compound error (${res.status}): ${d.error?.message || 'unknown'}`;
+                            return;
+                        }
+                    } catch (e) {
+                        statusDiv.style.color = '#ef4444';
+                        statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Network error: ${e.message}`;
+                        return;
+                    }
+                } else if (eng === 'groq') {
                     statusDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Checking Groq account & available models...';
                     
                     let workingModel = null;
@@ -3666,7 +3728,7 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                     const d = await res.json().catch(() => ({}));
                     if (res.ok) {
                         statusDiv.style.color = '#10b981';
-                        statusDiv.innerHTML = '<i class="fa-solid fa-circle-check"></i> <strong>DeepSeek Key Valid!</strong> DeepSeek-V3 is active and ready for search & reasoning.';
+                        statusDiv.innerHTML = '<i class="fa-solid fa-circle-check"></i> <strong>DeepSeek Key Valid!</strong> DeepSeek-V3 is active and ready for reasoning & chat.';
                     } else {
                         statusDiv.style.color = '#ef4444';
                         statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> DeepSeek Error (${res.status}): ${d.error?.message || 'Invalid API Key'}`;
@@ -4432,7 +4494,7 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                 selectedEngine: selectedEngine,
                 currentPersonaId: currentPersonaId,
                 currentLanguage: currentLanguage,
-                groqModel: selectedGroqModel,
+                groqModel: groqModel,
                 bridgeOnline: bridgeOnline,
                 transcriptLength: sessionTranscript.length,
                 localStorageKeys: Object.keys(localStorage)

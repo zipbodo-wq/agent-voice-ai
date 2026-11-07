@@ -4,12 +4,12 @@ echo ======================================================================
 echo          AGENT · AUTONOMOUS TWO-WAY VOICE AI ^& IOT COPILOT
 echo ======================================================================
 echo.
-echo [1/3] Starting Local Python Orchestrator Bridge on 0.0.0.0:8765 ...
+echo [1/3] Starting Local Python Orchestrator Bridge on 127.0.0.1:8765 (LAN off by default) ...
 start /B "" python "%~dp0voice_agent_bridge.py" >>"%~dp0bridge.log" 2>&1
 timeout /t 1 >nul
 
 if exist "%~dp0maya_tts_server.py" (
-    echo [2/3] Starting Local Maya 2 Voice Cloning Server on 0.0.0.0:8766 ...
+    echo [2/3] Starting Local Maya 2 Voice Cloning Server on 127.0.0.1:8766 ...
     start /B "" python "%~dp0maya_tts_server.py" >>"%~dp0maya.log" 2>&1
     timeout /t 1 >nul
 ) else (

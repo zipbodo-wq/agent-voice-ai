@@ -116,15 +116,14 @@ class VoiceAgentBridgeHandler(BaseHTTPRequestHandler):
         path = self.path.split('?')[0]
         
         # Serve the Voice Agent Web App directly to any PC or Mobile Phone
-        if path == "/" or path == "/app" or path == "/dots-voice-agent.html" or path == "/index.html":
-            for fname in ["index.html", "dots-voice-agent.html"]:
-                html_path = os.path.join(WORKSPACE_DIR, fname)
-                if os.path.exists(html_path):
-                    with open(html_path, "r", encoding="utf-8") as f:
-                        content = f.read()
-                    self._set_headers(200, "text/html; charset=utf-8")
-                    self.wfile.write(content.encode("utf-8"))
-                    return
+        if path == "/" or path == "/app" or path == "/index.html" or path == "/dots-voice-agent.html":
+            html_path = os.path.join(WORKSPACE_DIR, "index.html")
+            if os.path.exists(html_path):
+                with open(html_path, "r", encoding="utf-8") as f:
+                    content = f.read()
+                self._set_headers(200, "text/html; charset=utf-8")
+                self.wfile.write(content.encode("utf-8"))
+                return
 
         # Serve static modular CSS & JS files (for split frontend)
         if path.startswith("/css/") or path.startswith("/js/"):

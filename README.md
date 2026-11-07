@@ -41,7 +41,7 @@ A low-latency, full-duplex two-way voice AI agent inspired by OpenAI's "Dots". S
 - 🧠 **Multi-Engine Support:**
   - Free built-in Local Semantic Engine (Zero API key needed)
   - 🌐 **Groq Compound** with built-in Web Search (`groq/compound-mini`, fallback `llama-3.1-8b-instant`)
-  - 🔍 **DeepSeek Search** (`deepseek-chat` / DeepSeek-V3 / R1)
+  - 🧠 **DeepSeek Chat** (`deepseek-chat` / DeepSeek-V3 reasoning, no live web)
   - ⚡ **Groq Cloud** Llama 3.1 8B Instant (Sub-200ms latency)
   - OpenAI GPT-4o / GPT-4o-mini
   - Google Gemini 2.0 Flash
@@ -139,7 +139,7 @@ To give the agent **infinite world knowledge** (coding, math, history, science, 
    - ⚡ **Groq Cloud (Recommended)**: **100% Free** and ultra-low latency (<200ms speech response). Powered by Meta's `llama-3.1-8b-instant`.
      - Get a free key at: [console.groq.com/keys](https://console.groq.com/keys)
    - 🌐 **Groq Compound (Web Search)**: Built-in real-time web search capability using your existing Groq API key!
-   - 🔍 **DeepSeek Search**: High-reasoning search synthesis powered by DeepSeek-V3 / R1.
+   - 🧠 **DeepSeek Chat**: High-reasoning conversational intelligence powered by DeepSeek-V3 / R1 (pure reasoning, not live web search).
      - Get a key at: [platform.deepseek.com/api_keys](https://platform.deepseek.com/api_keys)
      - Set bridge environment variable: `set DEEPSEEK_API_KEY=your_key` or enter in Settings.
    - 🤖 **OpenAI**: Connects `gpt-4o-mini` or `gpt-4o`.
