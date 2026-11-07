@@ -2483,7 +2483,6 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                         },
                         body: JSON.stringify({
                             text: cleanSpeech,
-                            inputs: [cleanSpeech],
                             target_language_code: sarvamLangCode,
                             speaker: vMeta.gender === 'female' ? 'ritu' : 'shubh',
                             model: "bulbul:v3"
@@ -2915,7 +2914,6 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                         },
                         body: JSON.stringify({
                             text: sampleText,
-                            inputs: [sampleText],
                             target_language_code: targetCode,
                             speaker: speaker,
                             model: "bulbul:v3"
