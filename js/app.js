@@ -1242,13 +1242,13 @@ CRITICAL: Reply in the user's language with bright, genius, futuristic 1-2 sente
                     (spokenLower.length > 10 && textToCheck.length > 5 && (spokenLower.includes(textToCheck.slice(-12)) || textToCheck.includes(spokenLower.slice(0, 15))))
                 );
 
-                const isInterruptWord = /^(stop|wait|pause|chup|ruko|shant|suno|arre|hello|listen|hold on|cancel|bhai)/i.test(currentText.trim());
+                const isInterruptWord = /^(stop|wait|pause|chup|ruko|shant|suno|arre|hello|listen|hold on|cancel|bhai|bas|band karo)/i.test(currentText.trim());
                 const timeSinceSpeechStart = Date.now() - agentSpeechStartTime;
-                const isDistinctHumanInterruption = (audioMode === 'headphones')
-                    ? (timeSinceSpeechStart > 800 && currentText.length >= 6)
-                    : (timeSinceSpeechStart > 1200 && currentText.length >= 10);
+                // Only allow length-based barge-in when user is wearing headphones.
+                // On laptop/PC speakers, microphone hears the speaker output, which false-triggers and cuts off the agent mid-sentence!
+                const isDistinctHumanInterruption = (audioMode === 'headphones') && (timeSinceSpeechStart > 800 && currentText.length >= 6);
 
-                // Instant barge-in: only trigger on genuine wake words, explicit stop commands, or verified human phrases
+                // Instant barge-in: only trigger on genuine wake words, explicit stop commands, or verified human phrases (on headphones)
                 if (isSpeaking && !isEcho && (wakeCheck.detected || isInterruptWord || isDistinctHumanInterruption)) {
                     console.log("⚡ Verified barge-in interruption triggered:", currentText);
                     triggerImmediateInterruption();
@@ -1288,7 +1288,17 @@ CRITICAL: Reply in the user's language with bright, genius, futuristic 1-2 sente
                 if (speechSilenceTimeout) clearTimeout(speechSilenceTimeout);
 
                 if (finalTranscript.trim()) {
-                    handleUserSpeechCommit(finalTranscript.trim());
+                    // Self-echo guard: If agent is currently speaking, speaker audio being picked up by mic must NOT abort speaking!
+                    if (isSpeaking) {
+                        if (wakeCheck.detected || isInterruptWord) {
+                            triggerImmediateInterruption();
+                            handleUserSpeechCommit(finalTranscript.trim());
+                        } else {
+                            console.log("🛡️ Suppressed speaker echo commit while agent is speaking:", finalTranscript.trim());
+                        }
+                    } else {
+                        handleUserSpeechCommit(finalTranscript.trim());
+                    }
                 } else if (interimTranscript.trim().length >= 2) {
                     // Smooth natural pause detection: 650ms ensures user finishes words without cutting off mid-sentence
                     speechSilenceTimeout = setTimeout(() => {
@@ -1939,7 +1949,7 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                                 { role: "system", content: sysPrompt },
                                 { role: "user", content: userPrompt }
                             ],
-                            max_tokens: 140,
+                            max_tokens: 500,
                             temperature: 0.6
                         }),
                         signal: currentAbortController?.signal
@@ -1977,7 +1987,7 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                                     { role: "system", content: sysPrompt },
                                     { role: "user", content: userPrompt }
                                 ],
-                                max_tokens: 250,
+                                max_tokens: 500,
                                 temperature: 0.5
                             }),
                             signal: currentAbortController?.signal
@@ -2001,7 +2011,7 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                                         { role: "system", content: sysPrompt },
                                         { role: "user", content: userPrompt }
                                     ],
-                                    max_tokens: 200,
+                                    max_tokens: 500,
                                     temperature: 0.5
                                 }),
                                 signal: currentAbortController?.signal
@@ -2069,7 +2079,7 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                                 { role: "system", content: sysPrompt },
                                 { role: "user", content: userPrompt }
                             ],
-                            max_tokens: 300,
+                            max_tokens: 500,
                             temperature: 0.6
                         }),
                         signal: currentAbortController?.signal
@@ -2138,7 +2148,7 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                                         { role: "system", content: sysPrompt },
                                         { role: "user", content: userPrompt }
                                     ],
-                                    max_tokens: 140, // Fast response: ~100ms generation on Groq
+                                    max_tokens: 500, // Complete sentences without premature cutoff
                                     temperature: 0.6
                                 }),
                                 signal: currentAbortController?.signal
@@ -3210,10 +3220,12 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
             }
 
             let finished = false;
+            let chromeKeepAlive = null;
             const finishOnce = () => {
                 if (finished) return;
                 finished = true;
                 if (speechSafetyTimer) clearTimeout(speechSafetyTimer);
+                if (chromeKeepAlive) clearInterval(chromeKeepAlive);
                 isSpeaking = false;
                 window.activeUtterances = window.activeUtterances.filter(u => u !== utter);
                 setAgentState('listening', isPushToTalkMode ? 'Push-to-Talk Standby' : 'Listening to your voice...');
@@ -3231,8 +3243,18 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                 document.getElementById('callSubtitles').innerText = cleanSpeech;
 
                 const wordCount = utterText.split(/\s+/).length;
-                const maxDurationMs = Math.max(15000, wordCount * 800 + 5000);
+                const maxDurationMs = Math.max(25000, wordCount * 1200 + 8000);
                 speechSafetyTimer = setTimeout(() => { if (isSpeaking) finishOnce(); }, maxDurationMs);
+
+                // Chrome speech synthesis keep-alive: prevents long utterances from cutting off mid-sentence
+                chromeKeepAlive = setInterval(() => {
+                    if (!window.speechSynthesis.speaking) {
+                        clearInterval(chromeKeepAlive);
+                    } else {
+                        window.speechSynthesis.pause();
+                        window.speechSynthesis.resume();
+                    }
+                }, 8000);
             };
 
             utter.onend = () => {
