@@ -172,15 +172,21 @@ class VoiceAgentBridgeHandler(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({"success": True, "iot": IOT_STATE}).encode("utf-8"))
             
         elif path == "/api/tts":
-            # Direct Neural Indic & Multilingual Speech Proxy
-            # Guarantees authentic Hindi and Odia voice streaming without CORS restrictions
+            # Direct Neural Indic Speech Proxy (Hindi Google TTS fallback)
+            # NOTE: Google Translate does NOT support Odia. Odia requests are rejected here so caller falls to native voices.
             try:
                 import urllib.parse
                 import urllib.request
                 query = self.path.split('?')[1] if '?' in self.path else ''
                 params = urllib.parse.parse_qs(query)
                 q_text = params.get('q', [''])[0]
-                lang = params.get('tl', ['hi'])[0]
+                lang = params.get('tl', ['hi'])[0].lower()
+
+                if lang in ['or', 'od', 'or-in', 'od-in', 'odia']:
+                    self._set_headers(400)
+                    self.wfile.write(json.dumps({"error": "Google TTS proxy does not support Odia. Use Sarvam AI Bulbul v3 (/tts) or native browser voice."}).encode("utf-8"))
+                    return
+
                 if q_text:
                     url = f"https://translate.google.com/translate_tts?ie=UTF-8&tl={lang}&client=tw-ob&q={urllib.parse.quote(q_text)}"
                     req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -267,6 +273,8 @@ class VoiceAgentBridgeHandler(BaseHTTPRequestHandler):
 
             try:
                 sarvam_url = "https://api.sarvam.ai/text-to-speech"
+                print(f"[SARVAM TTS] Target: {target_lang} | Speaker: {speaker} | Model: bulbul:v3")
+                print(f"[SARVAM TTS] Sending payload: {json.dumps(payload, ensure_ascii=False)}")
                 headers = {
                     "api-subscription-key": sarvam_key,
                     "Content-Type": "application/json",
@@ -288,8 +296,9 @@ class VoiceAgentBridgeHandler(BaseHTTPRequestHandler):
                     return
             except urllib.error.HTTPError as he:
                 err_body = he.read().decode("utf-8", errors="replace")
+                print(f"[!] Sarvam API HTTPError {he.code}: {err_body}")
                 self.log_message(f"Sarvam API HTTP Error {he.code}: {err_body}")
-                self._set_headers(500)
+                self._set_headers(he.code)
                 self.wfile.write(json.dumps({
                     "success": False,
                     "error": f"Sarvam AI API HTTP {he.code}: {err_body}"

@@ -2473,6 +2473,7 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                             "api-subscription-key": sarvamClientKey
                         },
                         body: JSON.stringify({
+                            text: cleanSpeech,
                             inputs: [cleanSpeech],
                             target_language_code: sarvamLangCode,
                             speaker: vMeta.gender === 'female' ? 'ritu' : 'shubh',
@@ -2561,9 +2562,14 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
         // (Guarantees 100% native Hindi and Odia speech on any PC, phone, or browser)
         // ==========================================
         async function streamIndicNeuralTts(cleanSpeech, isOdia, vMeta, onComplete) {
+            if (isOdia) {
+                // Google TTS proxy does NOT support Odia (would speak Devanagari transliteration with Hindi accent).
+                // Disable Google proxy for Odia entirely; fall directly to browser's native speech synthesis.
+                console.warn("Google TTS does not support Odia. Skipping Google proxy to avoid garbled Hindi pronunciation.");
+                return false;
+            }
             try {
-                // If text is in Odia script, map it to Devanagari phonemes so the Indic acoustic engine pronounces authentic Odia
-                const indicText = isOdia ? odiaToDevanagari(cleanSpeech) : cleanSpeech;
+                const indicText = cleanSpeech;
                 const speakChunk = indicText.length > 220 ? indicText.slice(0, 220) : indicText;
                 const encodedText = encodeURIComponent(speakChunk);
 
