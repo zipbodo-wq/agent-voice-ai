@@ -40,8 +40,10 @@ A low-latency, full-duplex two-way voice AI agent inspired by OpenAI's "Dots". S
   Control real relays, actuators, test benches, and read temperature/humidity/power telemetry.
 - 🧠 **Multi-Engine Support:**
   - Free built-in Local Semantic Engine (Zero API key needed)
+  - 🌐 **Groq Compound** with built-in Web Search (`groq/compound-mini`, fallback `llama-3.1-8b-instant`)
+  - 🔍 **DeepSeek Search** (`deepseek-chat` / DeepSeek-V3 / R1)
+  - ⚡ **Groq Cloud** Llama 3.1 8B Instant (Sub-200ms latency)
   - OpenAI GPT-4o / GPT-4o-mini
-  - Groq Cloud Llama 3.3 70B (Sub-200ms latency)
   - Google Gemini 2.0 Flash
 - 👁️ **Optic Vision Feed:**
   Real-time camera feed analysis for vision assistance.
@@ -134,8 +136,12 @@ To give the agent **infinite world knowledge** (coding, math, history, science, 
 
 1. Click the **⚙️ Settings** icon in the top header.
 2. Select your **AI Intelligence Engine**:
-   - ⚡ **Groq Cloud (Recommended)**: **100% Free** and ultra-low latency (<200ms speech response). Powered by Meta's `llama-3.1-8b-instant` (or `llama-3.3-70b-versatile`).
+   - ⚡ **Groq Cloud (Recommended)**: **100% Free** and ultra-low latency (<200ms speech response). Powered by Meta's `llama-3.1-8b-instant`.
      - Get a free key at: [console.groq.com/keys](https://console.groq.com/keys)
+   - 🌐 **Groq Compound (Web Search)**: Built-in real-time web search capability using your existing Groq API key!
+   - 🔍 **DeepSeek Search**: High-reasoning search synthesis powered by DeepSeek-V3 / R1.
+     - Get a key at: [platform.deepseek.com/api_keys](https://platform.deepseek.com/api_keys)
+     - Set bridge environment variable: `set DEEPSEEK_API_KEY=your_key` or enter in Settings.
    - 🤖 **OpenAI**: Connects `gpt-4o-mini` or `gpt-4o`.
      - Get key at: [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
    - ✨ **Google Gemini**: Connects `gemini-2.0-flash`.

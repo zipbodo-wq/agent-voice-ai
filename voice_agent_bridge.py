@@ -15,13 +15,24 @@ import socket
 import platform
 import subprocess
 import threading
+import ssl
 import urllib.request
 import urllib.error
 import urllib.parse
 from pathlib import Path
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
-PORT = 8765
+def safe_urlopen(req, timeout=20):
+    try:
+        ctx = ssl.create_default_context()
+        return urllib.request.urlopen(req, context=ctx, timeout=timeout)
+    except urllib.error.URLError as ue:
+        if "CERTIFICATE_VERIFY_FAILED" in str(ue):
+            unverified_ctx = ssl._create_unverified_context()
+            return urllib.request.urlopen(req, context=unverified_ctx, timeout=timeout)
+        raise
+
+PORT = int(os.environ.get("BRIDGE_PORT", 8765))
 WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Security Token Initialization
@@ -145,11 +156,13 @@ class VoiceAgentBridgeHandler(BaseHTTPRequestHandler):
             
         elif path == "/config" or path == "/api/config":
             sarvam_key = os.environ.get("SARVAM_API_KEY", "").strip()
+            deepseek_key = os.environ.get("DEEPSEEK_API_KEY", "").strip()
             self._set_headers(200)
             self.wfile.write(json.dumps({
                 "success": True,
                 "tts_available": bool(sarvam_key),
                 "sarvam_configured": bool(sarvam_key),
+                "deepseek_configured": bool(deepseek_key),
                 "model": "bulbul:v3",
                 "supported_languages": ["hi-IN", "od-IN", "en-IN"]
             }).encode("utf-8"))
@@ -172,7 +185,7 @@ class VoiceAgentBridgeHandler(BaseHTTPRequestHandler):
                 if q_text:
                     url = f"https://translate.google.com/translate_tts?ie=UTF-8&tl={lang}&client=tw-ob&q={urllib.parse.quote(q_text)}"
                     req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-                    with urllib.request.urlopen(req, timeout=8) as response:
+                    with safe_urlopen(req, timeout=8) as response:
                         audio_data = response.read()
                         self._set_headers(200, content_type="audio/mpeg")
                         self.wfile.write(audio_data)
@@ -263,7 +276,7 @@ class VoiceAgentBridgeHandler(BaseHTTPRequestHandler):
                 post_data = json.dumps(payload).encode("utf-8")
                 req = urllib.request.Request(sarvam_url, data=post_data, headers=headers, method="POST")
 
-                with urllib.request.urlopen(req, timeout=15) as resp:
+                with safe_urlopen(req, timeout=15) as resp:
                     resp_data = json.loads(resp.read().decode("utf-8"))
                     audios = resp_data.get("audios", [])
                     if not audios or not audios[0]:
@@ -291,6 +304,84 @@ class VoiceAgentBridgeHandler(BaseHTTPRequestHandler):
                     "error": f"Sarvam TTS bridge failed: {str(ex)}"
                 }).encode("utf-8"))
                 return
+
+        elif path == "/api/deepseek-search":
+            query = data.get("query", data.get("text", "")).strip()
+            system_prompt = data.get("system_prompt", "You are an intelligent, ultra-concise voice assistant. Answer directly in 1-2 spoken sentences.").strip()
+            client_key = data.get("api_key", "").strip()
+            deepseek_key = os.environ.get("DEEPSEEK_API_KEY", "").strip() or client_key
+
+            if not deepseek_key:
+                self._set_headers(400)
+                self.wfile.write(json.dumps({
+                    "success": False,
+                    "error": "DEEPSEEK_API_KEY is not configured on server or in request payload."
+                }).encode("utf-8"))
+                return
+
+            if not query:
+                self._set_headers(400)
+                self.wfile.write(json.dumps({
+                    "success": False,
+                    "error": "Missing 'query' or 'text' parameter."
+                }).encode("utf-8"))
+                return
+
+            try:
+                payload = json.dumps({
+                    "model": "deepseek-chat",
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": query}
+                    ],
+                    "temperature": 0.6,
+                    "max_tokens": 300
+                }).encode("utf-8")
+
+                req = urllib.request.Request(
+                    "https://api.deepseek.com/chat/completions",
+                    data=payload,
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {deepseek_key}",
+                        "User-Agent": "VoiceAgentBridge/1.0"
+                    },
+                    method="POST"
+                )
+
+                with safe_urlopen(req, timeout=20) as resp:
+                    resp_data = json.loads(resp.read().decode("utf-8"))
+                    choices = resp_data.get("choices", [])
+                    if choices and "message" in choices[0]:
+                        reply = choices[0]["message"].get("content", "")
+                        self._set_headers(200)
+                        self.wfile.write(json.dumps({
+                            "success": True,
+                            "reply": reply,
+                            "model": "deepseek-chat"
+                        }).encode("utf-8"))
+                    else:
+                        self._set_headers(500)
+                        self.wfile.write(json.dumps({
+                            "success": False,
+                            "error": "DeepSeek API returned empty choices."
+                        }).encode("utf-8"))
+
+            except urllib.error.HTTPError as he:
+                err_body = he.read().decode("utf-8", errors="replace")
+                print(f"[!] DeepSeek API HTTPError {he.code}: {err_body}")
+                self._set_headers(he.code)
+                self.wfile.write(json.dumps({
+                    "success": False,
+                    "error": f"DeepSeek API HTTPError {he.code}: {err_body}"
+                }).encode("utf-8"))
+            except Exception as ex:
+                print(f"[!] DeepSeek API exception: {str(ex)}")
+                self._set_headers(500)
+                self.wfile.write(json.dumps({
+                    "success": False,
+                    "error": f"DeepSeek request failed: {str(ex)}"
+                }).encode("utf-8"))
 
         elif path == "/api/execute":
             # Execute a local Python command, script, or shell task

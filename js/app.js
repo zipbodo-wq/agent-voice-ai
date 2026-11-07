@@ -62,6 +62,7 @@
         let selectedEngine = localStorage.getItem('dots_engine') || 'local';
         let groqKey = localStorage.getItem('jarvis_groq_key') || localStorage.getItem('dots_groq_key') || '';
         let groqModel = localStorage.getItem('dots_groq_model') || 'llama-3.1-8b-instant';
+        let deepseekKey = localStorage.getItem('dots_deepseek_key') || '';
         let geminiKey = localStorage.getItem('jarvis_gemini_key') || localStorage.getItem('dots_gemini_key') || '';
         let openaiKey = localStorage.getItem('dots_openai_key') || '';
 
@@ -1863,6 +1864,12 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
             if (selectedEngine === 'groq' && !groqKey) {
                 return "Groq engine is selected, but no API key was found. Click the Settings gear icon at the top right to paste your free Groq API key, and I will be able to answer any question in the world!";
             }
+            if (selectedEngine === 'groq_compound' && !groqKey) {
+                return "Groq Compound engine is selected, but no Groq API key was found. Click the Settings gear icon at the top right to paste your free Groq API key, and I will be able to search the web and answer any question!";
+            }
+            if (selectedEngine === 'deepseek' && !deepseekKey) {
+                return "DeepSeek engine is selected, but no DeepSeek API key was found. Please open Settings and paste your DeepSeek API key.";
+            }
             if (selectedEngine === 'openai' && !openaiKey) {
                 return "OpenAI engine is selected, but no API key was found. Please open Settings and paste your OpenAI API key to activate GPT-4o intelligence.";
             }
@@ -1921,6 +1928,139 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                 } catch (e) {
                     if (e.name === 'AbortError') return "";
                     console.warn("OpenAI fallback:", e);
+                }
+            }
+
+            // Mode 1.5: Groq Compound (Web Search built-in)
+            if (selectedEngine === 'groq_compound' && groqKey) {
+                try {
+                    let sysPrompt = PERSONAS[currentPersonaId].systemPrompt + langInstruction;
+                    if (toolResult) {
+                        sysPrompt += `\nBACKGROUND MISSION RESULT: You just executed '${toolIntent.name}'. Output was: '${toolResult.output}'. Confirm this verbally to the user in 1-2 natural spoken sentences.`;
+                    }
+                    try {
+                        const res = await fetchWithTimeout("https://api.groq.com/openai/v1/chat/completions", {
+                            method: "POST",
+                            headers: {
+                                "Authorization": `Bearer ${groqKey.trim()}`,
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                model: "groq/compound-mini",
+                                messages: [
+                                    { role: "system", content: sysPrompt },
+                                    { role: "user", content: userPrompt }
+                                ],
+                                max_tokens: 250,
+                                temperature: 0.5
+                            }),
+                            signal: currentAbortController?.signal
+                        });
+                        if (res.ok) {
+                            const d = await res.json();
+                            if (d.choices && d.choices[0] && d.choices[0].message) {
+                                return d.choices[0].message.content;
+                            }
+                        } else if (res.status === 404) {
+                            console.warn("groq/compound-mini returned 404, falling back to llama-3.1-8b-instant");
+                            const fbRes = await fetchWithTimeout("https://api.groq.com/openai/v1/chat/completions", {
+                                method: "POST",
+                                headers: {
+                                    "Authorization": `Bearer ${groqKey.trim()}`,
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({
+                                    model: "llama-3.1-8b-instant",
+                                    messages: [
+                                        { role: "system", content: sysPrompt },
+                                        { role: "user", content: userPrompt }
+                                    ],
+                                    max_tokens: 200,
+                                    temperature: 0.5
+                                }),
+                                signal: currentAbortController?.signal
+                            });
+                            if (fbRes.ok) {
+                                const fbd = await fbRes.json();
+                                if (fbd.choices && fbd.choices[0] && fbd.choices[0].message) {
+                                    return fbd.choices[0].message.content;
+                                }
+                            }
+                        } else {
+                            const errData = await res.json().catch(() => ({}));
+                            console.warn("Groq Compound API error:", res.status, errData);
+                            return `Groq Compound notice: ${errData.error?.message || "Service temporarily unavailable."}`;
+                        }
+                    } catch (fetchErr) {
+                        if (fetchErr.name === 'AbortError') return "";
+                        console.warn("Groq Compound network error:", fetchErr);
+                    }
+                } catch (e) {
+                    if (e.name === 'AbortError') return "";
+                    console.warn("Groq Compound outer exception:", e);
+                }
+            }
+
+            // Mode 1.8: DeepSeek Search (DeepSeek-V3 / R1)
+            if (selectedEngine === 'deepseek' && deepseekKey) {
+                try {
+                    let sysPrompt = PERSONAS[currentPersonaId].systemPrompt + langInstruction;
+                    if (toolResult) {
+                        sysPrompt += `\nBACKGROUND MISSION RESULT: You just executed '${toolIntent.name}'. Output was: '${toolResult.output}'. Confirm this verbally to the user in 1-2 natural spoken sentences.`;
+                    }
+                    if (bridgeOnline) {
+                        try {
+                            const bRes = await fetchWithTimeout(`${bridgeUrl}/api/deepseek-search`, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    query: userPrompt,
+                                    system_prompt: sysPrompt,
+                                    api_key: deepseekKey.trim()
+                                }),
+                                signal: currentAbortController?.signal
+                            }, 18000);
+                            if (bRes.ok) {
+                                const bData = await bRes.json();
+                                if (bData.success && bData.reply) {
+                                    return bData.reply;
+                                }
+                            }
+                        } catch (bErr) {
+                            console.warn("Bridge deepseek-search failed, falling back to direct API:", bErr);
+                        }
+                    }
+
+                    const res = await fetchWithTimeout("https://api.deepseek.com/chat/completions", {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${deepseekKey.trim()}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            model: "deepseek-chat",
+                            messages: [
+                                { role: "system", content: sysPrompt },
+                                { role: "user", content: userPrompt }
+                            ],
+                            max_tokens: 300,
+                            temperature: 0.6
+                        }),
+                        signal: currentAbortController?.signal
+                    }, 20000);
+
+                    if (res.ok) {
+                        const d = await res.json();
+                        if (d.choices && d.choices[0] && d.choices[0].message) {
+                            return d.choices[0].message.content;
+                        }
+                    } else {
+                        const err = await res.json().catch(() => ({}));
+                        return `DeepSeek error: ${err.error?.message || "Check your DeepSeek API key."}`;
+                    }
+                } catch (e) {
+                    if (e.name === 'AbortError') return "";
+                    console.warn("DeepSeek exception:", e);
                 }
             }
 
@@ -3287,6 +3427,30 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                 }
                 document.getElementById('apiKeyInput').value = groqKey;
                 document.getElementById('activeEngineLabel').innerText = "Groq Llama 3.1 8B";
+            } else if (eng === 'groq_compound') {
+                grp.style.display = 'flex';
+                label.innerText = "Groq API Key (gsk_...)";
+                if (helpLink) {
+                    helpLink.href = "https://console.groq.com/keys";
+                    helpLink.innerHTML = `<i class="fa-solid fa-globe"></i> Get Free Groq Key (Search Included)`;
+                }
+                if (helpText) {
+                    helpText.innerHTML = `<strong>Groq Compound:</strong> Includes real-time web search capability built directly into the engine, using your same free Groq API key!`;
+                }
+                document.getElementById('apiKeyInput').value = groqKey;
+                document.getElementById('activeEngineLabel').innerText = "Groq Compound (Web Search)";
+            } else if (eng === 'deepseek') {
+                grp.style.display = 'flex';
+                label.innerText = "DeepSeek API Key (sk-...)";
+                if (helpLink) {
+                    helpLink.href = "https://platform.deepseek.com/api_keys";
+                    helpLink.innerHTML = `<i class="fa-solid fa-brain"></i> Get DeepSeek API Key`;
+                }
+                if (helpText) {
+                    helpText.innerHTML = `Powered by DeepSeek-V3 / R1 for advanced multi-step reasoning and deep knowledge synthesis.`;
+                }
+                document.getElementById('apiKeyInput').value = deepseekKey;
+                document.getElementById('activeEngineLabel').innerText = "DeepSeek Search";
             } else if (eng === 'gemini') {
                 grp.style.display = 'flex';
                 label.innerText = "Google Gemini API Key (AIza...)";
@@ -3336,7 +3500,7 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
             }
 
             // Quick format checks
-            if (eng === 'groq') {
+            if (eng === 'groq' || eng === 'groq_compound') {
                 if (!key.startsWith('gsk_')) {
                     statusDiv.style.display = 'block';
                     statusDiv.style.color = '#ef4444';
@@ -3355,6 +3519,13 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                     statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> <strong>Incomplete Key:</strong> The key you entered is only ${key.length} characters long. Groq keys are ~56 characters.`;
                     return;
                 }
+            } else if (eng === 'deepseek') {
+                if (!key.startsWith('sk-')) {
+                    statusDiv.style.display = 'block';
+                    statusDiv.style.color = '#ef4444';
+                    statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> DeepSeek API keys start with <code>sk-</code>. Check your key at platform.deepseek.com.`;
+                    return;
+                }
             } else if (eng === 'openai') {
                 if (!key.startsWith('sk-')) {
                     statusDiv.style.display = 'block';
@@ -3369,7 +3540,7 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
             statusDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying key with ' + eng.toUpperCase() + ' servers...';
 
             try {
-                if (eng === 'groq') {
+                if (eng === 'groq' || eng === 'groq_compound') {
                     statusDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Checking Groq account & available models...';
                     
                     let workingModel = null;
@@ -3481,6 +3652,25 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                         statusDiv.style.color = '#ef4444';
                         statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> OpenAI Error (${res.status}): ${d.error?.message || 'Invalid API Key'}`;
                     }
+                } else if (eng === 'deepseek') {
+                    statusDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Checking DeepSeek API...';
+                    const res = await fetchWithTimeout("https://api.deepseek.com/chat/completions", {
+                        method: "POST",
+                        headers: { "Authorization": `Bearer ${key}`, "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            model: "deepseek-chat",
+                            messages: [{ role: "user", content: "ping" }],
+                            max_tokens: 5
+                        })
+                    });
+                    const d = await res.json().catch(() => ({}));
+                    if (res.ok) {
+                        statusDiv.style.color = '#10b981';
+                        statusDiv.innerHTML = '<i class="fa-solid fa-circle-check"></i> <strong>DeepSeek Key Valid!</strong> DeepSeek-V3 is active and ready for search & reasoning.';
+                    } else {
+                        statusDiv.style.color = '#ef4444';
+                        statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> DeepSeek Error (${res.status}): ${d.error?.message || 'Invalid API Key'}`;
+                    }
                 } else if (eng === 'gemini') {
                     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`, {
                         method: "POST",
@@ -3512,10 +3702,13 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
             if (selectedEngine === 'openai') {
                 openaiKey = inputVal;
                 localStorage.setItem('dots_openai_key', openaiKey);
-            } else if (selectedEngine === 'groq') {
+            } else if (selectedEngine === 'groq' || selectedEngine === 'groq_compound') {
                 groqKey = inputVal;
                 localStorage.setItem('dots_groq_key', groqKey);
                 localStorage.setItem('jarvis_groq_key', groqKey);
+            } else if (selectedEngine === 'deepseek') {
+                deepseekKey = inputVal;
+                localStorage.setItem('dots_deepseek_key', deepseekKey);
             } else if (selectedEngine === 'gemini') {
                 geminiKey = inputVal;
                 localStorage.setItem('dots_gemini_key', geminiKey);
