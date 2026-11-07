@@ -32,6 +32,19 @@ def safe_urlopen(req, timeout=20):
             return urllib.request.urlopen(req, context=unverified_ctx, timeout=timeout)
         raise
 
+COMMON_ODIA_WORDS = {
+    "namaskara": "ନମସ୍କାର", "namaskar": "ନମସ୍କାର", "hello": "ନମସ୍କାର",
+    "kemiti": "କେମିତି", "achhanti": "ଅଛନ୍ତି", "achha": "ଅଛ", "achhi": "ଅଛି",
+    "aapan": "ଆପଣ", "aapanka": "ଆପଣଙ୍କ", "aapanku": "ଆପଣଙ୍କୁ", "mu": "ମୁଁ", "mote": "ମୋତେ",
+    "dhanyabad": "ଧନ୍ୟବାଦ", "dhanyabada": "ଧନ୍ୟବାଦ", "sahajya": "ସାହାଯ୍ୟ",
+    "karibi": "କରିବି", "karipare": "କରିପାରେ", "kariparibe": "କରିପାରିବେ", "kuha": "କୁହ", "kuhantu": "କୁହନ୍ତୁ",
+    "kie": "କିଏ", "kana": "କଣ", "kan": "କଣ", "kaha": "କାହା", "kete": "କେତେ",
+    "bhala": "ଭଲ", "bhalare": "ଭଲରେ", "aji": "ଆଜି", "kali": "କାଲି",
+    "samaya": "ସମୟ", "tarikha": "ତାରିଖ", "ghanta": "ଘଣ୍ଟା", "dine": "ଦିନେ",
+    "odisha": "ଓଡ଼ିଶା", "odia": "ଓଡ଼ିଆ", "bhubaneswar": "ଭୁବନେଶ୍ୱର", "puri": "ପୁରୀ",
+    "cuttack": "କଟକ", "konark": "କୋଣାର୍କ", "mandira": "ମନ୍ଦିର", "jagannath": "ଜଗନ୍ନାଥ"
+}
+
 def split_text_for_tts(text, max_chars=2400):
     """Split text into chunks under max_chars, preferring sentence boundaries."""
     if len(text) <= max_chars:
@@ -173,12 +186,14 @@ class VoiceAgentBridgeHandler(BaseHTTPRequestHandler):
         elif path == "/config" or path == "/api/config":
             sarvam_key = os.environ.get("SARVAM_API_KEY", "").strip()
             deepseek_key = os.environ.get("DEEPSEEK_API_KEY", "").strip()
+            serper_key = os.environ.get("SERPER_API_KEY", "").strip()
             self._set_headers(200)
             self.wfile.write(json.dumps({
                 "success": True,
                 "tts_available": bool(sarvam_key),
                 "sarvam_configured": bool(sarvam_key),
                 "deepseek_configured": bool(deepseek_key),
+                "serper_configured": bool(serper_key),
                 "model": "bulbul:v3",
                 "supported_languages": ["hi-IN", "od-IN", "en-IN"]
             }).encode("utf-8"))
@@ -331,6 +346,123 @@ class VoiceAgentBridgeHandler(BaseHTTPRequestHandler):
                 self.wfile.write(json.dumps({
                     "success": False,
                     "error": f"Sarvam TTS bridge failed: {str(ex)}"
+                }).encode("utf-8"))
+                return
+
+        elif path == "/api/transliterate":
+            input_text = data.get("text", "")
+            target_lang = data.get("lang", "or").strip().lower()
+
+            if not input_text:
+                self._set_headers(200)
+                self.wfile.write(json.dumps({"success": True, "text": ""}).encode("utf-8"))
+                return
+
+            try:
+                import re
+                tokens = re.split(r'(\s+|[^\w\s]+)', input_text)
+                transliterated_tokens = []
+
+                for token in tokens:
+                    if token.strip() and re.match(r'^[a-zA-Z]+$', token):
+                        try:
+                            encoded_word = urllib.parse.quote(token)
+                            url = f"http://127.0.0.1:8001/tl/{target_lang}/{encoded_word}"
+                            req = urllib.request.Request(url, headers={"User-Agent": "VoiceAgentBridge/1.0"})
+                            with urllib.request.urlopen(req, timeout=5) as resp:
+                                res_json = json.loads(resp.read().decode("utf-8"))
+                                candidates = []
+                                if isinstance(res_json, dict):
+                                    candidates = res_json.get("result", res_json.get("output", []))
+                                elif isinstance(res_json, list):
+                                    candidates = res_json
+                                if candidates and len(candidates) > 0:
+                                    transliterated_tokens.append(str(candidates[0]))
+                                else:
+                                    transliterated_tokens.append(token)
+                        except Exception as word_ex:
+                            # Fallback to built-in Odia phonetic map if local Indic-Xlit server is offline
+                            mapped = COMMON_ODIA_WORDS.get(token.lower(), token) if target_lang in ["or", "od", "odia"] else token
+                            transliterated_tokens.append(mapped)
+                    else:
+                        transliterated_tokens.append(token)
+
+                result_text = "".join(transliterated_tokens)
+                self._set_headers(200)
+                self.wfile.write(json.dumps({
+                    "success": True,
+                    "text": result_text
+                }, ensure_ascii=False).encode("utf-8"))
+                return
+            except Exception as ex:
+                self._set_headers(200)
+                self.wfile.write(json.dumps({
+                    "success": False,
+                    "text": input_text,
+                    "error": str(ex)
+                }, ensure_ascii=False).encode("utf-8"))
+                return
+
+        elif path == "/api/search":
+            query = data.get("query", "").strip()
+            if not query:
+                self._set_headers(400)
+                self.wfile.write(json.dumps({"success": False, "error": "Missing query"}).encode("utf-8"))
+                return
+
+            serper_key = os.environ.get("SERPER_API_KEY", "").strip() or data.get("api_key", "").strip()
+            if not serper_key:
+                self._set_headers(500)
+                self.wfile.write(json.dumps({"success": False, "error": "SERPER_API_KEY not set"}).encode("utf-8"))
+                return
+
+            try:
+                payload = json.dumps({"q": query, "num": 5}).encode("utf-8")
+                req = urllib.request.Request(
+                    "https://google.serper.dev/search",
+                    data=payload,
+                    headers={
+                        "X-API-KEY": serper_key,
+                        "Content-Type": "application/json"
+                    },
+                    method="POST"
+                )
+
+                with safe_urlopen(req, timeout=10) as resp:
+                    resp_data = json.loads(resp.read().decode("utf-8"))
+
+                organic = resp_data.get("organic", [])
+                results = []
+                for item in organic[:5]:
+                    results.append({
+                        "title": item.get("title", ""),
+                        "link": item.get("link", ""),
+                        "snippet": item.get("snippet", "")
+                    })
+
+                self._set_headers(200)
+                self.wfile.write(json.dumps({
+                    "success": True,
+                    "results": results,
+                    "count": len(results)
+                }, ensure_ascii=False).encode("utf-8"))
+                return
+
+            except urllib.error.HTTPError as he:
+                err = he.read().decode("utf-8", errors="replace")
+                is_quota = (he.code == 403 or "quota" in err.lower() or "unauthorized" in err.lower())
+                self._set_headers(he.code)
+                self.wfile.write(json.dumps({
+                    "success": False,
+                    "error": "Serper quota exhausted" if is_quota else f"Serper HTTP {he.code}: {err}",
+                    "quota_exhausted": is_quota
+                }).encode("utf-8"))
+                return
+            except Exception as ex:
+                self._set_headers(500)
+                self.wfile.write(json.dumps({
+                    "success": False,
+                    "error": f"Serper failed: {str(ex)}"
                 }).encode("utf-8"))
                 return
 

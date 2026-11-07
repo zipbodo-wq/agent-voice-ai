@@ -1319,6 +1319,27 @@ CRITICAL: Reply in the user's language with bright, genius, futuristic 1-2 sente
             // If query was aborted while thinking, exit
             if (!spokenReply) return;
 
+            // If language is Odia, try transliteration fix
+            if (currentLanguage.startsWith('or') && /[\u0B00-\u0B7F]/.test(spokenReply) === false) {
+                // Only attempt if the reply has NO Odia script (means it's Romanized)
+                try {
+                    const tRes = await fetchWithTimeout(`${bridgeUrl}/api/transliterate`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ text: spokenReply, lang: "or" })
+                    }, 6000);
+                    if (tRes.ok) {
+                        const tData = await tRes.json();
+                        if (tData.success && tData.text) {
+                            console.log("[XLIT FIX] Romanized Odia converted:", tData.text);
+                            spokenReply = tData.text;
+                        }
+                    }
+                } catch(e) {
+                    console.warn("Transliteration bridge unavailable, using original text:", e.message);
+                }
+            }
+
             // Step 2: Speak Out Loud & Restart Listening Loop
             setAgentState('speaking', `${PERSONAS[currentPersonaId].name} Speaking...`);
             appendTranscript('agent', spokenReply);
@@ -1595,6 +1616,31 @@ print("Memory buffer: allocated 0.4ms. Execution clean.")
             }
         }
 
+        async function fixOdiaTransliteration(spokenReply) {
+            if (!spokenReply) return spokenReply;
+            // If language is Odia, try transliteration fix
+            if (currentLanguage.startsWith('or') && /[\u0B00-\u0B7F]/.test(spokenReply) === false) {
+                // Only attempt if the reply has NO Odia script (means it's Romanized)
+                try {
+                    const tRes = await fetchWithTimeout(`${bridgeUrl}/api/transliterate`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ text: spokenReply, lang: "or" })
+                    }, 6000);
+                    if (tRes.ok) {
+                        const tData = await tRes.json();
+                        if (tData.success && tData.text) {
+                            console.log("[XLIT FIX] Romanized Odia converted:", tData.text);
+                            return tData.text;
+                        }
+                    }
+                } catch(e) {
+                    console.warn("Transliteration bridge unavailable, using original text:", e.message);
+                }
+            }
+            return spokenReply;
+        }
+
         async function generateAgentVoiceReply(userPrompt, toolIntent, toolResult) {
             // Check if selected engine requires an API key that is missing
             if (selectedEngine === 'groq' && !groqKey) {
@@ -1630,12 +1676,51 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                 langInstruction = "\nCRITICAL MULTILINGUAL INSTRUCTION: Detect the language spoken by the user (Hindi, Odia, or English) and reply in the EXACT SAME LANGUAGE (Hindi in Hindi हिंदी, Odia in Odia ଓଡ଼ିଆ, English in English). Keep voice response under 1-2 short sentences so it responds instantly.";
             }
 
+            // Web search check — only search when query needs current information
+            const needsSearch = /latest|today|current|news|weather|price|stock|score|election|release|update|2025|2026|कल|आज|ଆଜି|ଖବର/i.test(userPrompt);
+
+            let serperUses = parseInt(localStorage.getItem('serper_uses') || '0');
+            if (serperUses >= 2400) {
+                console.warn("[SEARCH] Serper free quota nearly exhausted, skipping search");
+            } else if (needsSearch && bridgeOnline) {
+                try {
+                    setAgentState('thinking', 'Searching the web...');
+                    const serperClientKey = localStorage.getItem('dots_serper_key') || localStorage.getItem('serper_api_key') || '';
+                    const searchRes = await fetchWithTimeout(`${bridgeUrl}/api/search`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ query: userPrompt, api_key: serperClientKey })
+                    }, 8000);
+
+                    if (searchRes.ok) {
+                        const searchData = await searchRes.json();
+                        if (searchData.quota_exhausted) {
+                            console.warn("[SEARCH] Serper quota exhausted on bridge, disabling further queries.");
+                            localStorage.setItem('serper_uses', '2500');
+                        } else if (searchData.success && searchData.results && searchData.results.length > 0) {
+                            localStorage.setItem('serper_uses', String(serperUses + 1));
+                            const searchContext = searchData.results.map((r, i) =>
+                                `[${i+1}] ${r.title}: ${r.snippet} (${r.link})`
+                            ).join('\n');
+                            window.__searchContext = `\n\nLIVE WEB SEARCH RESULTS (use these to answer):\n${searchContext}\n`;
+                            console.log("[SEARCH] Injected", searchData.results.length, "results into LLM context");
+                        }
+                    }
+                } catch (e) {
+                    console.warn("[SEARCH] Serper search failed, answering without search:", e.message);
+                }
+            }
+
             // Mode 1: OpenAI GPT-4o / GPT-4o-mini
             if (selectedEngine === 'openai' && openaiKey) {
                 try {
                     let sysPrompt = PERSONAS[currentPersonaId].systemPrompt + langInstruction;
                     if (toolResult) {
                         sysPrompt += `\nBACKGROUND MISSION RESULT: You just executed '${toolIntent.name}'. Output was: '${toolResult.output}'. Confirm this verbally to the user in 1-2 natural spoken sentences.`;
+                    }
+                    if (window.__searchContext) {
+                        sysPrompt += window.__searchContext;
+                        window.__searchContext = null;
                     }
                     const res = await fetchWithTimeout("https://api.openai.com/v1/chat/completions", {
                         method: "POST",
@@ -1673,6 +1758,10 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                     let sysPrompt = PERSONAS[currentPersonaId].systemPrompt + langInstruction;
                     if (toolResult) {
                         sysPrompt += `\nBACKGROUND MISSION RESULT: You just executed '${toolIntent.name}'. Output was: '${toolResult.output}'. Confirm this verbally to the user in 1-2 natural spoken sentences.`;
+                    }
+                    if (window.__searchContext) {
+                        sysPrompt += window.__searchContext;
+                        window.__searchContext = null;
                     }
                     try {
                         const res = await fetchWithTimeout("https://api.groq.com/openai/v1/chat/completions", {
@@ -1744,6 +1833,10 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                     if (toolResult) {
                         sysPrompt += `\nBACKGROUND MISSION RESULT: You just executed '${toolIntent.name}'. Output was: '${toolResult.output}'. Confirm this verbally to the user in 1-2 natural spoken sentences.`;
                     }
+                    if (window.__searchContext) {
+                        sysPrompt += window.__searchContext;
+                        window.__searchContext = null;
+                    }
                     if (bridgeOnline) {
                         try {
                             const bRes = await fetchWithTimeout(`${bridgeUrl}/api/deepseek-search`, {
@@ -1807,6 +1900,10 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                     if (toolResult) {
                         sysPrompt += `\nBACKGROUND MISSION RESULT: You just executed '${toolIntent.name}'. Output was: '${toolResult.output}'. Confirm this verbally to the user in 1-2 natural spoken sentences.`;
                     }
+                    if (window.__searchContext) {
+                        sysPrompt += window.__searchContext;
+                        window.__searchContext = null;
+                    }
                     let activeModel = groqModel || localStorage.getItem('dots_groq_model') || 'llama-3.3-70b-versatile';
                     // Auto-heal: If previously connected to a decommissioned, retired, or safeguard model, reset to active Llama 3.3/3.1
                     if (!activeModel || activeModel.includes('safeguard') || activeModel.includes('guard') || activeModel.includes('qwen') || activeModel.includes('saba') || activeModel.includes('llama3-') || activeModel.includes('gemma2')) {
@@ -1859,7 +1956,8 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                                     groqModel = m;
                                     localStorage.setItem('dots_groq_model', m);
                                 }
-                                return d.choices[0].message.content;
+                                const rawReply = d.choices[0].message.content;
+                                return await fixOdiaTransliteration(rawReply);
                             } else if (res.status === 404 || res.status === 429 || (d.error?.message && (d.error.message.includes('decommissioned') || d.error.message.includes('deprecated') || d.error.message.includes('not found') || d.error.message.includes('no longer supported')))) {
                                 // 404 Not Found, 429 Rate Limit, OR decommissioned notice -> seamlessly auto-rotate to next available model!
                                 console.warn(`Groq model ${m} notice (${d.error?.message}), rotating to next model...`);
@@ -1891,13 +1989,15 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                     if (toolResult) {
                         contextText += `\n[Tool Executed]: ${toolIntent.name}. Result: ${toolResult.output}`;
                     }
+                    const searchPart = window.__searchContext || '';
+                    if (window.__searchContext) window.__searchContext = null;
                     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey.trim()}`;
                     const res = await fetchWithTimeout(url, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
                             contents: [{ role: "user", parts: [{ text: contextText }] }],
-                            systemInstruction: { parts: [{ text: PERSONAS[currentPersonaId].systemPrompt + langInstruction }] }
+                            systemInstruction: { parts: [{ text: PERSONAS[currentPersonaId].systemPrompt + langInstruction + searchPart }] }
                         }),
                         signal: currentAbortController?.signal
                     });
@@ -1913,6 +2013,8 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                     console.warn("Gemini fallback:", e);
                 }
             }
+
+            if (window.__searchContext) window.__searchContext = null;
 
             // Mode 4: Local Autonomous Semantic Engine (Zero Setup & Fast)
             if (toolResult) {
