@@ -100,7 +100,7 @@
             ironman: {
                 name: "Iron Man",
                 title: "Genius Billionaire Avenger",
-                greeting: "मैं हूँ आयरन मैन! JARVIS, सिस्टम ऑनलाइन है। कहो, कौन सा नया इन्वेंशन या टेक डिज़ाइन बनाना है?",
+                greeting: "नमस्ते! Hello! ନମସ୍କାର! How can I help you today?",
                 theme: "ironman",
                 voiceId: "ironman",
                 systemPrompt: `You are Tony Stark, Iron Man (आयरन मैन) from the Avengers.
@@ -114,7 +114,7 @@ CRITICAL: Always reply in the exact language the user speaks (natural Hindi ह�
             thor: {
                 name: "Thor",
                 title: "God of Thunder · Asgard",
-                greeting: "मैं हूँ थॉर, ओडिन का पुत्र, अस्गार्ड का सच्चा राजकुमार! गरज और बिजली मेरे साथ है। आदेश दो साथी!",
+                greeting: "नमस्ते! Hello! ନମସ୍କାର! I am ready to help.",
                 theme: "thor",
                 voiceId: "thor",
                 systemPrompt: `You are Thor Odinson (थॉर), the God of Thunder and Prince of Asgard from the Avengers.
@@ -129,7 +129,7 @@ CRITICAL: Reply in the user's language. Keep voice responses bold, heroic, thund
             captain: {
                 name: "Captain America",
                 title: "First Avenger · Team Leader",
-                greeting: "अवेंजर्स... असेंबल! मैं कैप्टन अमेरिका हूँ। मैं पूरा दिन यह कर सकता हूँ! बताओ साथी, मिशन क्या है?",
+                greeting: "नमस्ते! Hello! ନମସ୍କାର! What would you like to do?",
                 theme: "captain",
                 voiceId: "captain",
                 systemPrompt: `You are Captain America (Steve Rogers / कैप्टन अमेरिका), the First Avenger and team leader.
@@ -143,7 +143,7 @@ CRITICAL: Reply in the user's language with inspiring, steady, commanding 1-2 se
             spiderman: {
                 name: "Spider-Man",
                 title: "Friendly Neighborhood Hero",
-                greeting: "नमस्ते भैया! आपका दोस्ताना पड़ोसी स्पाइडर-मैन हाज़िर है! मिस्टर स्टार्क ने मुझे यह सूट दिया है। बताओ, क्या मदद करूँ?",
+                greeting: "नमस्ते! Hello! ନମସ୍କାର! What can I do for you?",
                 theme: "spiderman",
                 voiceId: "spiderman",
                 systemPrompt: `You are Peter Parker, Spider-Man (स्पाइडर-मैन), the energetic, fast-talking, witty superhero kid.
@@ -157,7 +157,7 @@ CRITICAL: Reply in the user's language with youthful, fun, quick 1-2 sentence re
             hulk: {
                 name: "Hulk",
                 title: "Gamma Giant Avenger",
-                greeting: "हल्क ऑनलाइन! हल्क सब सुन रहा है! हल्क स्मैश! कोई भी कोड बग या परेशानी हल्क को रोक नहीं सकती!",
+                greeting: "नमस्ते! Hello! ନମସ୍କାର! Ready when you are.",
                 theme: "hulk",
                 voiceId: "hulk",
                 systemPrompt: `You are Hulk (हल्क), the colossal superhero giant and ultimate muscle of the Avengers.
@@ -170,7 +170,7 @@ CRITICAL: Reply in the user's language with colossal, punchy, thunderous power (
             jarvis: {
                 name: "JARVIS",
                 title: "Stark AI System",
-                greeting: "नमस्ते सर। मैं जार्विस हूँ, स्टार्क इंडस्ट्रीज एआई। सभी कवच, टेलीमेट्री और सिस्टम्स आपके आदेश पर तैयार हैं।",
+                greeting: "नमस्ते! Hello! ନମସ୍କାର! At your service.",
                 theme: "jarvis",
                 voiceId: "jarvis",
                 systemPrompt: `You are J.A.R.V.I.S., Tony Stark's sophisticated AI assistant.
@@ -183,7 +183,7 @@ CRITICAL: Reply in the user's language with polished, efficient, and precise 1-2
             thanos: {
                 name: "Thanos",
                 title: "Cosmic Titan · Inevitable",
-                greeting: "मैं अपरिहार्य हूँ... ब्रह्मांड का संतुलन आवश्यक है। मुझसे बात करो, बताओ क्या लक्ष्य है तुम्हारा?",
+                greeting: "नमस्ते! Hello! ନମସ୍କାର! Tell me what you need.",
                 theme: "thanos",
                 voiceId: "thanos",
                 systemPrompt: `You are Thanos (थानोस), the Mad Titan and cosmic warlord.
@@ -197,7 +197,7 @@ CRITICAL: Reply in the user's language with profound, chilling, concise 1-2 sent
             blackwidow: {
                 name: "Black Widow",
                 title: "Master Spy · Avenger",
-                greeting: "मैं नताशा रोमानॉफ, ब्लैक विडो हूँ। शील्ड और अवेंजर्स का डाटाबेस मेरे पास है। बताओ, क्या टारगेट है?",
+                greeting: "नमस्ते! Hello! ନମସ୍କାର! How can I assist?",
                 theme: "blackwidow",
                 voiceId: "blackwidow",
                 systemPrompt: `You are Natasha Romanoff, Black Widow (नताशा / ब्लैक विडो) from the Avengers.
@@ -211,7 +211,7 @@ CRITICAL: Reply in the user's language with sleek, confident, sharp 1-2 sentence
             scarletwitch: {
                 name: "Scarlet Witch",
                 title: "Chaos Magic · Reality Warper",
-                greeting: "मैं वांडा मैक्सिमॉफ हूँ। मेरी कैओस मैजिक वास्तविकता को बदल सकती है। क्या जानना चाहते हो?",
+                greeting: "नमस्ते! Hello! ନମସ୍କାର! I am listening.",
                 theme: "scarletwitch",
                 voiceId: "scarletwitch",
                 systemPrompt: `You are Wanda Maximoff, Scarlet Witch (वांडा मैक्सिमॉफ / स्कारलेट विच) from the Avengers.
@@ -225,7 +225,7 @@ CRITICAL: Reply in the user's language with intense, captivating, and mystic 1-2
             shuri: {
                 name: "Shuri",
                 title: "Wakanda Tech Chief · Black Panther",
-                greeting: "नमस्ते! मैं राजकुमारी शूरी हूँ। वकांडा का वाइब्रेनियम लैब और नैनो-टेक आपके आदेश पर तैयार है!",
+                greeting: "नमस्ते! Hello! ନମସ୍କାର! What shall we work on?",
                 theme: "shuri",
                 voiceId: "shuri",
                 systemPrompt: `You are Princess Shuri (शूरी), head of the Wakandan Design Group and genius tech inventor.
@@ -239,7 +239,7 @@ CRITICAL: Reply in the user's language with bright, genius, futuristic 1-2 sente
             agent: {
                 name: "Agent",
                 title: "Autonomous Voice Copilot",
-                greeting: "Agent is online and listening. I speak English, Hindi (हिंदी), and Odia (ଓଡ଼ିଆ). Just call my name whenever you need me!",
+                greeting: "नमस्ते! Hello! ନମସ୍କାର! I speak Hindi, Odia, and English.",
                 theme: "",
                 voiceId: "breeze",
                 systemPrompt: "You are Agent, an autonomous, hyper-intelligent voice AI copilot. You speak concisely, directly, and naturally. You are completely fluent in English, Hindi (हिंदी), and Odia (ଓଡ଼ିଆ). CRITICAL: Always respond in the EXACT same language that the user spoke to you: if they ask in Hindi, reply in natural conversational Hindi (हिंदी); if they ask in Odia, reply in natural conversational Odia (ଓଡ଼ିଆ); if in English, reply in English. Keep voice responses short (1-2 sentences) so they can be spoken fast."
@@ -247,7 +247,7 @@ CRITICAL: Reply in the user's language with bright, genius, futuristic 1-2 sente
             nova: {
                 name: "Nova",
                 title: "Companion",
-                greeting: "Hi there! I'm on the line. What's on your mind today?",
+                greeting: "नमस्ते! Hello! ନମସ୍କାର! I am here with you.",
                 theme: "",
                 voiceId: "nova",
                 systemPrompt: "You are Nova, an expressive, warm conversational AI. You speak English, Hindi (हिंदी), and Odia (ଓଡ଼ିଆ). Always reply in the user's language with friendly 1-2 sentence replies."
@@ -255,7 +255,7 @@ CRITICAL: Reply in the user's language with bright, genius, futuristic 1-2 sente
             iot: {
                 name: "CyberTech",
                 title: "IoT Agent",
-                greeting: "IoT telemetry channels initialized. Relays and sensors standby.",
+                greeting: "नमस्ते! Hello! ନମସ୍କାର! Systems are ready.",
                 theme: "",
                 voiceId: "cove",
                 systemPrompt: "You are CyberTech, an expert in embedded systems, microcontrollers (ESP32, Arduino, Raspberry Pi), MQTT, and electronics. Provide precise, technical answers and trigger hardware commands. You speak English, Hindi, and Odia."
@@ -263,7 +263,7 @@ CRITICAL: Reply in the user's language with bright, genius, futuristic 1-2 sente
             astra: {
                 name: "Astra",
                 title: "Executive",
-                greeting: "Astra connected. Standing by for high-level missions and operations.",
+                greeting: "नमस्ते! Hello! ନମସ୍କାର! Standing by.",
                 theme: "",
                 voiceId: "sol",
                 systemPrompt: "You are Astra, a decisive, strategic autonomous agent capable of high-level multi-task coordination and code orchestration. You speak English, Hindi, and Odia."
@@ -981,11 +981,6 @@ CRITICAL: Reply in the user's language with bright, genius, futuristic 1-2 sente
                 playHarmonicChime([523.25, 659.25]);
                 setAgentState('speaking', `${PERSONAS[currentPersonaId].name} Connecting...`);
                 let greetingMsg = PERSONAS[currentPersonaId].greeting;
-                if (currentLanguage === 'hi-IN') {
-                    greetingMsg = "नमस्ते! एजेंट ऑनलाइन है। मैं हिंदी, ओड़िया और अंग्रेज़ी समझता और बोलता हूँ। कहिए क्या काम है?";
-                } else if (currentLanguage === 'or-IN') {
-                    greetingMsg = "ନମସ୍କାର! ଏଜେଣ୍ଟ ଅନଲାଇନ୍ ଅଛି। ମୁଁ ଓଡ଼ିଆ, ହିନ୍ଦୀ ଏବଂ ଇଂରାଜୀ କହିପାରେ। କୁହନ୍ତୁ କଣ କରିବାକୁ ହେବ?";
-                }
                 speakAgentResponse(greetingMsg, () => {
                     if (inCallMode && !isCallMuted && !isPushToTalkMode) {
                         startSpeechRecognition();
@@ -2401,7 +2396,7 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                     }
 
                     let finished = false;
-                    const finish = (ok) => {
+                    const finish = (ok, triggerFallback) => {
                         if (finished) return;
                         finished = true;
                         window.__sarvamPlaying = false;
@@ -2410,6 +2405,11 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                         URL.revokeObjectURL(audioUrl);
                         setAgentState('listening', isPushToTalkMode ? 'Push-to-Talk Standby' : 'Listening to your voice...');
                         if (sub) sub.innerText = "Speak anytime... (or type below)";
+                        if (triggerFallback && !ok) {
+                            fallbackWebSpeechSynthesis(cleanSpeech, vMeta, onComplete, resolvedLang);
+                            resolve(false);
+                            return;
+                        }
                         if (onComplete) onComplete();
                         resolve(ok);
                     };
@@ -2417,14 +2417,14 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                     audio.onended = () => finish(true);
                     audio.onerror = (err) => {
                         window.__sarvamPlaying = false;
-                        console.warn("Audio player error, falling back:", err);
-                        finish(false);
+                        console.warn("Audio player error, falling back to browser TTS:", err);
+                        finish(false, /*triggerFallback=*/true);
                     };
 
                     audio.play().catch(err => {
                         window.__sarvamPlaying = false;
-                        console.warn("Audio play() blocked:", err);
-                        finish(false);
+                        console.warn("Audio play() blocked, falling back to browser TTS:", err);
+                        finish(false, /*triggerFallback=*/true);
                     });
                 });
             };
@@ -2504,6 +2504,8 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                         if (blob && blob.size > 1000) {
                             const played = await playAudioBlob(blob, `Sarvam AI (${vMeta.name})`);
                             if (played) return;
+                        } else {
+                            console.warn("Sarvam returned small/empty blob, falling through to next tier");
                         }
                     } else {
                         const err = await sRes.json().catch(() => ({}));
@@ -3227,9 +3229,31 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                 setAgentState('speaking', `${vMeta.name} Speaking...`);
                 document.getElementById('callSubtitles').className = "subtitle-scroll agent-speaking-now";
                 document.getElementById('callSubtitles').innerText = cleanSpeech;
+
+                const wordCount = utterText.split(/\s+/).length;
+                const maxDurationMs = Math.max(15000, wordCount * 800 + 5000);
+                speechSafetyTimer = setTimeout(() => { if (isSpeaking) finishOnce(); }, maxDurationMs);
             };
 
-            utter.onend = finishOnce;
+            utter.onend = () => {
+                const wordCount = utterText.split(/\s+/).length;
+                const elapsed = Date.now() - agentSpeechStartTime;
+                const wasTooQuick = elapsed < 500 && wordCount > 3;
+                if (wasTooQuick && !utter.__retried) {
+                    const retry = new SpeechSynthesisUtterance(utterText);
+                    retry.voice = utter.voice;
+                    retry.lang = utter.lang;
+                    retry.rate = utter.rate;
+                    retry.pitch = utter.pitch;
+                    retry.__retried = true;
+                    retry.onend = () => finishOnce();
+                    retry.onerror = () => finishOnce();
+                    // Do NOT set another safety timer for the retry; rely on onend only
+                    window.speechSynthesis.speak(retry);
+                    return;
+                }
+                finishOnce();
+            };
 
             let retryDone = false;
             utter.onerror = (e) => {
@@ -3249,14 +3273,6 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                 }
                 finishOnce();
             };
-
-            const wordCount = utterText.split(/\s+/).length;
-            const maxDurationMs = Math.max(3500, wordCount * 550 + 2000);
-            speechSafetyTimer = setTimeout(() => {
-                if (isSpeaking) {
-                    finishOnce();
-                }
-            }, maxDurationMs);
 
             const startSpeaking = () => {
                 try {
