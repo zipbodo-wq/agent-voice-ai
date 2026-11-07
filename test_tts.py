@@ -96,6 +96,7 @@ def main():
                 print(f"✓ Local Voice Agent Bridge active on {BRIDGE_URL}")
     except Exception:
         print(f"ℹ Local bridge not active on {BRIDGE_URL}. Testing direct Sarvam AI REST API...")
+        print("  → To test through the local bridge, open a NEW terminal and run: python voice_agent_bridge.py")
 
     print_separator("-")
 

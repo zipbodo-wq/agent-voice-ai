@@ -178,6 +178,16 @@ If you want the agent to control your local PC files and physical IoT devices:
 
 ---
 
+## 🔒 Security & Safe Execution Notice
+
+- **Local Loopback Default:** `voice_agent_bridge.py` binds to `127.0.0.1` by default to prevent unauthorized network access.
+- **LAN Access:** Set `ALLOW_LAN=1` to allow other devices on your local Wi-Fi to connect (`http://<your-ip>:8765`). Only run on trusted networks.
+- **Shell Execution:** Arbitrary shell execution is disabled by default for security. Set `ALLOW_SHELL=1` only if you explicitly require shell command execution.
+- **API Keys on Public Pages:** Never store private API keys in client `localStorage` on public GitHub Pages deployments. Use server bridge environment variables (`SARVAM_API_KEY`, `OPENAI_API_KEY`, `GROQ_API_KEY`).
+- **Bridge Token:** A security token is generated in `bridge_token.txt` and verified via `X-Bridge-Token` header for external requests.
+
+---
+
 ## 🗣️ Voice Commands Cheatsheet
 
 | Intent | Spoken Command | Action Taken |

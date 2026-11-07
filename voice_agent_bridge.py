@@ -9,16 +9,34 @@ import os
 import sys
 import json
 import time
+import base64
 import shutil
 import socket
 import platform
 import subprocess
 import threading
+import urllib.request
+import urllib.error
+import urllib.parse
 from pathlib import Path
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 PORT = 8765
 WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Security Token Initialization
+TOKEN_FILE = os.path.join(WORKSPACE_DIR, "bridge_token.txt")
+try:
+    if os.path.exists(TOKEN_FILE):
+        with open(TOKEN_FILE, "r", encoding="utf-8") as tf:
+            BRIDGE_TOKEN = tf.read().strip()
+    else:
+        import secrets
+        BRIDGE_TOKEN = secrets.token_hex(16)
+        with open(TOKEN_FILE, "w", encoding="utf-8") as tf:
+            tf.write(BRIDGE_TOKEN)
+except Exception:
+    BRIDGE_TOKEN = "local-dev-token"
 
 # Global Simulated / Connected IoT State
 IOT_STATE = {
@@ -64,9 +82,15 @@ class VoiceAgentBridgeHandler(BaseHTTPRequestHandler):
     def _set_headers(self, status=200, content_type="application/json"):
         self.send_response(status)
         self.send_header("Content-Type", content_type)
-        self.send_header("Access-Control-Allow-Origin", "*")
+        origin = self.headers.get("Origin", "")
+        if origin and any(origin.startswith(h) for h in ["http://127.0.0.1", "http://localhost", "https://zipbodo-wq.github.io"]):
+            self.send_header("Access-Control-Allow-Origin", origin)
+        elif not origin:
+            self.send_header("Access-Control-Allow-Origin", "*")
+        else:
+            self.send_header("Access-Control-Allow-Origin", "http://127.0.0.1:8765")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Bridge-Token")
         self.end_headers()
 
     def do_OPTIONS(self):
@@ -90,6 +114,18 @@ class VoiceAgentBridgeHandler(BaseHTTPRequestHandler):
                     self._set_headers(200, "text/html; charset=utf-8")
                     self.wfile.write(content.encode("utf-8"))
                     return
+
+        # Serve static modular CSS & JS files (for split frontend)
+        if path.startswith("/css/") or path.startswith("/js/"):
+            rel_path = path.lstrip("/").replace("/", os.sep)
+            file_path = os.path.join(WORKSPACE_DIR, rel_path)
+            if os.path.exists(file_path) and os.path.isfile(file_path):
+                content_type = "text/css; charset=utf-8" if path.endswith(".css") else "application/javascript; charset=utf-8"
+                with open(file_path, "rb") as f:
+                    data = f.read()
+                self._set_headers(200, content_type)
+                self.wfile.write(data)
+                return
 
         if path == "/api/status":
             telemetry = get_system_telemetry()
@@ -161,14 +197,21 @@ class VoiceAgentBridgeHandler(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({"success": False, "error": f"Invalid JSON: {str(e)}"}).encode("utf-8"))
             return
 
+        # Security check: Validate Origin and optional X-Bridge-Token
+        origin = self.headers.get("Origin", "")
+        if origin and not any(origin.startswith(h) for h in ["http://127.0.0.1", "http://localhost", "https://zipbodo-wq.github.io"]):
+            token = self.headers.get("X-Bridge-Token", "")
+            if token != BRIDGE_TOKEN:
+                self._set_headers(403)
+                self.wfile.write(json.dumps({"success": False, "error": "Forbidden: Untrusted origin and missing/invalid X-Bridge-Token"}).encode("utf-8"))
+                return
+
         path = self.path.split('?')[0]
 
         if path == "/tts" or path == "/api/tts":
-            # Sarvam AI Bulbul v3 TTS REST Integration
-            # Accepts: {"text": "...", "language": "hi" | "or" | "en", "speaker": "shubh" | "ritu"}
             text = data.get("text", "").strip()
             lang = data.get("language", data.get("lang", "en")).strip().lower()
-            speaker = data.get("speaker", "shubh") # "shubh" (male) or "ritu" (female)
+            speaker = data.get("speaker", "shubh")
             client_key = data.get("api_key", "").strip()
 
             sarvam_key = os.environ.get("SARVAM_API_KEY", "").strip() or client_key
@@ -177,7 +220,7 @@ class VoiceAgentBridgeHandler(BaseHTTPRequestHandler):
                 self._set_headers(500)
                 self.wfile.write(json.dumps({
                     "success": False,
-                    "error": "SARVAM_API_KEY environment variable is not set. Please set SARVAM_API_KEY in your environment."
+                    "error": "SARVAM_API_KEY environment variable is not set. Please set SARVAM_API_KEY."
                 }).encode("utf-8"))
                 return
 
@@ -189,18 +232,10 @@ class VoiceAgentBridgeHandler(BaseHTTPRequestHandler):
                 }).encode("utf-8"))
                 return
 
-            # Maps language: hi -> hi-IN, or -> od-IN, en -> en-IN
             lang_map = {
-                "hi": "hi-IN",
-                "hindi": "hi-IN",
-                "hi-in": "hi-IN",
-                "or": "od-IN",
-                "odia": "od-IN",
-                "or-in": "od-IN",
-                "od-in": "od-IN",
-                "en": "en-IN",
-                "english": "en-IN",
-                "en-in": "en-IN"
+                "hi": "hi-IN", "hindi": "hi-IN", "hi-in": "hi-IN",
+                "or": "od-IN", "odia": "od-IN", "or-in": "od-IN", "od-in": "od-IN",
+                "en": "en-IN", "english": "en-IN", "en-in": "en-IN"
             }
             target_lang = lang_map.get(lang)
             if not target_lang:
@@ -219,17 +254,12 @@ class VoiceAgentBridgeHandler(BaseHTTPRequestHandler):
             }
 
             try:
-                import base64
-                import urllib.request
-                import urllib.error
-
                 sarvam_url = "https://api.sarvam.ai/text-to-speech"
                 headers = {
                     "api-subscription-key": sarvam_key,
                     "Content-Type": "application/json",
                     "User-Agent": "VoiceAgentBridge/1.0"
                 }
-
                 post_data = json.dumps(payload).encode("utf-8")
                 req = urllib.request.Request(sarvam_url, data=post_data, headers=headers, method="POST")
 
@@ -240,9 +270,7 @@ class VoiceAgentBridgeHandler(BaseHTTPRequestHandler):
                         self._set_headers(500)
                         self.wfile.write(json.dumps({"success": False, "error": "Sarvam API returned empty audio array"}).encode("utf-8"))
                         return
-
                     audio_bytes = base64.b64decode(audios[0])
-                    # Return standard audio/wav binary
                     self._set_headers(200, content_type="audio/wav")
                     self.wfile.write(audio_bytes)
                     return
@@ -312,19 +340,24 @@ class VoiceAgentBridgeHandler(BaseHTTPRequestHandler):
                         result["returncode"] = res.returncode
 
                 elif shell_cmd:
-                    res = subprocess.run(
-                        shell_cmd,
-                        shell=True,
-                        capture_output=True,
-                        text=True,
-                        encoding="utf-8",
-                        errors="replace",
-                        timeout=15,
-                        cwd=WORKSPACE_DIR
-                    )
-                    result["stdout"] = res.stdout
-                    result["stderr"] = res.stderr
-                    result["returncode"] = res.returncode
+                    allow_shell = os.environ.get("ALLOW_SHELL", "0") == "1"
+                    if not allow_shell:
+                        result["stderr"] = "Shell execution is disabled by default for security. Set ALLOW_SHELL=1 environment variable to enable."
+                        result["returncode"] = 1
+                    else:
+                        res = subprocess.run(
+                            shell_cmd,
+                            shell=True,
+                            capture_output=True,
+                            text=True,
+                            encoding="utf-8",
+                            errors="replace",
+                            timeout=15,
+                            cwd=WORKSPACE_DIR
+                        )
+                        result["stdout"] = res.stdout
+                        result["stderr"] = res.stderr
+                        result["returncode"] = res.returncode
                 else:
                     result["stderr"] = "No command or script provided."
                     result["returncode"] = 1
@@ -454,7 +487,9 @@ def get_local_ip():
         s.close()
 
 def run_server():
-    server_address = ("0.0.0.0", PORT)
+    allow_lan = os.environ.get("ALLOW_LAN", "0") == "1"
+    bind_host = "0.0.0.0" if allow_lan else "127.0.0.1"
+    server_address = (bind_host, PORT)
     local_ip = get_local_ip()
     try:
         httpd = HTTPServer(server_address, VoiceAgentBridgeHandler)
@@ -462,10 +497,12 @@ def run_server():
         print("  AGENT · AUTONOMOUS VOICE AI - TASK & IOT BRIDGE")
         print("=" * 65)
         print(f"  [>] Local PC Access:  http://127.0.0.1:{PORT}")
-        print(f"  [>] Mobile / WiFi IP: http://{local_ip}:{PORT}")
-        print(f"  [>] Wake Word:        'Agent' (Hands-free voice recognition)")
-        print(f"  [>] Workspace Linked: {WORKSPACE_DIR}")
-        print("  [>] Ready for Two-Way Full-Duplex Voice & Background Missions")
+        if allow_lan:
+            print(f"  [>] Mobile / WiFi IP: http://{local_ip}:{PORT} (ALLOW_LAN=1 active)")
+        else:
+            print(f"  [>] Network Mode:     Loopback only (127.0.0.1). Set ALLOW_LAN=1 for LAN access.")
+        print(f"  [>] Security Token:   {BRIDGE_TOKEN}")
+        print("  [!] WARNING: This bridge executes local tasks. Only run on trusted networks.")
         print("=" * 65)
         httpd.serve_forever()
     except OSError as e:
@@ -475,5 +512,7 @@ def run_server():
             print(f"[!] Server error: {e}")
 
 if __name__ == "__main__":
+    if not os.environ.get("SARVAM_API_KEY"):
+        print("[WARN] SARVAM_API_KEY not set — /tts will return 500. Set it to enable Hindi/Odia.")
     run_server()
 

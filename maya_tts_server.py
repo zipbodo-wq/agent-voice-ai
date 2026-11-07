@@ -136,7 +136,11 @@ class MayaServerHandler(BaseHTTPRequestHandler):
             temp_ref_path = None
             if ref_audio_b64:
                 try:
-                    temp_ref_path = os.path.join(CLONE_STORAGE_DIR, f"ref_{int(time.time()*1000)}.wav")
+                    mime = "audio/wav"
+                    if ";" in ref_audio_b64 and ":" in ref_audio_b64:
+                        mime = ref_audio_b64.split(";")[0].split(":")[1].lower()
+                    ext = "mp3" if ("mpeg" in mime or "mp3" in mime) else "wav"
+                    temp_ref_path = os.path.join(CLONE_STORAGE_DIR, f"ref_{int(time.time()*1000)}.{ext}")
                     with open(temp_ref_path, "wb") as f:
                         f.write(base64.b64decode(ref_audio_b64.split(",")[-1]))
                     ref_audio_path = temp_ref_path
@@ -160,17 +164,21 @@ class MayaServerHandler(BaseHTTPRequestHandler):
                     return
                 except Exception as ex:
                     self.log_message(f"Maya synthesis error: {ex}")
-                    # Fallback to test WAV with informative header
-                    wav_data = generate_fallback_wav()
-                    self._set_headers(200, content_type="audio/wav")
-                    self.wfile.write(wav_data)
+                    self._set_headers(500)
+                    self.wfile.write(json.dumps({
+                        "success": False,
+                        "error": "Maya synthesis failed",
+                        "detail": str(ex)
+                    }).encode("utf-8"))
                     return
             else:
-                # Standby / Verification Mode: Generates clean test WAV audio (>1000 bytes)
-                self.log_message(f"Maya Server running in Standby/Test mode (Generating test WAV for '{text[:30]}...')")
-                wav_data = generate_fallback_wav()
-                self._set_headers(200, content_type="audio/wav")
-                self.wfile.write(wav_data)
+                self._set_headers(501)
+                self.wfile.write(json.dumps({
+                    "success": False,
+                    "error": "Maya 2 Native not loaded",
+                    "detail": ERROR_DETAILS,
+                    "note": "Install maya3 package and run on an NVIDIA GPU."
+                }).encode("utf-8"))
                 return
 
         else:

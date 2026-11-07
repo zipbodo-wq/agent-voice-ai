@@ -5,12 +5,16 @@ echo          AGENT · AUTONOMOUS TWO-WAY VOICE AI ^& IOT COPILOT
 echo ======================================================================
 echo.
 echo [1/3] Starting Local Python Orchestrator Bridge on 0.0.0.0:8765 ...
-start /B "" python "%~dp0voice_agent_bridge.py" >nul 2>&1
+start /B "" python "%~dp0voice_agent_bridge.py" >>"%~dp0bridge.log" 2>&1
 timeout /t 1 >nul
 
-echo [2/3] Starting Local Maya 2 Voice Cloning Server on 0.0.0.0:8766 ...
-start /B "" python "%~dp0maya_tts_server.py" >nul 2>&1
-timeout /t 1 >nul
+if exist "%~dp0maya_tts_server.py" (
+    echo [2/3] Starting Local Maya 2 Voice Cloning Server on 0.0.0.0:8766 ...
+    start /B "" python "%~dp0maya_tts_server.py" >>"%~dp0maya.log" 2>&1
+    timeout /t 1 >nul
+) else (
+    echo [2/3] Local Maya 2 server not found (skipping voice cloning server).
+)
 
 echo [3/3] Launching Agent Voice AI in your browser...
 start "" "http://127.0.0.1:8765"
@@ -20,7 +24,7 @@ echo ======================================================================
 echo  Agent Voice AI is now LIVE locally on your PC!
 echo  - Local PC URL:       http://127.0.0.1:8765
 echo  - Voice Bridge:       Port 8765 (Active)
-echo  - Maya 2 Cloning:     Port 8766 (Active)
+echo  - Logs:               bridge.log / maya.log
 echo  - Languages:          Hindi, Odia, English + Avengers Voice Clones
 echo ======================================================================
 echo.

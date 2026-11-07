@@ -46,11 +46,9 @@ def main():
                 print(f"✓ Maya 2 Server detected on {SERVER_URL}")
                 print(f"  Model status: {data.get('model_status')} | CUDA: {data.get('cuda_available')}")
     except Exception:
-        print(f"\n[NOTICE] Maya 2 Native server is not currently running on {SERVER_URL}")
-        print("\nTo start the local voice cloning server:")
-        print("  1. In a separate terminal or prompt, run:")
-        print("     python maya_tts_server.py")
-        print("  2. Then re-run this test script.")
+        print(f"\n[NOTICE] Server on :8766 is not responding.")
+        print("  → Open a NEW terminal and run: python maya_tts_server.py")
+        print("  → Wait for the 'Model loaded' message, then re-run THIS test.")
         print("\nPrerequisites:")
         print("  pip install \"maya3[server] @ git+https://github.com/MayaResearch/maya2-native\" --extra-index-url https://download.pytorch.org/whl/cu128")
         print_separator()
@@ -83,20 +81,25 @@ def main():
 
             with urllib.request.urlopen(req, timeout=30) as resp:
                 code = resp.getcode()
+                content_type = resp.headers.get("Content-Type", "")
                 audio_bytes = resp.read()
                 byte_len = len(audio_bytes)
 
-                if code == 200 and byte_len > 1000:
+                if code == 200 and "audio/wav" in content_type and byte_len > 1000:
                     status_str = "PASS"
                     notes = f"WAV Audio ({byte_len} B)"
                 else:
                     status_str = "FAIL"
                     all_passed = False
-                    notes = f"Code: {code}, bytes: {byte_len}"
+                    notes = f"Type: {content_type}, bytes: {byte_len}"
         except urllib.error.HTTPError as he:
-            status_str = "FAIL"
-            all_passed = False
-            notes = f"HTTP {he.code}"
+            if he.code == 501:
+                status_str = "SKIPPED"
+                notes = "Server up (model not loaded - GPU required)"
+            else:
+                status_str = "FAIL"
+                all_passed = False
+                notes = f"HTTP {he.code}"
         except Exception as ex:
             status_str = "FAIL"
             all_passed = False
