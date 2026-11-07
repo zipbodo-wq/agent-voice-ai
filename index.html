@@ -763,6 +763,14 @@
                     </button>
                 </div>
                 <div id="sarvamTestStatus" style="display:none;font-size:0.75rem;margin-top:6px;padding:6px 10px;border-radius:6px;line-height:1.4;"></div>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+                    <label style="font-size:0.75rem;color:var(--text-muted);white-space:nowrap;"><i class="fa-solid fa-venus-mars"></i> Sarvam Voice:</label>
+                    <select class="settings-input" id="sarvamGenderSelect" style="padding:4px 8px;font-size:0.75rem;" onchange="localStorage.setItem('sarvam_speaker_gender', this.value)">
+                        <option value="auto">Auto (Match Selected Hero)</option>
+                        <option value="male">👨 Male Voice (Shubh · शुभ)</option>
+                        <option value="female">👩 Female Voice (Ritu · रितु)</option>
+                    </select>
+                </div>
                 <div style="font-size:0.72rem;color:var(--text-muted);margin-top:3px;line-height:1.3;">
                     Natively supports Hindi (<code>hi-IN</code>) and Odia (<code>od-IN</code>) with speakers Shubh &amp; Ritu. Get key at <a href="https://www.sarvam.ai/" target="_blank" style="color:var(--accent-cyan);">sarvam.ai</a>.
                 </div>

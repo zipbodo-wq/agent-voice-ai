@@ -2291,24 +2291,51 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
         // ==========================================
         // 10. DETERMINISTIC MULTILINGUAL SPEECH (SARVAM AI · MAYA 2 CLONING · BROWSERS)
         // ==========================================
+        window.__sarvamPlaying = false;
+        window.__pendingGreetingTimeout = null;
+        window.__currentTestAudio = null;
+
+        function stopAllSpeech() {
+            if (window.__pendingGreetingTimeout) {
+                clearTimeout(window.__pendingGreetingTimeout);
+                window.__pendingGreetingTimeout = null;
+            }
+            if (speechSafetyTimer) {
+                clearTimeout(speechSafetyTimer);
+                speechSafetyTimer = null;
+            }
+            if (currentAudioPlayer) {
+                try {
+                    currentAudioPlayer.pause();
+                    currentAudioPlayer.currentTime = 0;
+                } catch(e) {}
+                currentAudioPlayer = null;
+            }
+            if (window.__currentTestAudio) {
+                try {
+                    window.__currentTestAudio.pause();
+                    window.__currentTestAudio.currentTime = 0;
+                } catch(e) {}
+                window.__currentTestAudio = null;
+            }
+            if ('speechSynthesis' in window) {
+                try {
+                    window.speechSynthesis.cancel();
+                } catch(e) {}
+            }
+            window.__sarvamPlaying = false;
+            isSpeaking = false;
+        }
+        window.stopAllSpeech = stopAllSpeech;
+
         async function speak(text, language, onComplete) {
             if (!text || !text.trim()) {
                 if (onComplete) onComplete();
                 return;
             }
 
-            // Stop any playing audio player or SpeechSynthesis
-            if (currentAudioPlayer) {
-                try {
-                    currentAudioPlayer.pause();
-                    currentAudioPlayer.currentTime = 0;
-                    currentAudioPlayer = null;
-                } catch(e) {}
-            }
-            if ('speechSynthesis' in window) {
-                try { window.speechSynthesis.cancel(); } catch(e) {}
-            }
-            if (speechSafetyTimer) clearTimeout(speechSafetyTimer);
+            // Immediately halt any previous playing audio, SpeechSynthesis, or pending greeting
+            stopAllSpeech();
 
             // Strip code brackets & raw markdown formatting for clean speech
             const cleanSpeech = text
@@ -2355,12 +2382,15 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
 
             const playAudioBlob = (blob, label) => {
                 return new Promise((resolve) => {
+                    stopAllSpeech();
+                    window.__sarvamPlaying = true;
+                    isSpeaking = true;
+
                     const audioUrl = URL.createObjectURL(blob);
                     const audio = new Audio();
                     audio.src = audioUrl;
                     currentAudioPlayer = audio;
 
-                    isSpeaking = true;
                     agentSpeechStartTime = Date.now();
                     currentAgentSpokenText = cleanSpeech.toLowerCase();
                     setAgentState('speaking', `${label || vMeta.name} Speaking...`);
@@ -2374,6 +2404,7 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                     const finish = (ok) => {
                         if (finished) return;
                         finished = true;
+                        window.__sarvamPlaying = false;
                         isSpeaking = false;
                         currentAudioPlayer = null;
                         URL.revokeObjectURL(audioUrl);
@@ -2385,11 +2416,13 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
 
                     audio.onended = () => finish(true);
                     audio.onerror = (err) => {
+                        window.__sarvamPlaying = false;
                         console.warn("Audio player error, falling back:", err);
                         finish(false);
                     };
 
                     audio.play().catch(err => {
+                        window.__sarvamPlaying = false;
                         console.warn("Audio play() blocked:", err);
                         finish(false);
                     });
@@ -2440,6 +2473,17 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
             const sarvamClientKey = (window.sarvamApiKey || localStorage.getItem('sarvam_api_key') || '').trim();
             const canUseSarvamBridge = window.sarvamBridgeAvailable === true;
 
+            // Sarvam speaker: allow user override or match voice avatar gender
+            const userSarvamGender = localStorage.getItem('sarvam_speaker_gender') || 'auto';
+            let sarvamSpeaker = 'shubh';
+            if (userSarvamGender === 'female') {
+                sarvamSpeaker = 'ritu';
+            } else if (userSarvamGender === 'male') {
+                sarvamSpeaker = 'shubh';
+            } else {
+                sarvamSpeaker = (vMeta.gender === 'female' ? 'ritu' : 'shubh');
+            }
+
             // Route via Python bridge /tts if bridge is online and (bridge has key or client key provided)
             if (bridgeOnline && (canUseSarvamBridge || sarvamClientKey.length > 5)) {
                 try {
@@ -2450,7 +2494,7 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                         body: JSON.stringify({
                             text: cleanSpeech,
                             language: resolvedLang,
-                            speaker: vMeta.gender === 'female' ? 'ritu' : 'shubh',
+                            speaker: sarvamSpeaker,
                             api_key: sarvamClientKey
                         })
                     });
@@ -2484,7 +2528,7 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                         body: JSON.stringify({
                             text: cleanSpeech,
                             target_language_code: sarvamLangCode,
-                            speaker: vMeta.gender === 'female' ? 'ritu' : 'shubh',
+                            speaker: sarvamSpeaker,
                             model: "bulbul:v3"
                         })
                     });
@@ -2873,7 +2917,8 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                 ? "ନମସ୍କାର, ମୁଁ ଆପଣଙ୍କ ସ୍ୱର ସହାୟକ ଅଟେ। ମୁଁ ଆପଣଙ୍କୁ କିପରି ସାହାଯ୍ୟ କରିପାରିବି?"
                 : "नमस्ते, मैं आपका वॉयस असिस्टेंट हूँ। मैं आपकी कैसे मदद कर सकता हूँ?";
             const targetCode = currentLang === 'or' ? 'od-IN' : 'hi-IN';
-            const speaker = 'ritu';
+            const userSarvamGender = localStorage.getItem('sarvam_speaker_gender') || 'auto';
+            const speaker = (userSarvamGender === 'male') ? 'shubh' : 'ritu';
 
             let audioBlob = null;
             let errorDetail = '';
@@ -2951,6 +2996,8 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
             }
 
             if (audioBlob && audioBlob.size > 1000) {
+                stopAllSpeech();
+                window.__sarvamPlaying = true;
                 if (badge) {
                     badge.innerText = "🟢 Verified & Working";
                     badge.style.color = "var(--accent-emerald)";
@@ -2960,12 +3007,28 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                     statusDiv.style.background = 'rgba(16, 185, 129, 0.15)';
                     statusDiv.style.border = '1px solid #10b981';
                     statusDiv.style.color = '#6ee7b7';
-                    statusDiv.innerHTML = `<i class="fa-solid fa-circle-check"></i> <strong>Sarvam Key Verified!</strong> Playing natural human speech sample (${currentLang === 'or' ? 'Odia' : 'Hindi'})...`;
+                    statusDiv.innerHTML = `<i class="fa-solid fa-circle-check"></i> <strong>Sarvam Key Verified!</strong> Playing natural human speech sample (${currentLang === 'or' ? 'Odia' : 'Hindi'} · ${speaker === 'ritu' ? 'Female' : 'Male'})...`;
                 }
                 showToast("Playing natural Sarvam speech sample!");
                 const audioUrl = URL.createObjectURL(audioBlob);
                 const testAudio = new Audio(audioUrl);
-                testAudio.play().catch(e => console.warn("Audio autoplay blocked:", e));
+                window.__currentTestAudio = testAudio;
+                currentAudioPlayer = testAudio;
+                testAudio.onended = () => {
+                    window.__sarvamPlaying = false;
+                    window.__currentTestAudio = null;
+                    if (currentAudioPlayer === testAudio) currentAudioPlayer = null;
+                    URL.revokeObjectURL(audioUrl);
+                };
+                testAudio.onerror = () => {
+                    window.__sarvamPlaying = false;
+                    window.__currentTestAudio = null;
+                    if (currentAudioPlayer === testAudio) currentAudioPlayer = null;
+                };
+                testAudio.play().catch(e => {
+                    window.__sarvamPlaying = false;
+                    console.warn("Audio autoplay blocked:", e);
+                });
             } else {
                 if (badge) {
                     badge.innerText = "🔴 Key Rejected / Failed";
@@ -3018,6 +3081,13 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
         }
 
         function fallbackWebSpeechSynthesis(cleanSpeech, vMeta, onComplete, forcedLang) {
+            // STRICT AUDIO CONCURRENCY MUTEX: If neural audio (Sarvam / Maya / etc.) is currently playing, NEVER synthesize browser speech!
+            if (currentAudioPlayer || window.__sarvamPlaying || isSpeaking) {
+                console.log("🛡️ Suppressed fallbackWebSpeechSynthesis: Neural audio is currently active.");
+                if (onComplete) onComplete();
+                return;
+            }
+
             if (!('speechSynthesis' in window)) {
                 if (onComplete) onComplete();
                 return;
@@ -3227,30 +3297,36 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                 if (pSelect) pSelect.value = currentPersonaId;
                 const p = PERSONAS[currentPersonaId];
                 document.body.className = (p.theme ? ('theme-' + p.theme) : '');
-                playHeroSound(currentPersonaId);
-                setTimeout(() => {
-                    speakAgentResponse(p.greeting);
-                    appendTranscript('agent', p.greeting);
-                }, 180);
-                return;
             }
 
-            if (currentRealVoiceId === 'swara' || currentRealVoiceId === 'madhur') {
-                playHarmonicChime([523.25, 659.25]);
-                const intro = `नमस्ते! मैं ${v.name} हूँ। मैं आपकी सहायता के लिए तैयार हूँ।`;
-                speakAgentResponse(intro);
-                appendTranscript('agent', intro);
-            } else if (currentRealVoiceId === 'odia_copilot') {
-                playHarmonicChime([523.25, 659.25]);
-                const intro = `ନମସ୍କାର! ମୁଁ ଓଡ଼ିଆ କପାଇଲଟ୍। ଆପଣଙ୍କୁ ସାହାଯ୍ୟ କରିବାକୁ ପ୍ରସ୍ତୁତ!`;
-                speakAgentResponse(intro);
-                appendTranscript('agent', intro);
-            } else {
-                playHarmonicChime([523.25, 659.25]);
-                const intro = `Voice changed to ${v.name}: ${v.desc}. How does this sound?`;
-                speakAgentResponse(intro);
-                appendTranscript('agent', intro);
-            }
+            // Preview voice greeting safely without overlapping active speech
+            if (window.__pendingGreetingTimeout) clearTimeout(window.__pendingGreetingTimeout);
+            window.__pendingGreetingTimeout = setTimeout(() => {
+                window.__pendingGreetingTimeout = null;
+                if (!inCallMode && !isSpeaking && !window.__sarvamPlaying) {
+                    if (PERSONAS[currentRealVoiceId]) {
+                        const p = PERSONAS[currentPersonaId];
+                        playHeroSound(currentPersonaId);
+                        speakAgentResponse(p.greeting);
+                        appendTranscript('agent', p.greeting);
+                    } else if (currentRealVoiceId === 'swara' || currentRealVoiceId === 'madhur') {
+                        playHarmonicChime([523.25, 659.25]);
+                        const intro = `नमस्ते! मैं ${v.name} हूँ। मैं आपकी सहायता के लिए तैयार हूँ।`;
+                        speakAgentResponse(intro);
+                        appendTranscript('agent', intro);
+                    } else if (currentRealVoiceId === 'odia_copilot') {
+                        playHarmonicChime([523.25, 659.25]);
+                        const intro = `ନମସ୍କାର! ମୁଁ ଓଡ଼ିଆ କପାଇଲଟ୍। ଆପଣଙ୍କୁ ସାହାଯ୍ୟ କରିବାକୁ ପ୍ରସ୍ତୁତ!`;
+                        speakAgentResponse(intro);
+                        appendTranscript('agent', intro);
+                    } else {
+                        playHarmonicChime([523.25, 659.25]);
+                        const intro = `Voice changed to ${v.name}: ${v.desc}. How does this sound?`;
+                        speakAgentResponse(intro);
+                        appendTranscript('agent', intro);
+                    }
+                }
+            }, 250);
         }
 
         // ==========================================
@@ -3580,11 +3656,15 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
             // Play character superhero SFX
             playHeroSound(currentPersonaId);
 
-            // Announce superhero greeting
-            setTimeout(() => {
-                speakAgentResponse(p.greeting);
-                appendTranscript('agent', p.greeting);
-            }, 180);
+            // Announce superhero greeting safely without overlapping active speech
+            if (window.__pendingGreetingTimeout) clearTimeout(window.__pendingGreetingTimeout);
+            window.__pendingGreetingTimeout = setTimeout(() => {
+                window.__pendingGreetingTimeout = null;
+                if (!inCallMode && !isSpeaking && !window.__sarvamPlaying) {
+                    speakAgentResponse(p.greeting);
+                    appendTranscript('agent', p.greeting);
+                }
+            }, 250);
         }
 
         function openSettingsModal() {
@@ -4025,6 +4105,8 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
             const savedSarvamKey = localStorage.getItem('sarvam_api_key') || '';
             if (sInput) sInput.value = savedSarvamKey;
             window.sarvamApiKey = savedSarvamKey;
+            const sGender = document.getElementById('sarvamGenderSelect');
+            if (sGender) sGender.value = localStorage.getItem('sarvam_speaker_gender') || 'auto';
 
             // Restore Avengers superhero persona and HUD theme
             currentPersonaId = localStorage.getItem('dots_persona') || 'ironman';
