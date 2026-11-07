@@ -181,7 +181,7 @@
             </div>
 
             <!-- THE FLUID AUDIO-REACTIVE ORB CENTERPIECE -->
-            <div class="orb-interactive-wrapper" id="orbInteractiveElement" title="Click or tap to interrupt agent / speak (Hold in Push-to-Talk mode)">
+            <div class="orb-interactive-wrapper" id="orbInteractiveElement" onclick="handleOrbClick()" title="Click or tap to interrupt agent / speak (Hold in Push-to-Talk mode)">
                 <div class="orb-canvas-container">
                     <video id="opticVideoFeed" autoplay playsinline muted></video>
                     <canvas id="voiceOrbCanvas" width="280" height="280"></canvas>
@@ -217,7 +217,7 @@
 
             <!-- CALL CONTROL PILL -->
             <div class="stage-controls">
-                <button class="ctrl-btn" id="micMuteBtn" onclick="toggleMicMute()" title="Toggle Microphone Mute (Shortcut: M)">
+                <button class="ctrl-btn" id="micMuteBtn" onclick="event.stopPropagation(); toggleMicMute()" title="Toggle Microphone Mute (Shortcut: M)">
                     <i class="fa-solid fa-microphone"></i>
                 </button>
 

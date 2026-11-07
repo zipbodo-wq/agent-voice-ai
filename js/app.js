@@ -386,12 +386,13 @@ CRITICAL: Reply in the user's language with bright, genius, futuristic 1-2 sente
         }
 
         // ==========================================
-        // 2. RETINA-SCALED 3D FLUID VOICE ORB
+        // 2. SOFT BREATHING CIRCLE VOICE ORB VISUALIZER
         // ==========================================
         function initOrbVisualizer() {
             const canvas = document.getElementById('voiceOrbCanvas');
+            if (!canvas) return;
             const container = canvas.parentElement;
-            const rect = container.getBoundingClientRect();
+            const rect = container ? container.getBoundingClientRect() : { width: 280, height: 280 };
             const cssSize = Math.min(rect.width, rect.height) || 280;
             const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
 
@@ -402,11 +403,36 @@ CRITICAL: Reply in the user's language with bright, genius, futuristic 1-2 sente
             canvas.style.height = cssSize + 'px';
 
             const ctx = canvas.getContext('2d');
-            let angle = 0;
+            let breathPhase = 0;
+            let lastRippleAt = 0;
+            const ripples = [];
+
+            // Helper to parse hex or rgb to rgba with specified opacity
+            function toRgba(colorStr, alpha) {
+                const s = (colorStr || '#00f2fe').trim();
+                if (s.startsWith('rgb')) {
+                    if (s.startsWith('rgba')) {
+                        return s.replace(/[\d\.]+\)$/g, `${alpha})`);
+                    }
+                    return s.replace('rgb', 'rgba').replace(')', `, ${alpha})`);
+                }
+                const hex = s.replace('#', '');
+                let r = 0, g = 242, b = 254;
+                if (hex.length === 3) {
+                    r = parseInt(hex[0] + hex[0], 16) || 0;
+                    g = parseInt(hex[1] + hex[1], 16) || 242;
+                    b = parseInt(hex[2] + hex[2], 16) || 254;
+                } else if (hex.length >= 6) {
+                    r = parseInt(hex.substring(0, 2), 16) || 0;
+                    g = parseInt(hex.substring(2, 4), 16) || 242;
+                    b = parseInt(hex.substring(4, 6), 16) || 254;
+                }
+                return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+            }
 
             function render() {
-                ctx.save();
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.save();
                 ctx.scale(dpr, dpr);
 
                 const cx = cssSize / 2;
@@ -458,415 +484,80 @@ CRITICAL: Reply in the user's language with bright, genius, futuristic 1-2 sente
                     if (devVuText) devVuText.innerText = '0% (-inf dB)';
                 }
 
-                // Speed adjustments based on state
-                let speed = 0.02;
-                if (orbState === 'thinking') speed = 0.07;
-                else if (orbState === 'speaking') speed = 0.05;
-                else if (orbState === 'executing') speed = 0.09;
-                else if (orbState === 'listening') speed = 0.03 + userVoiceVolume * 0.05;
-                angle += speed;
+                // Read current theme accent color dynamically from body element
+                const accentColor = (window.getComputedStyle(document.body).getPropertyValue('--accent-cyan') || '#00f2fe').trim();
 
-                // Base radius modulation
-                let baseRadius = cssSize * 0.28;
-                if (orbState === 'listening') {
-                    baseRadius += (userVoiceVolume * 26) + Math.sin(angle * 3) * 5;
+                // Breath phase increments based on state
+                let breathInc = 0.004; // idle / listening
+                let rippleInterval = 6000; // idle
+                if (orbState === 'speaking') {
+                    breathInc = 0.012; // breathing cycle ~2s
+                    rippleInterval = 3000;
                 } else if (orbState === 'thinking') {
-                    baseRadius += Math.sin(angle * 5) * 6;
-                } else if (orbState === 'speaking') {
-                    baseRadius += Math.sin(angle * 6) * 10 + Math.cos(angle * 2) * 5;
-                } else if (orbState === 'executing') {
-                    baseRadius += Math.sin(angle * 8) * 8;
+                    breathInc = 0.008;
+                    rippleInterval = 3500;
+                } else if (orbState === 'listening') {
+                    breathInc = 0.004;
+                    rippleInterval = 4000;
+                }
+                breathPhase += breathInc;
+
+                // Base size calculation
+                let baseSize = cssSize * 0.22;
+                if (orbState === 'listening') {
+                    const clampedVol = Math.max(0, Math.min(1, userVoiceVolume));
+                    baseSize *= (1 + clampedVol * 0.15);
+                }
+                const coreRadius = baseSize * (1 + Math.sin(breathPhase) * 0.04);
+
+                // Ripple emission timing
+                const now = Date.now();
+                if (now - lastRippleAt >= rippleInterval) {
+                    ripples.push({ born: now, lifetime: 6000 });
+                    lastRippleAt = now;
                 }
 
-                // JARVIS Dynamic Holographic Color Palette
-                let hudCyan = 'rgba(0, 242, 254, 0.9)';
-                let hudGold = 'rgba(251, 191, 36, 0.85)';
-                let hudGlow = 'rgba(0, 242, 254, 0.4)';
+                // Render and update expanding ripples (behind core)
+                for (let i = ripples.length - 1; i >= 0; i--) {
+                    const r = ripples[i];
+                    const age = now - r.born;
+                    if (age >= r.lifetime) {
+                        ripples.splice(i, 1);
+                        continue;
+                    }
+                    const progress = age / r.lifetime;
+                    const rippleRadius = progress * (cssSize * 0.5);
+                    const rippleAlpha = (1 - progress) * 0.20;
 
-                if (currentPersonaId === 'ironman') {
-                    hudCyan = 'rgba(251, 191, 36, 0.95)';
-                    hudGold = 'rgba(239, 68, 68, 0.9)';
-                    hudGlow = 'rgba(251, 191, 36, 0.45)';
-                } else if (currentPersonaId === 'thor') {
-                    hudCyan = 'rgba(56, 189, 248, 0.95)';
-                    hudGold = 'rgba(96, 165, 250, 0.85)';
-                    hudGlow = 'rgba(56, 189, 248, 0.45)';
-                } else if (currentPersonaId === 'captain') {
-                    hudCyan = 'rgba(96, 165, 250, 0.95)';
-                    hudGold = 'rgba(239, 68, 68, 0.9)';
-                    hudGlow = 'rgba(59, 130, 246, 0.4)';
-                } else if (currentPersonaId === 'spiderman') {
-                    hudCyan = 'rgba(244, 63, 94, 0.95)';
-                    hudGold = 'rgba(6, 182, 212, 0.9)';
-                    hudGlow = 'rgba(244, 63, 94, 0.45)';
-                } else if (currentPersonaId === 'hulk') {
-                    hudCyan = 'rgba(16, 185, 129, 0.95)';
-                    hudGold = 'rgba(5, 150, 105, 0.9)';
-                    hudGlow = 'rgba(16, 185, 129, 0.5)';
-                } else if (currentPersonaId === 'thanos') {
-                    hudCyan = 'rgba(192, 132, 252, 0.95)';
-                    hudGold = 'rgba(245, 158, 11, 0.85)';
-                    hudGlow = 'rgba(168, 85, 247, 0.45)';
-                } else if (currentPersonaId === 'blackwidow') {
-                    hudCyan = 'rgba(239, 68, 68, 0.95)';
-                    hudGold = 'rgba(244, 63, 94, 0.85)';
-                    hudGlow = 'rgba(239, 68, 68, 0.45)';
-                } else if (currentPersonaId === 'scarletwitch') {
-                    hudCyan = 'rgba(244, 63, 94, 0.95)';
-                    hudGold = 'rgba(190, 18, 60, 0.9)';
-                    hudGlow = 'rgba(225, 29, 72, 0.5)';
-                } else if (currentPersonaId === 'shuri') {
-                    hudCyan = 'rgba(168, 85, 247, 0.95)';
-                    hudGold = 'rgba(234, 179, 8, 0.9)';
-                    hudGlow = 'rgba(168, 85, 247, 0.45)';
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, rippleRadius, 0, Math.PI * 2);
+                    ctx.strokeStyle = toRgba(accentColor, rippleAlpha);
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
                 }
 
-                // 1. Holographic Atmospheric Core Ambient Glow
-                const coreGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseRadius * 1.4);
-                coreGlow.addColorStop(0, hudGlow);
-                coreGlow.addColorStop(0.5, 'rgba(15, 23, 42, 0.4)');
-                coreGlow.addColorStop(1, 'transparent');
+                // Soft radial gradient glow behind the core (2x core radius)
+                const glowRadius = coreRadius * 2.0;
+                const glowAlpha = (orbState === 'thinking') ? 0.22 : 0.15;
+                const glowGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowRadius);
+                glowGrad.addColorStop(0, toRgba(accentColor, glowAlpha));
+                glowGrad.addColorStop(1, toRgba(accentColor, 0.0));
+
                 ctx.beginPath();
-                ctx.arc(cx, cy, baseRadius * 1.4, 0, Math.PI * 2);
-                ctx.fillStyle = coreGlow;
+                ctx.arc(cx, cy, glowRadius, 0, Math.PI * 2);
+                ctx.fillStyle = glowGrad;
                 ctx.fill();
 
-                // 2. LAYER 1: OUTER TACHOMETER RING (Clockwise rotation)
-                ctx.save();
-                ctx.translate(cx, cy);
-                ctx.rotate(angle * 0.35);
-                const rOuter = baseRadius * 1.30;
+                // Core fill: solid accent color at 85% opacity, fading to transparent at 60% radius
+                const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
+                coreGrad.addColorStop(0, toRgba(accentColor, 0.85));
+                coreGrad.addColorStop(0.6, toRgba(accentColor, 0.85));
+                coreGrad.addColorStop(1.0, toRgba(accentColor, 0.0));
+
                 ctx.beginPath();
-                ctx.arc(0, 0, rOuter, 0, Math.PI * 2);
-                ctx.strokeStyle = hudCyan;
-                ctx.lineWidth = 1.2;
-                ctx.setLineDash([4, 6]);
-                ctx.stroke();
-                ctx.setLineDash([]);
-
-                // 40 Graduated Tick Marks around outer ring
-                for (let t = 0; t < 40; t++) {
-                    const tAngle = (t * Math.PI * 2) / 40;
-                    const isMajor = t % 5 === 0;
-                    const innerLen = isMajor ? rOuter - 9 : rOuter - 4;
-                    ctx.beginPath();
-                    ctx.moveTo(Math.cos(tAngle) * innerLen, Math.sin(tAngle) * innerLen);
-                    ctx.lineTo(Math.cos(tAngle) * rOuter, Math.sin(tAngle) * rOuter);
-                    ctx.strokeStyle = isMajor ? hudGold : hudCyan;
-                    ctx.lineWidth = isMajor ? 2 : 1;
-                    ctx.stroke();
-
-                    if (isMajor) {
-                        ctx.beginPath();
-                        ctx.arc(Math.cos(tAngle) * (innerLen - 3), Math.sin(tAngle) * (innerLen - 3), 1.8, 0, Math.PI * 2);
-                        ctx.fillStyle = hudGold;
-                        ctx.fill();
-                    }
-                }
-                ctx.restore();
-
-                // 3. LAYER 2: SEGMENTED HUD BRACKET RING (Counter-Clockwise rotation)
-                ctx.save();
-                ctx.translate(cx, cy);
-                ctx.rotate(-angle * 0.55);
-                const rBracket = baseRadius * 1.14;
-                for (let b = 0; b < 4; b++) {
-                    ctx.rotate(Math.PI / 2);
-                    ctx.beginPath();
-                    ctx.arc(0, 0, rBracket, -0.28, 0.28);
-                    ctx.strokeStyle = hudCyan;
-                    ctx.lineWidth = 2.8;
-                    ctx.stroke();
-
-                    // Corner bracket tips
-                    const tipX = Math.cos(0.28) * rBracket;
-                    const tipY = Math.sin(0.28) * rBracket;
-                    ctx.beginPath();
-                    ctx.arc(tipX, tipY, 2.5, 0, Math.PI * 2);
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fill();
-                }
-                ctx.restore();
-
-                // 4. LAYER 3: RADIAL AUDIO EQUALIZER SPECTRUM PINS (Reacts to live voice)
-                ctx.save();
-                ctx.translate(cx, cy);
-                const rEqualizerBase = baseRadius * 0.88;
-                const barCount = 36;
-                for (let i = 0; i < barCount; i++) {
-                    const bAngle = (i * Math.PI * 2) / barCount + angle * 0.2;
-                    let intensity = 0;
-                    if (orbState === 'listening') {
-                        intensity = userVoiceVolume * (0.8 + 0.4 * Math.sin(i * 1.5 + angle * 6));
-                    } else if (orbState === 'speaking') {
-                        intensity = 0.25 + 0.25 * Math.sin(i * 0.8 + angle * 8);
-                    } else if (orbState === 'thinking') {
-                        intensity = 0.15 + 0.15 * Math.cos(i * 2 - angle * 10);
-                    } else {
-                        intensity = 0.06 + 0.04 * Math.sin(i + angle * 2);
-                    }
-                    const barLen = rEqualizerBase + (intensity * baseRadius * 0.35);
-
-                    ctx.beginPath();
-                    ctx.moveTo(Math.cos(bAngle) * rEqualizerBase, Math.sin(bAngle) * rEqualizerBase);
-                    ctx.lineTo(Math.cos(bAngle) * barLen, Math.sin(bAngle) * barLen);
-                    ctx.strokeStyle = (i % 3 === 0 ? hudGold : hudCyan);
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-                }
-                ctx.restore();
-
-                // 5. LAYER 4: HOLOGRAPHIC RADAR SCANNER SWEEP
-                ctx.save();
-                ctx.translate(cx, cy);
-                ctx.rotate(angle * 1.6);
-                const radarGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, baseRadius * 1.15);
-                radarGrad.addColorStop(0, 'rgba(0, 242, 254, 0.25)');
-                radarGrad.addColorStop(1, 'transparent');
-                ctx.beginPath();
-                ctx.moveTo(0, 0);
-                ctx.arc(0, 0, baseRadius * 1.15, -0.35, 0);
-                ctx.fillStyle = radarGrad;
+                ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
+                ctx.fillStyle = coreGrad;
                 ctx.fill();
-                ctx.restore();
-
-                // 6. LAYER 5: INNER ROTATING GEOMETRIC REACTOR IRIS (Hexagon / Concentric HUD Core)
-                ctx.save();
-                ctx.translate(cx, cy);
-                ctx.rotate(angle * 0.75);
-                const rHex = baseRadius * 0.58;
-                ctx.beginPath();
-                for (let h = 0; h < 6; h++) {
-                    const hAngle = (h * Math.PI * 2) / 6;
-                    const hx = Math.cos(hAngle) * rHex;
-                    const hy = Math.sin(hAngle) * rHex;
-                    if (h === 0) ctx.moveTo(hx, hy);
-                    else ctx.lineTo(hx, hy);
-                }
-                ctx.closePath();
-                ctx.strokeStyle = hudCyan;
-                ctx.lineWidth = 1.8;
-                ctx.stroke();
-
-                // Crosshair targeting reticles (+)
-                ctx.beginPath();
-                ctx.moveTo(-baseRadius * 0.75, 0); ctx.lineTo(-baseRadius * 0.40, 0);
-                ctx.moveTo(baseRadius * 0.40, 0); ctx.lineTo(baseRadius * 0.75, 0);
-                ctx.moveTo(0, -baseRadius * 0.75); ctx.lineTo(0, -baseRadius * 0.40);
-                ctx.moveTo(0, baseRadius * 0.40); ctx.lineTo(0, baseRadius * 0.75);
-                ctx.strokeStyle = hudGold;
-                ctx.lineWidth = 1.8;
-                ctx.stroke();
-                ctx.restore();
-
-                // 7. LAYER 6: SIGNATURE AVENGERS & JARVIS CORE GRAPHICS
-                if (currentPersonaId === 'ironman') {
-                    // Stark Industries Arc Reactor Core
-                    ctx.save();
-                    ctx.translate(cx, cy);
-                    ctx.rotate(angle * 0.85);
-                    // 3 Mechanical Arc Dampers
-                    for (let s = 0; s < 3; s++) {
-                        ctx.rotate((Math.PI * 2) / 3);
-                        ctx.beginPath();
-                        ctx.arc(0, 0, baseRadius * 0.46, -0.42, 0.42);
-                        ctx.strokeStyle = '#fbbf24';
-                        ctx.lineWidth = 4;
-                        ctx.stroke();
-
-                        ctx.beginPath();
-                        ctx.arc(0, 0, baseRadius * 0.32, -0.32, 0.32);
-                        ctx.strokeStyle = '#ef4444';
-                        ctx.lineWidth = 3;
-                        ctx.stroke();
-                    }
-                    // Central Plasma Reactor
-                    ctx.beginPath();
-                    ctx.arc(0, 0, baseRadius * 0.22, 0, Math.PI * 2);
-                    ctx.fillStyle = '#ffffff';
-                    ctx.shadowColor = '#00f2fe';
-                    ctx.shadowBlur = 18;
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-                    ctx.restore();
-                } else if (currentPersonaId === 'thor') {
-                    // Mjolnir Lightning Storm
-                    ctx.save();
-                    ctx.translate(cx, cy);
-                    ctx.rotate(angle * 1.2);
-                    for (let l = 0; l < 5; l++) {
-                        ctx.rotate((Math.PI * 2) / 5);
-                        ctx.beginPath();
-                        ctx.moveTo(0, 0);
-                        const midR = baseRadius * 0.48;
-                        const outR = baseRadius * 0.95 + Math.sin(angle * 6 + l) * 10;
-                        ctx.lineTo(Math.sin(angle * 8 + l) * 10, midR);
-                        ctx.lineTo(Math.cos(angle * 8 + l) * 10, outR);
-                        ctx.strokeStyle = '#38bdf8';
-                        ctx.lineWidth = 2.5;
-                        ctx.shadowColor = '#38bdf8';
-                        ctx.shadowBlur = 12;
-                        ctx.stroke();
-                        ctx.shadowBlur = 0;
-                    }
-                    ctx.restore();
-                } else if (currentPersonaId === 'captain') {
-                    // Vibranium Shield Rings
-                    ctx.save();
-                    ctx.translate(cx, cy);
-                    ctx.beginPath();
-                    ctx.arc(0, 0, baseRadius * 0.88, 0, Math.PI * 2);
-                    ctx.strokeStyle = '#dc2626';
-                    ctx.lineWidth = 5;
-                    ctx.stroke();
-                    ctx.beginPath();
-                    ctx.arc(0, 0, baseRadius * 0.68, 0, Math.PI * 2);
-                    ctx.strokeStyle = '#f1f5f9';
-                    ctx.lineWidth = 4;
-                    ctx.stroke();
-                    ctx.beginPath();
-                    ctx.arc(0, 0, baseRadius * 0.48, 0, Math.PI * 2);
-                    ctx.fillStyle = '#1d4ed8';
-                    ctx.fill();
-                    ctx.fillStyle = '#ffffff';
-                    ctx.beginPath();
-                    ctx.arc(0, 0, baseRadius * 0.18, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.restore();
-                } else if (currentPersonaId === 'spiderman') {
-                    // Spider-Web Matrix
-                    ctx.save();
-                    ctx.translate(cx, cy);
-                    ctx.rotate(angle * 0.4);
-                    for (let w = 0; w < 8; w++) {
-                        ctx.rotate(Math.PI / 4);
-                        ctx.beginPath();
-                        ctx.moveTo(0, 0);
-                        ctx.lineTo(baseRadius * 0.95, 0);
-                        ctx.strokeStyle = 'rgba(244, 63, 94, 0.75)';
-                        ctx.lineWidth = 1.5;
-                        ctx.stroke();
-                    }
-                    [0.35, 0.65, 0.95].forEach(scale => {
-                        ctx.beginPath();
-                        ctx.arc(0, 0, baseRadius * scale, 0, Math.PI * 2);
-                        ctx.strokeStyle = 'rgba(6, 182, 212, 0.7)';
-                        ctx.lineWidth = 1.8;
-                        ctx.stroke();
-                    });
-                    ctx.restore();
-                } else if (currentPersonaId === 'hulk') {
-                    // Gamma Shockwave Rings
-                    ctx.save();
-                    ctx.translate(cx, cy);
-                    for (let g = 0; g < 3; g++) {
-                        const pulseR = (baseRadius * 0.35) + ((angle * 30 + g * 35) % (baseRadius * 0.75));
-                        ctx.beginPath();
-                        ctx.arc(0, 0, pulseR, 0, Math.PI * 2);
-                        ctx.strokeStyle = `rgba(16, 185, 129, ${0.85 - (pulseR / baseRadius) * 0.65})`;
-                        ctx.lineWidth = 4;
-                        ctx.stroke();
-                    }
-                    ctx.restore();
-                } else if (currentPersonaId === 'thanos') {
-                    // 6 Orbiting Infinity Stones
-                    const stoneColors = ['#a855f7', '#38bdf8', '#ef4444', '#f97316', '#10b981', '#fbbf24'];
-                    for (let st = 0; st < 6; st++) {
-                        const stoneAngle = angle * 0.9 + (st * (Math.PI * 2 / 6));
-                        const sx = cx + Math.cos(stoneAngle) * (baseRadius * 0.92);
-                        const sy = cy + Math.sin(stoneAngle) * (baseRadius * 0.92);
-                        ctx.beginPath();
-                        ctx.arc(sx, sy, 7.5, 0, Math.PI * 2);
-                        ctx.fillStyle = stoneColors[st];
-                        ctx.shadowColor = stoneColors[st];
-                        ctx.shadowBlur = 14;
-                        ctx.fill();
-                        ctx.shadowBlur = 0;
-                    }
-                } else if (currentPersonaId === 'blackwidow') {
-                    // Stealth Combat HUD & Red Hourglass Core
-                    ctx.save();
-                    ctx.translate(cx, cy);
-                    ctx.beginPath();
-                    ctx.arc(0, 0, baseRadius * 0.75, 0, Math.PI * 2);
-                    ctx.strokeStyle = '#ef4444';
-                    ctx.lineWidth = 2.5;
-                    ctx.stroke();
-                    // Hourglass symbol in center
-                    ctx.fillStyle = '#ef4444';
-                    ctx.shadowColor = '#ef4444';
-                    ctx.shadowBlur = 12;
-                    ctx.beginPath();
-                    ctx.moveTo(-12, -16); ctx.lineTo(12, -16); ctx.lineTo(0, 0); ctx.closePath();
-                    ctx.fill();
-                    ctx.beginPath();
-                    ctx.moveTo(-12, 16); ctx.lineTo(12, 16); ctx.lineTo(0, 0); ctx.closePath();
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-                    ctx.restore();
-                } else if (currentPersonaId === 'scarletwitch') {
-                    // Chaos Magic Rune Rings
-                    ctx.save();
-                    ctx.translate(cx, cy);
-                    ctx.rotate(angle * 0.9);
-                    for (let r = 0; r < 4; r++) {
-                        ctx.rotate(Math.PI / 2);
-                        ctx.beginPath();
-                        ctx.arc(0, 0, baseRadius * 0.65, -0.4, 0.4);
-                        ctx.strokeStyle = '#f43f5e';
-                        ctx.lineWidth = 3.5;
-                        ctx.shadowColor = '#f43f5e';
-                        ctx.shadowBlur = 15;
-                        ctx.stroke();
-                        ctx.shadowBlur = 0;
-                    }
-                    ctx.restore();
-                } else if (currentPersonaId === 'shuri') {
-                    // Wakandan Vibranium Matrix
-                    ctx.save();
-                    ctx.translate(cx, cy);
-                    ctx.rotate(angle * 0.6);
-                    for (let sh = 0; sh < 8; sh++) {
-                        ctx.rotate(Math.PI / 4);
-                        ctx.beginPath();
-                        ctx.moveTo(0, 0); ctx.lineTo(baseRadius * 0.85, 0);
-                        ctx.strokeStyle = (sh % 2 === 0 ? '#a855f7' : '#eab308');
-                        ctx.lineWidth = 2;
-                        ctx.stroke();
-                    }
-                    ctx.restore();
-                } else {
-                    // Pure Classic Tony Stark JARVIS Holographic Core
-                    ctx.save();
-                    ctx.translate(cx, cy);
-                    ctx.rotate(angle * 0.85);
-                    ctx.beginPath();
-                    ctx.arc(0, 0, baseRadius * 0.42, 0, Math.PI * 2);
-                    ctx.strokeStyle = '#00f2fe';
-                    ctx.lineWidth = 2;
-                    ctx.setLineDash([6, 6]);
-                    ctx.stroke();
-                    ctx.setLineDash([]);
-
-                    ctx.beginPath();
-                    ctx.arc(0, 0, baseRadius * 0.24, 0, Math.PI * 2);
-                    ctx.fillStyle = '#ffffff';
-                    ctx.shadowColor = '#00f2fe';
-                    ctx.shadowBlur = 18;
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-                    ctx.restore();
-                }
-
-                // Center Pulsating Plasma Star (Present on all HUD modes)
-                const corePulse = (baseRadius * 0.16) + Math.sin(angle * 5) * 3;
-                ctx.beginPath();
-                ctx.arc(cx, cy, corePulse, 0, Math.PI * 2);
-                ctx.fillStyle = '#ffffff';
-                ctx.shadowColor = hudCyan;
-                ctx.shadowBlur = 15;
-                ctx.fill();
-                ctx.shadowBlur = 0;
 
                 ctx.restore();
                 requestAnimationFrame(render);
@@ -1001,6 +692,10 @@ CRITICAL: Reply in the user's language with bright, genius, futuristic 1-2 sente
                     currentAudioPlayer.currentTime = 0;
                     currentAudioPlayer = null;
                 } catch(e) {}
+            }
+            if (window.__speechKeepAlive) {
+                clearInterval(window.__speechKeepAlive);
+                window.__speechKeepAlive = null;
             }
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
@@ -1361,6 +1056,10 @@ CRITICAL: Reply in the user's language with bright, genius, futuristic 1-2 sente
                     currentAudioPlayer = null;
                 } catch(e) {}
             }
+            if (window.__speechKeepAlive) {
+                clearInterval(window.__speechKeepAlive);
+                window.__speechKeepAlive = null;
+            }
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
             }
@@ -1394,13 +1093,14 @@ CRITICAL: Reply in the user's language with bright, genius, futuristic 1-2 sente
         }
 
         function toggleMicMute() {
+            event?.stopPropagation?.();
             isCallMuted = !isCallMuted;
             const btn = document.getElementById('micMuteBtn');
             if (isCallMuted) {
                 stopSpeechRecognition();
                 btn.className = 'ctrl-btn mic-muted';
                 btn.innerHTML = '<i class="fa-solid fa-microphone-slash"></i>';
-                setAgentState('idle', 'Microphone Muted');
+                if (!isSpeaking) setAgentState('idle', 'Microphone Muted');
                 playTone(220, 0.1);
             } else {
                 btn.className = 'ctrl-btn active-mic';
@@ -3220,12 +2920,14 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
             }
 
             let finished = false;
-            let chromeKeepAlive = null;
             const finishOnce = () => {
                 if (finished) return;
                 finished = true;
                 if (speechSafetyTimer) clearTimeout(speechSafetyTimer);
-                if (chromeKeepAlive) clearInterval(chromeKeepAlive);
+                if (window.__speechKeepAlive) {
+                    clearInterval(window.__speechKeepAlive);
+                    window.__speechKeepAlive = null;
+                }
                 isSpeaking = false;
                 window.activeUtterances = window.activeUtterances.filter(u => u !== utter);
                 setAgentState('listening', isPushToTalkMode ? 'Push-to-Talk Standby' : 'Listening to your voice...');
@@ -3243,18 +2945,8 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                 document.getElementById('callSubtitles').innerText = cleanSpeech;
 
                 const wordCount = utterText.split(/\s+/).length;
-                const maxDurationMs = Math.max(25000, wordCount * 1200 + 8000);
+                const maxDurationMs = Math.max(20000, wordCount * 900 + 8000);
                 speechSafetyTimer = setTimeout(() => { if (isSpeaking) finishOnce(); }, maxDurationMs);
-
-                // Chrome speech synthesis keep-alive: prevents long utterances from cutting off mid-sentence
-                chromeKeepAlive = setInterval(() => {
-                    if (!window.speechSynthesis.speaking) {
-                        clearInterval(chromeKeepAlive);
-                    } else {
-                        window.speechSynthesis.pause();
-                        window.speechSynthesis.resume();
-                    }
-                }, 8000);
             };
 
             utter.onend = () => {
@@ -3302,6 +2994,18 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                         window.speechSynthesis.resume();
                     }
                     window.speechSynthesis.speak(utter);
+
+                    // Chrome 15s speechSynthesis cutoff workaround
+                    if (window.__speechKeepAlive) clearInterval(window.__speechKeepAlive);
+                    window.__speechKeepAlive = setInterval(() => {
+                        if (!window.speechSynthesis.speaking) {
+                            clearInterval(window.__speechKeepAlive);
+                            window.__speechKeepAlive = null;
+                            return;
+                        }
+                        window.speechSynthesis.pause();
+                        window.speechSynthesis.resume();
+                    }, 14000);
                 } catch(err) {
                     console.error("Speak execution notice:", err);
                     finishOnce();

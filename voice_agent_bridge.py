@@ -32,6 +32,23 @@ def safe_urlopen(req, timeout=20):
             return urllib.request.urlopen(req, context=unverified_ctx, timeout=timeout)
         raise
 
+def split_text_for_tts(text, max_chars=2400):
+    """Split text into chunks under max_chars, preferring sentence boundaries."""
+    if len(text) <= max_chars:
+        return [text]
+    chunks = []
+    current = ""
+    for sentence in text.replace('।', '.').replace('॥', '.').replace('?', '?.').replace('!', '!.').split('. '):
+        candidate = (current + ". " + sentence).strip() if current else sentence.strip()
+        if len(candidate) > max_chars and current:
+            chunks.append(current.strip())
+            current = sentence.strip()
+        else:
+            current = candidate
+    if current.strip():
+        chunks.append(current.strip())
+    return chunks
+
 PORT = int(os.environ.get("BRIDGE_PORT", 8765))
 WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -264,36 +281,40 @@ class VoiceAgentBridgeHandler(BaseHTTPRequestHandler):
                 else:
                     target_lang = "en-IN"
 
-            payload = {
-                "text": text,
-                "target_language_code": target_lang,
-                "speaker": speaker,
-                "model": "bulbul:v3"
-            }
+            text_chunks = split_text_for_tts(text, 2400)
 
             try:
                 sarvam_url = "https://api.sarvam.ai/text-to-speech"
-                print(f"[SARVAM TTS] Target: {target_lang} | Speaker: {speaker} | Model: bulbul:v3")
-                print(f"[SARVAM TTS] Sending payload: {json.dumps(payload, ensure_ascii=False)}")
+                print(f"[SARVAM TTS] Target: {target_lang} | Speaker: {speaker} | Model: bulbul:v3 | Chunks: {len(text_chunks)}")
                 headers = {
                     "api-subscription-key": sarvam_key,
                     "Content-Type": "application/json",
                     "User-Agent": "VoiceAgentBridge/1.0"
                 }
-                post_data = json.dumps(payload).encode("utf-8")
-                req = urllib.request.Request(sarvam_url, data=post_data, headers=headers, method="POST")
 
-                with safe_urlopen(req, timeout=15) as resp:
-                    resp_data = json.loads(resp.read().decode("utf-8"))
-                    audios = resp_data.get("audios", [])
-                    if not audios or not audios[0]:
-                        self._set_headers(500)
-                        self.wfile.write(json.dumps({"success": False, "error": "Sarvam API returned empty audio array"}).encode("utf-8"))
-                        return
-                    audio_bytes = base64.b64decode(audios[0])
-                    self._set_headers(200, content_type="audio/wav")
-                    self.wfile.write(audio_bytes)
-                    return
+                all_audio_bytes = b""
+                for chunk in text_chunks:
+                    payload = {
+                        "text": chunk,
+                        "target_language_code": target_lang,
+                        "speaker": speaker,
+                        "model": "bulbul:v3"
+                    }
+                    post_data = json.dumps(payload).encode("utf-8")
+                    req = urllib.request.Request(sarvam_url, data=post_data, headers=headers, method="POST")
+
+                    with safe_urlopen(req, timeout=15) as resp:
+                        resp_data = json.loads(resp.read().decode("utf-8"))
+                        audios = resp_data.get("audios", [])
+                        if audios and audios[0]:
+                            all_audio_bytes += base64.b64decode(audios[0])
+
+                if not all_audio_bytes:
+                    raise ValueError("Sarvam returned no audio for any chunk")
+                audio_bytes = all_audio_bytes
+                self._set_headers(200, content_type="audio/wav")
+                self.wfile.write(audio_bytes)
+                return
             except urllib.error.HTTPError as he:
                 err_body = he.read().decode("utf-8", errors="replace")
                 print(f"[!] Sarvam API HTTPError {he.code}: {err_body}")

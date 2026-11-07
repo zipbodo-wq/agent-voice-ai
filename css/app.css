@@ -483,11 +483,13 @@
             width: 280px;
             height: 280px;
             border-radius: 50%;
-            transition: transform 0.15s ease-out;
+            background: transparent;
+            border: none;
+            box-shadow: none;
         }
 
         .orb-canvas-container:hover #voiceOrbCanvas {
-            transform: scale(1.025);
+            transform: none;
         }
 
         /* CAMERA OPTIC VISION HUD (PIP OVERLAY) */
