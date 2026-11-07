@@ -2440,8 +2440,8 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
             const sarvamClientKey = (window.sarvamApiKey || localStorage.getItem('sarvam_api_key') || '').trim();
             const canUseSarvamBridge = window.sarvamBridgeAvailable === true;
 
-            // Route via Python bridge /tts if bridge reports SARVAM_API_KEY is configured
-            if (canUseSarvamBridge) {
+            // Route via Python bridge /tts if bridge is online and (bridge has key or client key provided)
+            if (bridgeOnline && (canUseSarvamBridge || sarvamClientKey.length > 5)) {
                 try {
                     setAgentState('speaking', `Sarvam AI (${resolvedLang.toUpperCase()})...`);
                     const sRes = await fetch(`${bridgeUrl}/tts`, {
@@ -2450,7 +2450,8 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                         body: JSON.stringify({
                             text: cleanSpeech,
                             language: resolvedLang,
-                            speaker: vMeta.gender === 'female' ? 'ritu' : 'shubh'
+                            speaker: vMeta.gender === 'female' ? 'ritu' : 'shubh',
+                            api_key: sarvamClientKey
                         })
                     });
 
@@ -2460,6 +2461,9 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                             const played = await playAudioBlob(blob, `Sarvam AI (${vMeta.name})`);
                             if (played) return;
                         }
+                    } else {
+                        const err = await sRes.json().catch(() => ({}));
+                        console.warn("Sarvam AI bridge returned error:", sRes.status, err);
                     }
                 } catch(e) {
                     console.warn("Sarvam AI bridge call notice:", e.message || e);
@@ -2962,8 +2966,14 @@ CRITICAL ODIA (ଓଡ଼ିଆ) ADVANCED KNOWLEDGE & CONVERSATION INSTRUCTION:
                 utter.lang = defaultLangCode;
             }
 
-            utter.rate = vMeta.rate || 1.05;
-            utter.pitch = vMeta.pitch || (targetGender === 'male' ? 0.94 : 1.08);
+            if (hasOdia || hasHindi) {
+                // Natural human cadence and pitch for Indian speech (removes robotic superhero warping)
+                utter.rate = 1.0;
+                utter.pitch = (targetGender === 'female' ? 1.04 : 0.98);
+            } else {
+                utter.rate = vMeta.rate || 1.0;
+                utter.pitch = vMeta.pitch || (targetGender === 'male' ? 0.98 : 1.05);
+            }
 
             let finished = false;
             const finishOnce = () => {
